@@ -1,0 +1,1741 @@
+[gd_scene load_steps=210 format=3 uid="uid://c7u64tpv6byvb"]
+
+[ext_resource type="Shader" path="res://demo/shaders/wireframe.gdshader" id="1_pum5v"]
+[ext_resource type="Texture2D" uid="uid://cdx7ceoux78g0" path="res://demo/textures/yellow_grass.png" id="2_idy2r"]
+[ext_resource type="Shader" path="res://demo/shaders/terrain.gdshader" id="2_vbolp"]
+[ext_resource type="Texture2D" uid="uid://480r6dmk61dl" path="res://demo/textures/grass0.png" id="3_pqdn5"]
+[ext_resource type="Texture2D" uid="uid://do00yjl6ipe16" path="res://demo/textures/water.png" id="4_puk6l"]
+[ext_resource type="Texture2D" uid="uid://ba6285rpeyj4l" path="res://demo/textures/snow.png" id="5_ir8h7"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_c07xd"]
+render_priority = 0
+shader = ExtResource("1_pum5v")
+
+[sub_resource type="HexMesh" id="HexMesh_aam54"]
+material = SubResource("ShaderMaterial_c07xd")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ai26t"]
+render_priority = 0
+shader = ExtResource("1_pum5v")
+
+[sub_resource type="HexMesh" id="HexMesh_yk04q"]
+material = SubResource("ShaderMaterial_ai26t")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_wfyc7"]
+render_priority = 0
+shader = ExtResource("1_pum5v")
+
+[sub_resource type="HexMesh" id="HexMesh_1n72s"]
+material = SubResource("ShaderMaterial_wfyc7")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_6ulhl"]
+render_priority = 0
+shader = ExtResource("1_pum5v")
+
+[sub_resource type="HexMesh" id="HexMesh_ks0f1"]
+material = SubResource("ShaderMaterial_6ulhl")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_cof6w"]
+render_priority = 0
+shader = ExtResource("1_pum5v")
+
+[sub_resource type="HexMesh" id="HexMesh_oq8xr"]
+material = SubResource("ShaderMaterial_cof6w")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_nolgk"]
+render_priority = 0
+shader = ExtResource("1_pum5v")
+
+[sub_resource type="HexMesh" id="HexMesh_pmpg4"]
+material = SubResource("ShaderMaterial_nolgk")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_sahdk"]
+render_priority = 0
+shader = ExtResource("1_pum5v")
+
+[sub_resource type="HexMesh" id="HexMesh_6sovu"]
+material = SubResource("ShaderMaterial_sahdk")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_h2uq0"]
+render_priority = 0
+shader = ExtResource("1_pum5v")
+
+[sub_resource type="HexMesh" id="HexMesh_e013l"]
+material = SubResource("ShaderMaterial_h2uq0")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_0r7py"]
+render_priority = 0
+shader = ExtResource("1_pum5v")
+
+[sub_resource type="HexMesh" id="HexMesh_jnkb4"]
+material = SubResource("ShaderMaterial_0r7py")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_t2ot3"]
+render_priority = 0
+shader = ExtResource("1_pum5v")
+
+[sub_resource type="HexMesh" id="HexMesh_wfdrn"]
+material = SubResource("ShaderMaterial_t2ot3")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_rbd0t"]
+render_priority = 0
+shader = ExtResource("1_pum5v")
+
+[sub_resource type="HexMesh" id="HexMesh_0vrmw"]
+material = SubResource("ShaderMaterial_rbd0t")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_hwo4l"]
+render_priority = 0
+shader = ExtResource("1_pum5v")
+
+[sub_resource type="HexMesh" id="HexMesh_yjdvq"]
+material = SubResource("ShaderMaterial_hwo4l")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_x5yyd"]
+render_priority = 0
+shader = ExtResource("1_pum5v")
+
+[sub_resource type="HexMesh" id="HexMesh_p8o58"]
+material = SubResource("ShaderMaterial_x5yyd")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_esnye"]
+render_priority = 0
+shader = ExtResource("1_pum5v")
+
+[sub_resource type="HexMesh" id="HexMesh_sdkxu"]
+material = SubResource("ShaderMaterial_esnye")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_whs3x"]
+render_priority = 0
+shader = ExtResource("1_pum5v")
+
+[sub_resource type="HexMesh" id="HexMesh_m8pyh"]
+material = SubResource("ShaderMaterial_whs3x")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_t6oaa"]
+render_priority = 0
+shader = ExtResource("1_pum5v")
+
+[sub_resource type="HexMesh" id="HexMesh_4jk2h"]
+material = SubResource("ShaderMaterial_t6oaa")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_61rkk"]
+render_priority = 0
+shader = ExtResource("1_pum5v")
+
+[sub_resource type="HexMesh" id="HexMesh_n414r"]
+material = SubResource("ShaderMaterial_61rkk")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_suy3v"]
+render_priority = 0
+shader = ExtResource("1_pum5v")
+
+[sub_resource type="HexMesh" id="HexMesh_j4at5"]
+material = SubResource("ShaderMaterial_suy3v")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ha25f"]
+render_priority = 0
+shader = ExtResource("1_pum5v")
+
+[sub_resource type="HexMesh" id="HexMesh_kkknl"]
+material = SubResource("ShaderMaterial_ha25f")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ydkn4"]
+render_priority = 0
+shader = ExtResource("1_pum5v")
+
+[sub_resource type="HexMesh" id="HexMesh_6sll8"]
+material = SubResource("ShaderMaterial_ydkn4")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_vhihw"]
+render_priority = 0
+shader = ExtResource("1_pum5v")
+
+[sub_resource type="HexMesh" id="HexMesh_mldbg"]
+material = SubResource("ShaderMaterial_vhihw")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_otwl6"]
+render_priority = 0
+shader = ExtResource("1_pum5v")
+
+[sub_resource type="HexMesh" id="HexMesh_c35hc"]
+material = SubResource("ShaderMaterial_otwl6")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ipfcj"]
+render_priority = 0
+shader = ExtResource("1_pum5v")
+
+[sub_resource type="HexMesh" id="HexMesh_67kg3"]
+material = SubResource("ShaderMaterial_ipfcj")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_twi05"]
+render_priority = 0
+shader = ExtResource("1_pum5v")
+
+[sub_resource type="HexMesh" id="HexMesh_gx8g8"]
+material = SubResource("ShaderMaterial_twi05")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_7ilno"]
+render_priority = 0
+shader = ExtResource("1_pum5v")
+
+[sub_resource type="HexMesh" id="HexMesh_gd1p3"]
+material = SubResource("ShaderMaterial_7ilno")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_rb07h"]
+render_priority = 0
+shader = ExtResource("1_pum5v")
+
+[sub_resource type="HexMesh" id="HexMesh_y2wb5"]
+material = SubResource("ShaderMaterial_rb07h")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_itgy6"]
+render_priority = 0
+shader = ExtResource("1_pum5v")
+
+[sub_resource type="HexMesh" id="HexMesh_ng77i"]
+material = SubResource("ShaderMaterial_itgy6")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_7enfw"]
+render_priority = 0
+shader = ExtResource("1_pum5v")
+
+[sub_resource type="HexMesh" id="HexMesh_3t03a"]
+material = SubResource("ShaderMaterial_7enfw")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_mksya"]
+render_priority = 0
+shader = ExtResource("1_pum5v")
+
+[sub_resource type="HexMesh" id="HexMesh_cov3d"]
+material = SubResource("ShaderMaterial_mksya")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_hx8yq"]
+render_priority = 0
+shader = ExtResource("1_pum5v")
+
+[sub_resource type="HexMesh" id="HexMesh_vca4m"]
+material = SubResource("ShaderMaterial_hx8yq")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_aq7nf"]
+render_priority = 0
+shader = ExtResource("1_pum5v")
+
+[sub_resource type="HexMesh" id="HexMesh_y65sm"]
+material = SubResource("ShaderMaterial_aq7nf")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_cj66h"]
+render_priority = 0
+shader = ExtResource("1_pum5v")
+
+[sub_resource type="HexMesh" id="HexMesh_fp8p0"]
+material = SubResource("ShaderMaterial_cj66h")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_sr0p3"]
+render_priority = 0
+shader = ExtResource("1_pum5v")
+
+[sub_resource type="HexMesh" id="HexMesh_07uwv"]
+material = SubResource("ShaderMaterial_sr0p3")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_5nh1b"]
+render_priority = 0
+shader = ExtResource("1_pum5v")
+
+[sub_resource type="HexMesh" id="HexMesh_7ejb1"]
+material = SubResource("ShaderMaterial_5nh1b")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_so00m"]
+render_priority = 0
+shader = ExtResource("1_pum5v")
+
+[sub_resource type="HexMesh" id="HexMesh_v7lrr"]
+material = SubResource("ShaderMaterial_so00m")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_meh08"]
+render_priority = 0
+shader = ExtResource("1_pum5v")
+
+[sub_resource type="HexMesh" id="HexMesh_phv72"]
+material = SubResource("ShaderMaterial_meh08")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_u5uu7"]
+render_priority = 0
+shader = ExtResource("1_pum5v")
+
+[sub_resource type="HexMesh" id="HexMesh_e7nkv"]
+material = SubResource("ShaderMaterial_u5uu7")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_54fnj"]
+render_priority = 0
+shader = ExtResource("1_pum5v")
+
+[sub_resource type="HexMesh" id="HexMesh_bqxth"]
+material = SubResource("ShaderMaterial_54fnj")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_0uenc"]
+render_priority = 0
+shader = ExtResource("1_pum5v")
+
+[sub_resource type="HexMesh" id="HexMesh_aokkp"]
+material = SubResource("ShaderMaterial_0uenc")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_g4lcg"]
+render_priority = 0
+shader = ExtResource("1_pum5v")
+
+[sub_resource type="HexMesh" id="HexMesh_sgpx1"]
+material = SubResource("ShaderMaterial_g4lcg")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ppu2n"]
+render_priority = 0
+shader = ExtResource("1_pum5v")
+
+[sub_resource type="HexMesh" id="HexMesh_sc3mr"]
+material = SubResource("ShaderMaterial_ppu2n")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_8pceu"]
+render_priority = 0
+shader = ExtResource("1_pum5v")
+
+[sub_resource type="HexMesh" id="HexMesh_gsmgq"]
+material = SubResource("ShaderMaterial_8pceu")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_3pd8k"]
+render_priority = 0
+shader = ExtResource("1_pum5v")
+
+[sub_resource type="HexMesh" id="HexMesh_858k1"]
+material = SubResource("ShaderMaterial_3pd8k")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_qy6yk"]
+render_priority = 0
+shader = ExtResource("1_pum5v")
+
+[sub_resource type="HexMesh" id="HexMesh_rjide"]
+material = SubResource("ShaderMaterial_qy6yk")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_c4btu"]
+render_priority = 0
+shader = ExtResource("1_pum5v")
+
+[sub_resource type="HexMesh" id="HexMesh_biva5"]
+material = SubResource("ShaderMaterial_c4btu")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_b1dr1"]
+render_priority = 0
+shader = ExtResource("1_pum5v")
+
+[sub_resource type="HexMesh" id="HexMesh_4d1r3"]
+material = SubResource("ShaderMaterial_b1dr1")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_gpl4e"]
+render_priority = 0
+shader = ExtResource("1_pum5v")
+
+[sub_resource type="HexMesh" id="HexMesh_4hv12"]
+material = SubResource("ShaderMaterial_gpl4e")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ggwj5"]
+render_priority = 0
+shader = ExtResource("1_pum5v")
+
+[sub_resource type="HexMesh" id="HexMesh_5lunu"]
+material = SubResource("ShaderMaterial_ggwj5")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_2q7kb"]
+render_priority = 0
+shader = ExtResource("1_pum5v")
+
+[sub_resource type="HexMesh" id="HexMesh_kmimw"]
+material = SubResource("ShaderMaterial_2q7kb")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_wvbhs"]
+render_priority = 0
+shader = ExtResource("1_pum5v")
+
+[sub_resource type="HexMesh" id="HexMesh_4o3va"]
+material = SubResource("ShaderMaterial_wvbhs")
+
+[sub_resource type="MeshLibrary" id="MeshLibrary_s7lp7"]
+item/0/name = ""
+item/0/mesh = SubResource("HexMesh_yk04q")
+item/0/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/0/shapes = []
+item/0/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/0/navigation_layers = 1
+item/1/name = ""
+item/1/mesh = SubResource("HexMesh_1n72s")
+item/1/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/1/shapes = []
+item/1/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/1/navigation_layers = 1
+item/2/name = ""
+item/2/mesh = SubResource("HexMesh_sdkxu")
+item/2/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/2/shapes = []
+item/2/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/2/navigation_layers = 1
+item/3/name = ""
+item/3/mesh = SubResource("HexMesh_gd1p3")
+item/3/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/3/shapes = []
+item/3/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/3/navigation_layers = 1
+item/4/name = ""
+item/4/mesh = SubResource("HexMesh_phv72")
+item/4/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/4/shapes = []
+item/4/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/4/navigation_layers = 1
+item/5/name = ""
+item/5/mesh = SubResource("HexMesh_4d1r3")
+item/5/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/5/shapes = []
+item/5/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/5/navigation_layers = 1
+item/6/name = ""
+item/6/mesh = SubResource("HexMesh_4hv12")
+item/6/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/6/shapes = []
+item/6/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/6/navigation_layers = 1
+item/7/name = ""
+item/7/mesh = SubResource("HexMesh_5lunu")
+item/7/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.433013, 0, 0)
+item/7/shapes = []
+item/7/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/7/navigation_layers = 1
+item/8/name = ""
+item/8/mesh = SubResource("HexMesh_kmimw")
+item/8/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.433013, 0, 0)
+item/8/shapes = []
+item/8/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/8/navigation_layers = 1
+item/9/name = ""
+item/9/mesh = SubResource("HexMesh_4o3va")
+item/9/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.433013, 0, 0)
+item/9/shapes = []
+item/9/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/9/navigation_layers = 1
+item/10/name = ""
+item/10/mesh = SubResource("HexMesh_ks0f1")
+item/10/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.433013, 0, 0)
+item/10/shapes = []
+item/10/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/10/navigation_layers = 1
+item/11/name = ""
+item/11/mesh = SubResource("HexMesh_oq8xr")
+item/11/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.433013, 0, 0)
+item/11/shapes = []
+item/11/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/11/navigation_layers = 1
+item/12/name = ""
+item/12/mesh = SubResource("HexMesh_pmpg4")
+item/12/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.433013, 0, 0)
+item/12/shapes = []
+item/12/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/12/navigation_layers = 1
+item/13/name = ""
+item/13/mesh = SubResource("HexMesh_6sovu")
+item/13/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.433013, 0, 0)
+item/13/shapes = []
+item/13/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/13/navigation_layers = 1
+item/14/name = ""
+item/14/mesh = SubResource("HexMesh_e013l")
+item/14/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/14/shapes = []
+item/14/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/14/navigation_layers = 1
+item/15/name = ""
+item/15/mesh = SubResource("HexMesh_jnkb4")
+item/15/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/15/shapes = []
+item/15/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/15/navigation_layers = 1
+item/16/name = ""
+item/16/mesh = SubResource("HexMesh_wfdrn")
+item/16/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/16/shapes = []
+item/16/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/16/navigation_layers = 1
+item/17/name = ""
+item/17/mesh = SubResource("HexMesh_0vrmw")
+item/17/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/17/shapes = []
+item/17/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/17/navigation_layers = 1
+item/18/name = ""
+item/18/mesh = SubResource("HexMesh_yjdvq")
+item/18/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/18/shapes = []
+item/18/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/18/navigation_layers = 1
+item/19/name = ""
+item/19/mesh = SubResource("HexMesh_p8o58")
+item/19/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/19/shapes = []
+item/19/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/19/navigation_layers = 1
+item/20/name = ""
+item/20/mesh = SubResource("HexMesh_m8pyh")
+item/20/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/20/shapes = []
+item/20/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/20/navigation_layers = 1
+item/21/name = ""
+item/21/mesh = SubResource("HexMesh_4jk2h")
+item/21/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.433013, 0, 0)
+item/21/shapes = []
+item/21/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/21/navigation_layers = 1
+item/22/name = ""
+item/22/mesh = SubResource("HexMesh_n414r")
+item/22/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.433013, 0, 0)
+item/22/shapes = []
+item/22/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/22/navigation_layers = 1
+item/23/name = ""
+item/23/mesh = SubResource("HexMesh_j4at5")
+item/23/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.433013, 0, 0)
+item/23/shapes = []
+item/23/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/23/navigation_layers = 1
+item/24/name = ""
+item/24/mesh = SubResource("HexMesh_kkknl")
+item/24/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.433013, 0, 0)
+item/24/shapes = []
+item/24/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/24/navigation_layers = 1
+item/25/name = ""
+item/25/mesh = SubResource("HexMesh_6sll8")
+item/25/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.433013, 0, 0)
+item/25/shapes = []
+item/25/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/25/navigation_layers = 1
+item/26/name = ""
+item/26/mesh = SubResource("HexMesh_mldbg")
+item/26/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.433013, 0, 0)
+item/26/shapes = []
+item/26/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/26/navigation_layers = 1
+item/27/name = ""
+item/27/mesh = SubResource("HexMesh_c35hc")
+item/27/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.433013, 0, 0)
+item/27/shapes = []
+item/27/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/27/navigation_layers = 1
+item/28/name = ""
+item/28/mesh = SubResource("HexMesh_67kg3")
+item/28/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/28/shapes = []
+item/28/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/28/navigation_layers = 1
+item/29/name = ""
+item/29/mesh = SubResource("HexMesh_gx8g8")
+item/29/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/29/shapes = []
+item/29/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/29/navigation_layers = 1
+item/30/name = ""
+item/30/mesh = SubResource("HexMesh_y2wb5")
+item/30/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/30/shapes = []
+item/30/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/30/navigation_layers = 1
+item/31/name = ""
+item/31/mesh = SubResource("HexMesh_ng77i")
+item/31/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/31/shapes = []
+item/31/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/31/navigation_layers = 1
+item/32/name = ""
+item/32/mesh = SubResource("HexMesh_3t03a")
+item/32/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/32/shapes = []
+item/32/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/32/navigation_layers = 1
+item/33/name = ""
+item/33/mesh = SubResource("HexMesh_cov3d")
+item/33/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/33/shapes = []
+item/33/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/33/navigation_layers = 1
+item/34/name = ""
+item/34/mesh = SubResource("HexMesh_vca4m")
+item/34/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/34/shapes = []
+item/34/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/34/navigation_layers = 1
+item/35/name = ""
+item/35/mesh = SubResource("HexMesh_y65sm")
+item/35/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.433013, 0, 0)
+item/35/shapes = []
+item/35/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/35/navigation_layers = 1
+item/36/name = ""
+item/36/mesh = SubResource("HexMesh_fp8p0")
+item/36/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.433013, 0, 0)
+item/36/shapes = []
+item/36/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/36/navigation_layers = 1
+item/37/name = ""
+item/37/mesh = SubResource("HexMesh_07uwv")
+item/37/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.433013, 0, 0)
+item/37/shapes = []
+item/37/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/37/navigation_layers = 1
+item/38/name = ""
+item/38/mesh = SubResource("HexMesh_7ejb1")
+item/38/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.433013, 0, 0)
+item/38/shapes = []
+item/38/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/38/navigation_layers = 1
+item/39/name = ""
+item/39/mesh = SubResource("HexMesh_v7lrr")
+item/39/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.433013, 0, 0)
+item/39/shapes = []
+item/39/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/39/navigation_layers = 1
+item/40/name = ""
+item/40/mesh = SubResource("HexMesh_e7nkv")
+item/40/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.433013, 0, 0)
+item/40/shapes = []
+item/40/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/40/navigation_layers = 1
+item/41/name = ""
+item/41/mesh = SubResource("HexMesh_bqxth")
+item/41/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.433013, 0, 0)
+item/41/shapes = []
+item/41/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/41/navigation_layers = 1
+item/42/name = ""
+item/42/mesh = SubResource("HexMesh_aokkp")
+item/42/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/42/shapes = []
+item/42/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/42/navigation_layers = 1
+item/43/name = ""
+item/43/mesh = SubResource("HexMesh_sgpx1")
+item/43/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/43/shapes = []
+item/43/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/43/navigation_layers = 1
+item/44/name = ""
+item/44/mesh = SubResource("HexMesh_sc3mr")
+item/44/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/44/shapes = []
+item/44/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/44/navigation_layers = 1
+item/45/name = ""
+item/45/mesh = SubResource("HexMesh_gsmgq")
+item/45/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/45/shapes = []
+item/45/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/45/navigation_layers = 1
+item/46/name = ""
+item/46/mesh = SubResource("HexMesh_858k1")
+item/46/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/46/shapes = []
+item/46/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/46/navigation_layers = 1
+item/47/name = ""
+item/47/mesh = SubResource("HexMesh_rjide")
+item/47/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/47/shapes = []
+item/47/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/47/navigation_layers = 1
+item/48/name = ""
+item/48/mesh = SubResource("HexMesh_biva5")
+item/48/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/48/shapes = []
+item/48/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/48/navigation_layers = 1
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_cgrrc"]
+noise_type = 3
+frequency = 0.5286
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_mfm5d"]
+noise_type = 3
+frequency = 0.7055
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_h1x8h"]
+noise_type = 3
+frequency = 0.7712
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_bycu0"]
+render_priority = 0
+shader = ExtResource("2_vbolp")
+shader_parameter/top_offset = 0.5
+shader_parameter/bottom_offset = -0.07
+shader_parameter/hill_level_ratio = 0.7
+shader_parameter/water_texture = ExtResource("4_puk6l")
+shader_parameter/plain_texture = ExtResource("2_idy2r")
+shader_parameter/hill_texture = ExtResource("3_pqdn5")
+shader_parameter/mountain_texture = ExtResource("5_ir8h7")
+
+[sub_resource type="RidgeHexMesh" id="RidgeHexMesh_rwcmu"]
+divisions = 7
+material = SubResource("ShaderMaterial_bycu0")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_njuru"]
+render_priority = 0
+shader = ExtResource("2_vbolp")
+shader_parameter/top_offset = 0.5
+shader_parameter/bottom_offset = -0.07
+shader_parameter/hill_level_ratio = 0.7
+shader_parameter/water_texture = ExtResource("4_puk6l")
+shader_parameter/plain_texture = ExtResource("2_idy2r")
+shader_parameter/hill_texture = ExtResource("3_pqdn5")
+shader_parameter/mountain_texture = ExtResource("5_ir8h7")
+
+[sub_resource type="RidgeHexMesh" id="RidgeHexMesh_ip6wl"]
+divisions = 7
+material = SubResource("ShaderMaterial_njuru")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_irfjj"]
+render_priority = 0
+shader = ExtResource("2_vbolp")
+shader_parameter/top_offset = 0.5
+shader_parameter/bottom_offset = -0.07
+shader_parameter/hill_level_ratio = 0.7
+shader_parameter/water_texture = ExtResource("4_puk6l")
+shader_parameter/plain_texture = ExtResource("2_idy2r")
+shader_parameter/hill_texture = ExtResource("3_pqdn5")
+shader_parameter/mountain_texture = ExtResource("5_ir8h7")
+
+[sub_resource type="RidgeHexMesh" id="RidgeHexMesh_kc1oa"]
+divisions = 7
+material = SubResource("ShaderMaterial_irfjj")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_iegha"]
+render_priority = 0
+shader = ExtResource("2_vbolp")
+shader_parameter/top_offset = 0.5
+shader_parameter/bottom_offset = -0.07
+shader_parameter/hill_level_ratio = 0.7
+shader_parameter/water_texture = ExtResource("4_puk6l")
+shader_parameter/plain_texture = ExtResource("2_idy2r")
+shader_parameter/hill_texture = ExtResource("3_pqdn5")
+shader_parameter/mountain_texture = ExtResource("5_ir8h7")
+
+[sub_resource type="RidgeHexMesh" id="RidgeHexMesh_dqy5p"]
+divisions = 7
+material = SubResource("ShaderMaterial_iegha")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_bgha8"]
+render_priority = 0
+shader = ExtResource("2_vbolp")
+shader_parameter/top_offset = 0.5
+shader_parameter/bottom_offset = -0.07
+shader_parameter/hill_level_ratio = 0.7
+shader_parameter/water_texture = ExtResource("4_puk6l")
+shader_parameter/plain_texture = ExtResource("2_idy2r")
+shader_parameter/hill_texture = ExtResource("3_pqdn5")
+shader_parameter/mountain_texture = ExtResource("5_ir8h7")
+
+[sub_resource type="RidgeHexMesh" id="RidgeHexMesh_cmfb1"]
+divisions = 7
+material = SubResource("ShaderMaterial_bgha8")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_rmg4e"]
+render_priority = 0
+shader = ExtResource("2_vbolp")
+shader_parameter/top_offset = 0.5
+shader_parameter/bottom_offset = -0.07
+shader_parameter/hill_level_ratio = 0.7
+shader_parameter/water_texture = ExtResource("4_puk6l")
+shader_parameter/plain_texture = ExtResource("2_idy2r")
+shader_parameter/hill_texture = ExtResource("3_pqdn5")
+shader_parameter/mountain_texture = ExtResource("5_ir8h7")
+
+[sub_resource type="RidgeHexMesh" id="RidgeHexMesh_gp68t"]
+divisions = 7
+material = SubResource("ShaderMaterial_rmg4e")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_bb6bm"]
+render_priority = 0
+shader = ExtResource("2_vbolp")
+shader_parameter/top_offset = 0.5
+shader_parameter/bottom_offset = -0.07
+shader_parameter/hill_level_ratio = 0.7
+shader_parameter/water_texture = ExtResource("4_puk6l")
+shader_parameter/plain_texture = ExtResource("2_idy2r")
+shader_parameter/hill_texture = ExtResource("3_pqdn5")
+shader_parameter/mountain_texture = ExtResource("5_ir8h7")
+
+[sub_resource type="RidgeHexMesh" id="RidgeHexMesh_7xl82"]
+divisions = 7
+material = SubResource("ShaderMaterial_bb6bm")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_jvibh"]
+render_priority = 0
+shader = ExtResource("2_vbolp")
+shader_parameter/top_offset = 0.5
+shader_parameter/bottom_offset = -0.07
+shader_parameter/hill_level_ratio = 0.7
+shader_parameter/water_texture = ExtResource("4_puk6l")
+shader_parameter/plain_texture = ExtResource("2_idy2r")
+shader_parameter/hill_texture = ExtResource("3_pqdn5")
+shader_parameter/mountain_texture = ExtResource("5_ir8h7")
+
+[sub_resource type="RidgeHexMesh" id="RidgeHexMesh_l47hf"]
+divisions = 7
+material = SubResource("ShaderMaterial_jvibh")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_0h4b5"]
+render_priority = 0
+shader = ExtResource("2_vbolp")
+shader_parameter/top_offset = 0.5
+shader_parameter/bottom_offset = -0.07
+shader_parameter/hill_level_ratio = 0.7
+shader_parameter/water_texture = ExtResource("4_puk6l")
+shader_parameter/plain_texture = ExtResource("2_idy2r")
+shader_parameter/hill_texture = ExtResource("3_pqdn5")
+shader_parameter/mountain_texture = ExtResource("5_ir8h7")
+
+[sub_resource type="RidgeHexMesh" id="RidgeHexMesh_jakkr"]
+divisions = 7
+material = SubResource("ShaderMaterial_0h4b5")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_6mgox"]
+render_priority = 0
+shader = ExtResource("2_vbolp")
+shader_parameter/top_offset = 0.5
+shader_parameter/bottom_offset = -0.07
+shader_parameter/hill_level_ratio = 0.7
+shader_parameter/water_texture = ExtResource("4_puk6l")
+shader_parameter/plain_texture = ExtResource("2_idy2r")
+shader_parameter/hill_texture = ExtResource("3_pqdn5")
+shader_parameter/mountain_texture = ExtResource("5_ir8h7")
+
+[sub_resource type="RidgeHexMesh" id="RidgeHexMesh_n8alr"]
+divisions = 7
+material = SubResource("ShaderMaterial_6mgox")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_0ckbx"]
+render_priority = 0
+shader = ExtResource("2_vbolp")
+shader_parameter/top_offset = 0.5
+shader_parameter/bottom_offset = -0.07
+shader_parameter/hill_level_ratio = 0.7
+shader_parameter/water_texture = ExtResource("4_puk6l")
+shader_parameter/plain_texture = ExtResource("2_idy2r")
+shader_parameter/hill_texture = ExtResource("3_pqdn5")
+shader_parameter/mountain_texture = ExtResource("5_ir8h7")
+
+[sub_resource type="RidgeHexMesh" id="RidgeHexMesh_d37w8"]
+divisions = 7
+material = SubResource("ShaderMaterial_0ckbx")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_iwvq2"]
+render_priority = 0
+shader = ExtResource("2_vbolp")
+shader_parameter/top_offset = 0.5
+shader_parameter/bottom_offset = -0.07
+shader_parameter/hill_level_ratio = 0.7
+shader_parameter/water_texture = ExtResource("4_puk6l")
+shader_parameter/plain_texture = ExtResource("2_idy2r")
+shader_parameter/hill_texture = ExtResource("3_pqdn5")
+shader_parameter/mountain_texture = ExtResource("5_ir8h7")
+
+[sub_resource type="RidgeHexMesh" id="RidgeHexMesh_vg2fy"]
+divisions = 7
+material = SubResource("ShaderMaterial_iwvq2")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_leon0"]
+render_priority = 0
+shader = ExtResource("2_vbolp")
+shader_parameter/top_offset = 0.5
+shader_parameter/bottom_offset = -0.07
+shader_parameter/hill_level_ratio = 0.7
+shader_parameter/water_texture = ExtResource("4_puk6l")
+shader_parameter/plain_texture = ExtResource("2_idy2r")
+shader_parameter/hill_texture = ExtResource("3_pqdn5")
+shader_parameter/mountain_texture = ExtResource("5_ir8h7")
+
+[sub_resource type="RidgeHexMesh" id="RidgeHexMesh_bpxtq"]
+divisions = 7
+material = SubResource("ShaderMaterial_leon0")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_75yy2"]
+render_priority = 0
+shader = ExtResource("2_vbolp")
+shader_parameter/top_offset = 0.5
+shader_parameter/bottom_offset = -0.07
+shader_parameter/hill_level_ratio = 0.7
+shader_parameter/water_texture = ExtResource("4_puk6l")
+shader_parameter/plain_texture = ExtResource("2_idy2r")
+shader_parameter/hill_texture = ExtResource("3_pqdn5")
+shader_parameter/mountain_texture = ExtResource("5_ir8h7")
+
+[sub_resource type="RidgeHexMesh" id="RidgeHexMesh_1b83k"]
+divisions = 7
+material = SubResource("ShaderMaterial_75yy2")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_itw4o"]
+render_priority = 0
+shader = ExtResource("2_vbolp")
+shader_parameter/top_offset = 0.5
+shader_parameter/bottom_offset = -0.07
+shader_parameter/hill_level_ratio = 0.7
+shader_parameter/water_texture = ExtResource("4_puk6l")
+shader_parameter/plain_texture = ExtResource("2_idy2r")
+shader_parameter/hill_texture = ExtResource("3_pqdn5")
+shader_parameter/mountain_texture = ExtResource("5_ir8h7")
+
+[sub_resource type="RidgeHexMesh" id="RidgeHexMesh_034gm"]
+divisions = 7
+material = SubResource("ShaderMaterial_itw4o")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ubbgo"]
+render_priority = 0
+shader = ExtResource("2_vbolp")
+shader_parameter/top_offset = 0.5
+shader_parameter/bottom_offset = -0.07
+shader_parameter/hill_level_ratio = 0.7
+shader_parameter/water_texture = ExtResource("4_puk6l")
+shader_parameter/plain_texture = ExtResource("2_idy2r")
+shader_parameter/hill_texture = ExtResource("3_pqdn5")
+shader_parameter/mountain_texture = ExtResource("5_ir8h7")
+
+[sub_resource type="RidgeHexMesh" id="RidgeHexMesh_wb6mg"]
+divisions = 7
+material = SubResource("ShaderMaterial_ubbgo")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_8a4uy"]
+render_priority = 0
+shader = ExtResource("2_vbolp")
+shader_parameter/top_offset = 0.5
+shader_parameter/bottom_offset = -0.07
+shader_parameter/hill_level_ratio = 0.7
+shader_parameter/water_texture = ExtResource("4_puk6l")
+shader_parameter/plain_texture = ExtResource("2_idy2r")
+shader_parameter/hill_texture = ExtResource("3_pqdn5")
+shader_parameter/mountain_texture = ExtResource("5_ir8h7")
+
+[sub_resource type="RidgeHexMesh" id="RidgeHexMesh_dgyh6"]
+divisions = 7
+material = SubResource("ShaderMaterial_8a4uy")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_f2nbt"]
+render_priority = 0
+shader = ExtResource("2_vbolp")
+shader_parameter/top_offset = 0.5
+shader_parameter/bottom_offset = -0.07
+shader_parameter/hill_level_ratio = 0.7
+shader_parameter/water_texture = ExtResource("4_puk6l")
+shader_parameter/plain_texture = ExtResource("2_idy2r")
+shader_parameter/hill_texture = ExtResource("3_pqdn5")
+shader_parameter/mountain_texture = ExtResource("5_ir8h7")
+
+[sub_resource type="RidgeHexMesh" id="RidgeHexMesh_2vcvk"]
+divisions = 7
+material = SubResource("ShaderMaterial_f2nbt")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_p2i38"]
+render_priority = 0
+shader = ExtResource("2_vbolp")
+shader_parameter/top_offset = 0.5
+shader_parameter/bottom_offset = -0.07
+shader_parameter/hill_level_ratio = 0.7
+shader_parameter/water_texture = ExtResource("4_puk6l")
+shader_parameter/plain_texture = ExtResource("2_idy2r")
+shader_parameter/hill_texture = ExtResource("3_pqdn5")
+shader_parameter/mountain_texture = ExtResource("5_ir8h7")
+
+[sub_resource type="RidgeHexMesh" id="RidgeHexMesh_ndq48"]
+divisions = 7
+material = SubResource("ShaderMaterial_p2i38")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_5rcn6"]
+render_priority = 0
+shader = ExtResource("2_vbolp")
+shader_parameter/top_offset = 0.5
+shader_parameter/bottom_offset = -0.07
+shader_parameter/hill_level_ratio = 0.7
+shader_parameter/water_texture = ExtResource("4_puk6l")
+shader_parameter/plain_texture = ExtResource("2_idy2r")
+shader_parameter/hill_texture = ExtResource("3_pqdn5")
+shader_parameter/mountain_texture = ExtResource("5_ir8h7")
+
+[sub_resource type="RidgeHexMesh" id="RidgeHexMesh_bahmu"]
+divisions = 7
+material = SubResource("ShaderMaterial_5rcn6")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_judfq"]
+render_priority = 0
+shader = ExtResource("2_vbolp")
+shader_parameter/top_offset = 0.5
+shader_parameter/bottom_offset = -0.07
+shader_parameter/hill_level_ratio = 0.7
+shader_parameter/water_texture = ExtResource("4_puk6l")
+shader_parameter/plain_texture = ExtResource("2_idy2r")
+shader_parameter/hill_texture = ExtResource("3_pqdn5")
+shader_parameter/mountain_texture = ExtResource("5_ir8h7")
+
+[sub_resource type="RidgeHexMesh" id="RidgeHexMesh_nhvke"]
+divisions = 7
+material = SubResource("ShaderMaterial_judfq")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_3yyj3"]
+render_priority = 0
+shader = ExtResource("2_vbolp")
+shader_parameter/top_offset = 0.5
+shader_parameter/bottom_offset = -0.07
+shader_parameter/hill_level_ratio = 0.7
+shader_parameter/water_texture = ExtResource("4_puk6l")
+shader_parameter/plain_texture = ExtResource("2_idy2r")
+shader_parameter/hill_texture = ExtResource("3_pqdn5")
+shader_parameter/mountain_texture = ExtResource("5_ir8h7")
+
+[sub_resource type="RidgeHexMesh" id="RidgeHexMesh_ajclt"]
+divisions = 7
+material = SubResource("ShaderMaterial_3yyj3")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_fjkbn"]
+render_priority = 0
+shader = ExtResource("2_vbolp")
+shader_parameter/top_offset = 0.5
+shader_parameter/bottom_offset = -0.07
+shader_parameter/hill_level_ratio = 0.7
+shader_parameter/water_texture = ExtResource("4_puk6l")
+shader_parameter/plain_texture = ExtResource("2_idy2r")
+shader_parameter/hill_texture = ExtResource("3_pqdn5")
+shader_parameter/mountain_texture = ExtResource("5_ir8h7")
+
+[sub_resource type="RidgeHexMesh" id="RidgeHexMesh_c1t0t"]
+divisions = 7
+material = SubResource("ShaderMaterial_fjkbn")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_5h0u3"]
+render_priority = 0
+shader = ExtResource("2_vbolp")
+shader_parameter/top_offset = 0.5
+shader_parameter/bottom_offset = -0.07
+shader_parameter/hill_level_ratio = 0.7
+shader_parameter/water_texture = ExtResource("4_puk6l")
+shader_parameter/plain_texture = ExtResource("2_idy2r")
+shader_parameter/hill_texture = ExtResource("3_pqdn5")
+shader_parameter/mountain_texture = ExtResource("5_ir8h7")
+
+[sub_resource type="RidgeHexMesh" id="RidgeHexMesh_er0tu"]
+divisions = 7
+material = SubResource("ShaderMaterial_5h0u3")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_blntm"]
+render_priority = 0
+shader = ExtResource("2_vbolp")
+shader_parameter/top_offset = 0.5
+shader_parameter/bottom_offset = -0.07
+shader_parameter/hill_level_ratio = 0.7
+shader_parameter/water_texture = ExtResource("4_puk6l")
+shader_parameter/plain_texture = ExtResource("2_idy2r")
+shader_parameter/hill_texture = ExtResource("3_pqdn5")
+shader_parameter/mountain_texture = ExtResource("5_ir8h7")
+
+[sub_resource type="RidgeHexMesh" id="RidgeHexMesh_wm301"]
+divisions = 7
+material = SubResource("ShaderMaterial_blntm")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_d0tkq"]
+render_priority = 0
+shader = ExtResource("2_vbolp")
+shader_parameter/top_offset = 0.5
+shader_parameter/bottom_offset = -0.07
+shader_parameter/hill_level_ratio = 0.7
+shader_parameter/water_texture = ExtResource("4_puk6l")
+shader_parameter/plain_texture = ExtResource("2_idy2r")
+shader_parameter/hill_texture = ExtResource("3_pqdn5")
+shader_parameter/mountain_texture = ExtResource("5_ir8h7")
+
+[sub_resource type="RidgeHexMesh" id="RidgeHexMesh_2vrog"]
+divisions = 7
+material = SubResource("ShaderMaterial_d0tkq")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_wvr2n"]
+render_priority = 0
+shader = ExtResource("2_vbolp")
+shader_parameter/top_offset = 0.5
+shader_parameter/bottom_offset = -0.07
+shader_parameter/hill_level_ratio = 0.7
+shader_parameter/water_texture = ExtResource("4_puk6l")
+shader_parameter/plain_texture = ExtResource("2_idy2r")
+shader_parameter/hill_texture = ExtResource("3_pqdn5")
+shader_parameter/mountain_texture = ExtResource("5_ir8h7")
+
+[sub_resource type="RidgeHexMesh" id="RidgeHexMesh_gnk2b"]
+divisions = 7
+material = SubResource("ShaderMaterial_wvr2n")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_d1tsi"]
+render_priority = 0
+shader = ExtResource("2_vbolp")
+shader_parameter/top_offset = 0.5
+shader_parameter/bottom_offset = -0.07
+shader_parameter/hill_level_ratio = 0.7
+shader_parameter/water_texture = ExtResource("4_puk6l")
+shader_parameter/plain_texture = ExtResource("2_idy2r")
+shader_parameter/hill_texture = ExtResource("3_pqdn5")
+shader_parameter/mountain_texture = ExtResource("5_ir8h7")
+
+[sub_resource type="RidgeHexMesh" id="RidgeHexMesh_nu4t1"]
+divisions = 7
+material = SubResource("ShaderMaterial_d1tsi")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_fbogw"]
+render_priority = 0
+shader = ExtResource("2_vbolp")
+shader_parameter/top_offset = 0.5
+shader_parameter/bottom_offset = -0.07
+shader_parameter/hill_level_ratio = 0.7
+shader_parameter/water_texture = ExtResource("4_puk6l")
+shader_parameter/plain_texture = ExtResource("2_idy2r")
+shader_parameter/hill_texture = ExtResource("3_pqdn5")
+shader_parameter/mountain_texture = ExtResource("5_ir8h7")
+
+[sub_resource type="RidgeHexMesh" id="RidgeHexMesh_f3big"]
+divisions = 7
+material = SubResource("ShaderMaterial_fbogw")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_fyupg"]
+render_priority = 0
+shader = ExtResource("2_vbolp")
+shader_parameter/top_offset = 0.5
+shader_parameter/bottom_offset = -0.07
+shader_parameter/hill_level_ratio = 0.7
+shader_parameter/water_texture = ExtResource("4_puk6l")
+shader_parameter/plain_texture = ExtResource("2_idy2r")
+shader_parameter/hill_texture = ExtResource("3_pqdn5")
+shader_parameter/mountain_texture = ExtResource("5_ir8h7")
+
+[sub_resource type="RidgeHexMesh" id="RidgeHexMesh_p4kfj"]
+divisions = 7
+material = SubResource("ShaderMaterial_fyupg")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_acu5g"]
+render_priority = 0
+shader = ExtResource("2_vbolp")
+shader_parameter/top_offset = 0.5
+shader_parameter/bottom_offset = -0.07
+shader_parameter/hill_level_ratio = 0.7
+shader_parameter/water_texture = ExtResource("4_puk6l")
+shader_parameter/plain_texture = ExtResource("2_idy2r")
+shader_parameter/hill_texture = ExtResource("3_pqdn5")
+shader_parameter/mountain_texture = ExtResource("5_ir8h7")
+
+[sub_resource type="RidgeHexMesh" id="RidgeHexMesh_dyihb"]
+divisions = 7
+material = SubResource("ShaderMaterial_acu5g")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_kbe4o"]
+render_priority = 0
+shader = ExtResource("2_vbolp")
+shader_parameter/top_offset = 0.5
+shader_parameter/bottom_offset = -0.07
+shader_parameter/hill_level_ratio = 0.7
+shader_parameter/water_texture = ExtResource("4_puk6l")
+shader_parameter/plain_texture = ExtResource("2_idy2r")
+shader_parameter/hill_texture = ExtResource("3_pqdn5")
+shader_parameter/mountain_texture = ExtResource("5_ir8h7")
+
+[sub_resource type="RidgeHexMesh" id="RidgeHexMesh_4gukw"]
+divisions = 7
+material = SubResource("ShaderMaterial_kbe4o")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_v4nwu"]
+render_priority = 0
+shader = ExtResource("2_vbolp")
+shader_parameter/top_offset = 0.5
+shader_parameter/bottom_offset = -0.07
+shader_parameter/hill_level_ratio = 0.7
+shader_parameter/water_texture = ExtResource("4_puk6l")
+shader_parameter/plain_texture = ExtResource("2_idy2r")
+shader_parameter/hill_texture = ExtResource("3_pqdn5")
+shader_parameter/mountain_texture = ExtResource("5_ir8h7")
+
+[sub_resource type="RidgeHexMesh" id="RidgeHexMesh_1l3e8"]
+divisions = 7
+material = SubResource("ShaderMaterial_v4nwu")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_46kp2"]
+render_priority = 0
+shader = ExtResource("2_vbolp")
+shader_parameter/top_offset = 0.5
+shader_parameter/bottom_offset = -0.07
+shader_parameter/hill_level_ratio = 0.7
+shader_parameter/water_texture = ExtResource("4_puk6l")
+shader_parameter/plain_texture = ExtResource("2_idy2r")
+shader_parameter/hill_texture = ExtResource("3_pqdn5")
+shader_parameter/mountain_texture = ExtResource("5_ir8h7")
+
+[sub_resource type="RidgeHexMesh" id="RidgeHexMesh_0i06p"]
+divisions = 7
+material = SubResource("ShaderMaterial_46kp2")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_1ofu5"]
+render_priority = 0
+shader = ExtResource("2_vbolp")
+shader_parameter/top_offset = 0.5
+shader_parameter/bottom_offset = -0.07
+shader_parameter/hill_level_ratio = 0.7
+shader_parameter/water_texture = ExtResource("4_puk6l")
+shader_parameter/plain_texture = ExtResource("2_idy2r")
+shader_parameter/hill_texture = ExtResource("3_pqdn5")
+shader_parameter/mountain_texture = ExtResource("5_ir8h7")
+
+[sub_resource type="RidgeHexMesh" id="RidgeHexMesh_5aetr"]
+divisions = 7
+material = SubResource("ShaderMaterial_1ofu5")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_2dogb"]
+render_priority = 0
+shader = ExtResource("2_vbolp")
+shader_parameter/top_offset = 0.5
+shader_parameter/bottom_offset = -0.07
+shader_parameter/hill_level_ratio = 0.7
+shader_parameter/water_texture = ExtResource("4_puk6l")
+shader_parameter/plain_texture = ExtResource("2_idy2r")
+shader_parameter/hill_texture = ExtResource("3_pqdn5")
+shader_parameter/mountain_texture = ExtResource("5_ir8h7")
+
+[sub_resource type="RidgeHexMesh" id="RidgeHexMesh_lv6wt"]
+divisions = 7
+material = SubResource("ShaderMaterial_2dogb")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_r41ni"]
+render_priority = 0
+shader = ExtResource("2_vbolp")
+shader_parameter/top_offset = 0.5
+shader_parameter/bottom_offset = -0.07
+shader_parameter/hill_level_ratio = 0.7
+shader_parameter/water_texture = ExtResource("4_puk6l")
+shader_parameter/plain_texture = ExtResource("2_idy2r")
+shader_parameter/hill_texture = ExtResource("3_pqdn5")
+shader_parameter/mountain_texture = ExtResource("5_ir8h7")
+
+[sub_resource type="RidgeHexMesh" id="RidgeHexMesh_ncuor"]
+divisions = 7
+material = SubResource("ShaderMaterial_r41ni")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_b7ddo"]
+render_priority = 0
+shader = ExtResource("2_vbolp")
+shader_parameter/top_offset = 0.5
+shader_parameter/bottom_offset = -0.07
+shader_parameter/hill_level_ratio = 0.7
+shader_parameter/water_texture = ExtResource("4_puk6l")
+shader_parameter/plain_texture = ExtResource("2_idy2r")
+shader_parameter/hill_texture = ExtResource("3_pqdn5")
+shader_parameter/mountain_texture = ExtResource("5_ir8h7")
+
+[sub_resource type="RidgeHexMesh" id="RidgeHexMesh_0jfnc"]
+divisions = 7
+material = SubResource("ShaderMaterial_b7ddo")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ffsxw"]
+render_priority = 0
+shader = ExtResource("2_vbolp")
+shader_parameter/top_offset = 0.5
+shader_parameter/bottom_offset = -0.07
+shader_parameter/hill_level_ratio = 0.7
+shader_parameter/water_texture = ExtResource("4_puk6l")
+shader_parameter/plain_texture = ExtResource("2_idy2r")
+shader_parameter/hill_texture = ExtResource("3_pqdn5")
+shader_parameter/mountain_texture = ExtResource("5_ir8h7")
+
+[sub_resource type="RidgeHexMesh" id="RidgeHexMesh_n7xjh"]
+divisions = 7
+material = SubResource("ShaderMaterial_ffsxw")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_kisua"]
+render_priority = 0
+shader = ExtResource("2_vbolp")
+shader_parameter/top_offset = 0.5
+shader_parameter/bottom_offset = -0.07
+shader_parameter/hill_level_ratio = 0.7
+shader_parameter/water_texture = ExtResource("4_puk6l")
+shader_parameter/plain_texture = ExtResource("2_idy2r")
+shader_parameter/hill_texture = ExtResource("3_pqdn5")
+shader_parameter/mountain_texture = ExtResource("5_ir8h7")
+
+[sub_resource type="RidgeHexMesh" id="RidgeHexMesh_7m170"]
+divisions = 7
+material = SubResource("ShaderMaterial_kisua")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_71h5e"]
+render_priority = 0
+shader = ExtResource("2_vbolp")
+shader_parameter/top_offset = 0.5
+shader_parameter/bottom_offset = -0.07
+shader_parameter/hill_level_ratio = 0.7
+shader_parameter/water_texture = ExtResource("4_puk6l")
+shader_parameter/plain_texture = ExtResource("2_idy2r")
+shader_parameter/hill_texture = ExtResource("3_pqdn5")
+shader_parameter/mountain_texture = ExtResource("5_ir8h7")
+
+[sub_resource type="RidgeHexMesh" id="RidgeHexMesh_mwctv"]
+divisions = 7
+material = SubResource("ShaderMaterial_71h5e")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ag8jg"]
+render_priority = 0
+shader = ExtResource("2_vbolp")
+shader_parameter/top_offset = 0.5
+shader_parameter/bottom_offset = -0.07
+shader_parameter/hill_level_ratio = 0.7
+shader_parameter/water_texture = ExtResource("4_puk6l")
+shader_parameter/plain_texture = ExtResource("2_idy2r")
+shader_parameter/hill_texture = ExtResource("3_pqdn5")
+shader_parameter/mountain_texture = ExtResource("5_ir8h7")
+
+[sub_resource type="RidgeHexMesh" id="RidgeHexMesh_mrfxj"]
+divisions = 7
+material = SubResource("ShaderMaterial_ag8jg")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_0wwk2"]
+render_priority = 0
+shader = ExtResource("2_vbolp")
+shader_parameter/top_offset = 0.5
+shader_parameter/bottom_offset = -0.07
+shader_parameter/hill_level_ratio = 0.7
+shader_parameter/water_texture = ExtResource("4_puk6l")
+shader_parameter/plain_texture = ExtResource("2_idy2r")
+shader_parameter/hill_texture = ExtResource("3_pqdn5")
+shader_parameter/mountain_texture = ExtResource("5_ir8h7")
+
+[sub_resource type="RidgeHexMesh" id="RidgeHexMesh_8eqv0"]
+divisions = 7
+material = SubResource("ShaderMaterial_0wwk2")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_kdw4b"]
+render_priority = 0
+shader = ExtResource("2_vbolp")
+shader_parameter/top_offset = 0.5
+shader_parameter/bottom_offset = -0.07
+shader_parameter/hill_level_ratio = 0.7
+shader_parameter/water_texture = ExtResource("4_puk6l")
+shader_parameter/plain_texture = ExtResource("2_idy2r")
+shader_parameter/hill_texture = ExtResource("3_pqdn5")
+shader_parameter/mountain_texture = ExtResource("5_ir8h7")
+
+[sub_resource type="RidgeHexMesh" id="RidgeHexMesh_qqnus"]
+divisions = 7
+material = SubResource("ShaderMaterial_kdw4b")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_0opot"]
+render_priority = 0
+shader = ExtResource("2_vbolp")
+shader_parameter/top_offset = 0.5
+shader_parameter/bottom_offset = -0.07
+shader_parameter/hill_level_ratio = 0.7
+shader_parameter/water_texture = ExtResource("4_puk6l")
+shader_parameter/plain_texture = ExtResource("2_idy2r")
+shader_parameter/hill_texture = ExtResource("3_pqdn5")
+shader_parameter/mountain_texture = ExtResource("5_ir8h7")
+
+[sub_resource type="RidgeHexMesh" id="RidgeHexMesh_8gg50"]
+divisions = 7
+material = SubResource("ShaderMaterial_0opot")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_r741v"]
+render_priority = 0
+shader = ExtResource("2_vbolp")
+shader_parameter/top_offset = 0.5
+shader_parameter/bottom_offset = -0.07
+shader_parameter/hill_level_ratio = 0.7
+shader_parameter/water_texture = ExtResource("4_puk6l")
+shader_parameter/plain_texture = ExtResource("2_idy2r")
+shader_parameter/hill_texture = ExtResource("3_pqdn5")
+shader_parameter/mountain_texture = ExtResource("5_ir8h7")
+
+[sub_resource type="RidgeHexMesh" id="RidgeHexMesh_i3mul"]
+divisions = 7
+material = SubResource("ShaderMaterial_r741v")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_t88wj"]
+render_priority = 0
+shader = ExtResource("2_vbolp")
+shader_parameter/top_offset = 0.5
+shader_parameter/bottom_offset = -0.07
+shader_parameter/hill_level_ratio = 0.7
+shader_parameter/water_texture = ExtResource("4_puk6l")
+shader_parameter/plain_texture = ExtResource("2_idy2r")
+shader_parameter/hill_texture = ExtResource("3_pqdn5")
+shader_parameter/mountain_texture = ExtResource("5_ir8h7")
+
+[sub_resource type="RidgeHexMesh" id="RidgeHexMesh_qm3g8"]
+divisions = 7
+material = SubResource("ShaderMaterial_t88wj")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_q7ahf"]
+render_priority = 0
+shader = ExtResource("2_vbolp")
+shader_parameter/top_offset = 0.5
+shader_parameter/bottom_offset = -0.07
+shader_parameter/hill_level_ratio = 0.7
+shader_parameter/water_texture = ExtResource("4_puk6l")
+shader_parameter/plain_texture = ExtResource("2_idy2r")
+shader_parameter/hill_texture = ExtResource("3_pqdn5")
+shader_parameter/mountain_texture = ExtResource("5_ir8h7")
+
+[sub_resource type="RidgeHexMesh" id="RidgeHexMesh_egyaf"]
+divisions = 7
+material = SubResource("ShaderMaterial_q7ahf")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_1theb"]
+render_priority = 0
+shader = ExtResource("2_vbolp")
+shader_parameter/top_offset = 0.5
+shader_parameter/bottom_offset = -0.07
+shader_parameter/hill_level_ratio = 0.7
+shader_parameter/water_texture = ExtResource("4_puk6l")
+shader_parameter/plain_texture = ExtResource("2_idy2r")
+shader_parameter/hill_texture = ExtResource("3_pqdn5")
+shader_parameter/mountain_texture = ExtResource("5_ir8h7")
+
+[sub_resource type="RidgeHexMesh" id="RidgeHexMesh_2rb06"]
+divisions = 7
+material = SubResource("ShaderMaterial_1theb")
+
+[sub_resource type="MeshLibrary" id="MeshLibrary_xa5m4"]
+item/0/name = ""
+item/0/mesh = SubResource("RidgeHexMesh_rwcmu")
+item/0/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/0/shapes = []
+item/0/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/0/navigation_layers = 1
+item/1/name = ""
+item/1/mesh = SubResource("RidgeHexMesh_ip6wl")
+item/1/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/1/shapes = []
+item/1/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/1/navigation_layers = 1
+item/2/name = ""
+item/2/mesh = SubResource("RidgeHexMesh_bpxtq")
+item/2/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/2/shapes = []
+item/2/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/2/navigation_layers = 1
+item/3/name = ""
+item/3/mesh = SubResource("RidgeHexMesh_er0tu")
+item/3/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/3/shapes = []
+item/3/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/3/navigation_layers = 1
+item/4/name = ""
+item/4/mesh = SubResource("RidgeHexMesh_5aetr")
+item/4/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/4/shapes = []
+item/4/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/4/navigation_layers = 1
+item/5/name = ""
+item/5/mesh = SubResource("RidgeHexMesh_8gg50")
+item/5/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/5/shapes = []
+item/5/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/5/navigation_layers = 1
+item/6/name = ""
+item/6/mesh = SubResource("RidgeHexMesh_i3mul")
+item/6/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/6/shapes = []
+item/6/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/6/navigation_layers = 1
+item/7/name = ""
+item/7/mesh = SubResource("RidgeHexMesh_qm3g8")
+item/7/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.433013, 0, 0)
+item/7/shapes = []
+item/7/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/7/navigation_layers = 1
+item/8/name = ""
+item/8/mesh = SubResource("RidgeHexMesh_egyaf")
+item/8/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.433013, 0, 0)
+item/8/shapes = []
+item/8/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/8/navigation_layers = 1
+item/9/name = ""
+item/9/mesh = SubResource("RidgeHexMesh_2rb06")
+item/9/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.433013, 0, 0)
+item/9/shapes = []
+item/9/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/9/navigation_layers = 1
+item/10/name = ""
+item/10/mesh = SubResource("RidgeHexMesh_kc1oa")
+item/10/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.433013, 0, 0)
+item/10/shapes = []
+item/10/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/10/navigation_layers = 1
+item/11/name = ""
+item/11/mesh = SubResource("RidgeHexMesh_dqy5p")
+item/11/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.433013, 0, 0)
+item/11/shapes = []
+item/11/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/11/navigation_layers = 1
+item/12/name = ""
+item/12/mesh = SubResource("RidgeHexMesh_cmfb1")
+item/12/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.433013, 0, 0)
+item/12/shapes = []
+item/12/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/12/navigation_layers = 1
+item/13/name = ""
+item/13/mesh = SubResource("RidgeHexMesh_gp68t")
+item/13/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.433013, 0, 0)
+item/13/shapes = []
+item/13/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/13/navigation_layers = 1
+item/14/name = ""
+item/14/mesh = SubResource("RidgeHexMesh_7xl82")
+item/14/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/14/shapes = []
+item/14/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/14/navigation_layers = 1
+item/15/name = ""
+item/15/mesh = SubResource("RidgeHexMesh_l47hf")
+item/15/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/15/shapes = []
+item/15/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/15/navigation_layers = 1
+item/16/name = ""
+item/16/mesh = SubResource("RidgeHexMesh_jakkr")
+item/16/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/16/shapes = []
+item/16/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/16/navigation_layers = 1
+item/17/name = ""
+item/17/mesh = SubResource("RidgeHexMesh_n8alr")
+item/17/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/17/shapes = []
+item/17/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/17/navigation_layers = 1
+item/18/name = ""
+item/18/mesh = SubResource("RidgeHexMesh_d37w8")
+item/18/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/18/shapes = []
+item/18/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/18/navigation_layers = 1
+item/19/name = ""
+item/19/mesh = SubResource("RidgeHexMesh_vg2fy")
+item/19/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/19/shapes = []
+item/19/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/19/navigation_layers = 1
+item/20/name = ""
+item/20/mesh = SubResource("RidgeHexMesh_1b83k")
+item/20/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/20/shapes = []
+item/20/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/20/navigation_layers = 1
+item/21/name = ""
+item/21/mesh = SubResource("RidgeHexMesh_034gm")
+item/21/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.433013, 0, 0)
+item/21/shapes = []
+item/21/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/21/navigation_layers = 1
+item/22/name = ""
+item/22/mesh = SubResource("RidgeHexMesh_wb6mg")
+item/22/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.433013, 0, 0)
+item/22/shapes = []
+item/22/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/22/navigation_layers = 1
+item/23/name = ""
+item/23/mesh = SubResource("RidgeHexMesh_dgyh6")
+item/23/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.433013, 0, 0)
+item/23/shapes = []
+item/23/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/23/navigation_layers = 1
+item/24/name = ""
+item/24/mesh = SubResource("RidgeHexMesh_2vcvk")
+item/24/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.433013, 0, 0)
+item/24/shapes = []
+item/24/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/24/navigation_layers = 1
+item/25/name = ""
+item/25/mesh = SubResource("RidgeHexMesh_ndq48")
+item/25/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.433013, 0, 0)
+item/25/shapes = []
+item/25/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/25/navigation_layers = 1
+item/26/name = ""
+item/26/mesh = SubResource("RidgeHexMesh_bahmu")
+item/26/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.433013, 0, 0)
+item/26/shapes = []
+item/26/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/26/navigation_layers = 1
+item/27/name = ""
+item/27/mesh = SubResource("RidgeHexMesh_nhvke")
+item/27/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.433013, 0, 0)
+item/27/shapes = []
+item/27/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/27/navigation_layers = 1
+item/28/name = ""
+item/28/mesh = SubResource("RidgeHexMesh_ajclt")
+item/28/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/28/shapes = []
+item/28/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/28/navigation_layers = 1
+item/29/name = ""
+item/29/mesh = SubResource("RidgeHexMesh_c1t0t")
+item/29/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/29/shapes = []
+item/29/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/29/navigation_layers = 1
+item/30/name = ""
+item/30/mesh = SubResource("RidgeHexMesh_wm301")
+item/30/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/30/shapes = []
+item/30/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/30/navigation_layers = 1
+item/31/name = ""
+item/31/mesh = SubResource("RidgeHexMesh_2vrog")
+item/31/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/31/shapes = []
+item/31/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/31/navigation_layers = 1
+item/32/name = ""
+item/32/mesh = SubResource("RidgeHexMesh_gnk2b")
+item/32/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/32/shapes = []
+item/32/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/32/navigation_layers = 1
+item/33/name = ""
+item/33/mesh = SubResource("RidgeHexMesh_nu4t1")
+item/33/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/33/shapes = []
+item/33/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/33/navigation_layers = 1
+item/34/name = ""
+item/34/mesh = SubResource("RidgeHexMesh_f3big")
+item/34/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/34/shapes = []
+item/34/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/34/navigation_layers = 1
+item/35/name = ""
+item/35/mesh = SubResource("RidgeHexMesh_p4kfj")
+item/35/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.433013, 0, 0)
+item/35/shapes = []
+item/35/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/35/navigation_layers = 1
+item/36/name = ""
+item/36/mesh = SubResource("RidgeHexMesh_dyihb")
+item/36/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.433013, 0, 0)
+item/36/shapes = []
+item/36/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/36/navigation_layers = 1
+item/37/name = ""
+item/37/mesh = SubResource("RidgeHexMesh_4gukw")
+item/37/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.433013, 0, 0)
+item/37/shapes = []
+item/37/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/37/navigation_layers = 1
+item/38/name = ""
+item/38/mesh = SubResource("RidgeHexMesh_1l3e8")
+item/38/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.433013, 0, 0)
+item/38/shapes = []
+item/38/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/38/navigation_layers = 1
+item/39/name = ""
+item/39/mesh = SubResource("RidgeHexMesh_0i06p")
+item/39/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.433013, 0, 0)
+item/39/shapes = []
+item/39/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/39/navigation_layers = 1
+item/40/name = ""
+item/40/mesh = SubResource("RidgeHexMesh_lv6wt")
+item/40/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.433013, 0, 0)
+item/40/shapes = []
+item/40/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/40/navigation_layers = 1
+item/41/name = ""
+item/41/mesh = SubResource("RidgeHexMesh_ncuor")
+item/41/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.433013, 0, 0)
+item/41/shapes = []
+item/41/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/41/navigation_layers = 1
+item/42/name = ""
+item/42/mesh = SubResource("RidgeHexMesh_0jfnc")
+item/42/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/42/shapes = []
+item/42/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/42/navigation_layers = 1
+item/43/name = ""
+item/43/mesh = SubResource("RidgeHexMesh_n7xjh")
+item/43/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/43/shapes = []
+item/43/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/43/navigation_layers = 1
+item/44/name = ""
+item/44/mesh = SubResource("RidgeHexMesh_7m170")
+item/44/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/44/shapes = []
+item/44/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/44/navigation_layers = 1
+item/45/name = ""
+item/45/mesh = SubResource("RidgeHexMesh_mwctv")
+item/45/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/45/shapes = []
+item/45/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/45/navigation_layers = 1
+item/46/name = ""
+item/46/mesh = SubResource("RidgeHexMesh_mrfxj")
+item/46/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/46/shapes = []
+item/46/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/46/navigation_layers = 1
+item/47/name = ""
+item/47/mesh = SubResource("RidgeHexMesh_8eqv0")
+item/47/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/47/shapes = []
+item/47/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/47/navigation_layers = 1
+item/48/name = ""
+item/48/mesh = SubResource("RidgeHexMesh_qqnus")
+item/48/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/48/shapes = []
+item/48/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/48/navigation_layers = 1
+
+[node name="Node3D" type="Node3D"]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 0)
+mesh = SubResource("HexMesh_aam54")
+
+[node name="HexGridMap" type="HexGridMap" parent="."]
+height = 7
+width = 7
+shader = ExtResource("1_pum5v")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 0, 0)
+mesh_library = SubResource("MeshLibrary_s7lp7")
+cell_size = Vector3(0.866025, 1, 0.75)
+cell_center_x = false
+cell_center_y = false
+cell_center_z = false
+data = {
+"cells": PackedInt32Array(0, 0, 0, 1, 0, 1, 2, 0, 2, 3, 0, 3, 4, 0, 4, 5, 0, 5, 6, 0, 6, 0, 1, 7, 1, 1, 8, 2, 1, 9, 3, 1, 10, 4, 1, 11, 5, 1, 12, 6, 1, 13, 0, 2, 14, 1, 2, 15, 2, 2, 16, 3, 2, 17, 4, 2, 18, 5, 2, 19, 6, 2, 20, 0, 3, 21, 1, 3, 22, 2, 3, 23, 3, 3, 24, 4, 3, 25, 5, 3, 26, 6, 3, 27, 0, 4, 28, 1, 4, 29, 2, 4, 30, 3, 4, 31, 4, 4, 32, 5, 4, 33, 6, 4, 34, 0, 5, 35, 1, 5, 36, 2, 5, 37, 3, 5, 38, 4, 5, 39, 5, 5, 40, 6, 5, 41, 0, 6, 42, 1, 6, 43, 2, 6, 44, 3, 6, 45, 4, 6, 46, 5, 6, 47, 6, 6, 48)
+}
+
+[node name="RidgeHexGridMap" type="RidgeHexGridMap" parent="."]
+noise_biomes = SubResource("FastNoiseLite_cgrrc")
+noise_plain_hill = SubResource("FastNoiseLite_mfm5d")
+noise_mountain_water = SubResource("FastNoiseLite_h1x8h")
+texture_plain = ExtResource("2_idy2r")
+texture_hill = ExtResource("3_pqdn5")
+texture_water = ExtResource("4_puk6l")
+texture_mountain = ExtResource("5_ir8h7")
+divisions = 7
+height = 7
+width = 7
+shader = ExtResource("2_vbolp")
+mesh_library = SubResource("MeshLibrary_xa5m4")
+cell_size = Vector3(0.866025, 1, 0.75)
+cell_center_x = false
+cell_center_y = false
+cell_center_z = false
+data = {
+"cells": PackedInt32Array(0, 0, 0, 1, 0, 1, 2, 0, 2, 3, 0, 3, 4, 0, 4, 5, 0, 5, 6, 0, 6, 0, 1, 7, 1, 1, 8, 2, 1, 9, 3, 1, 10, 4, 1, 11, 5, 1, 12, 6, 1, 13, 0, 2, 14, 1, 2, 15, 2, 2, 16, 3, 2, 17, 4, 2, 18, 5, 2, 19, 6, 2, 20, 0, 3, 21, 1, 3, 22, 2, 3, 23, 3, 3, 24, 4, 3, 25, 5, 3, 26, 6, 3, 27, 0, 4, 28, 1, 4, 29, 2, 4, 30, 3, 4, 31, 4, 4, 32, 5, 4, 33, 6, 4, 34, 0, 5, 35, 1, 5, 36, 2, 5, 37, 3, 5, 38, 4, 5, 39, 5, 5, 40, 6, 5, 41, 0, 6, 42, 1, 6, 43, 2, 6, 44, 3, 6, 45, 4, 6, 46, 5, 6, 47, 6, 6, 48)
+}
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.5, 0, -0.866025, 0.433013, 0.866025, 0.25, 0.75, -0.5, 0.433013, -2, 3, 5)

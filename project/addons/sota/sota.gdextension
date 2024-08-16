@@ -1,0 +1,26 @@
+[configuration]
+
+entry_symbol = "sota_init"
+compatibility_minimum = 4.2
+
+[libraries]
+
+windows.debug.x86_32 = "res://addons/sota/bin/libsota.windows.debug.x86_32.dll"
+windows.release.x86_32 = "res://addons/sota/bin/libsota.windows.release.x86_32.dll"
+windows.debug.x86_64 = "res://addons/sota/bin/libsota.windows.debug.x86_64.dll"
+windows.release.x86_64 = "res://addons/sota/bin/libsota.windows.release.x86_64.dll"
+
+linux.debug.x86_64 = "res://addons/sota/bin/libsota.linux.debug.x86_64.so"
+linux.release.x86_64 = "res://addons/sota/bin/libsota.linux.release.x86_64.so"
+linux.debug.arm64 = "res://addons/sota/bin/libsota.linux.debug.arm64.so"
+linux.release.arm64 = "res://addons/sota/bin/libsota.linux.release.arm64.so"
+linux.debug.rv64 = "res://addons/sota/bin/libsota.linux.debug.rv64.so"
+linux.release.rv64 = "res://addons/sota/bin/libsota.linux.release.rv64.so"
+
+android.debug.x86_64 = "res://addons/sota/bin/libsota.android.debug.x86_64.so"
+android.release.x86_64 = "res://addons/sota/bin/libsota.android.release.x86_64.so"
+android.debug.arm64 = "res://addons/sota/bin/libsota.android.debug.arm64.so"
+android.release.arm64 = "res://addons/sota/bin/libsota.android.release.arm64.so"
+
+macos.debug = "res://addons/sota/bin/libsota.macos.debug.framework"
+macos.release = "res://addons/sota/bin/libsota.macos.release.framework"
