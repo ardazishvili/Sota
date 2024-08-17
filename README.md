@@ -27,7 +27,7 @@ Apart from making PR I will also highly appreciate if you:
 1. Raise an issue about bug or suggest new feature.
 2. Star repo if you like it.
 3. Use discord [link](https://discord.gg/6ZKQ8BfM) or ardazishvili.roma@gmail.com for your positive/negative feedback.
-4. Make a donation: [boosty](https://boosty.to/ardazishvili/donate), [patreon](add).
+4. Make a donation: [boosty](https://boosty.to/ardazishvili/donate), [patreon](https://patreon.com/RomanArdazishvili?utm_medium=unknown&utm_source=join_link&utm_campaign=creatorshare_creator&utm_content=copyLink).
 
 ## Roadmap
 There are features I want to implement already, but I want a roadmap based on user's needs. So, your opinion is most valuable thing.
