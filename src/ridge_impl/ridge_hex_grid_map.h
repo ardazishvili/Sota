@@ -4,6 +4,7 @@
 #include <unordered_map>
 
 #include "core/hex_grid_map.h"
+#include "cube_coordinates.h"
 #include "godot_cpp/classes/fast_noise_lite.hpp"
 #include "godot_cpp/classes/grid_map.hpp"
 #include "godot_cpp/classes/texture.hpp"
@@ -11,6 +12,13 @@
 #include "ridge_impl/ridge_set.h"
 
 namespace sota {
+
+struct ClipOptions {
+  bool left{false};
+  bool right{false};
+  bool up{false};
+  bool down{false};
+};
 
 using GroupOfHexagonMeshes = std::vector<RidgeHexMesh*>;
 using BiomeGroups = std::vector<GroupOfHexagonMeshes>;
@@ -95,6 +103,7 @@ class RidgeHexGridMap : public HexGridMap {
   void calculate_corner_points_distances_to_border(GroupOfHexagonMeshes& group);
 
   virtual BiomeGroups collect_biome_groups(Biome b) = 0;
+  virtual ClipOptions get_clip_options(int row, int col) const = 0;
 
   void init_biomes();
   void prepare_heights_calculation();
@@ -117,13 +126,18 @@ class RectRidgeHexGridMap : public RidgeHexGridMap {
   void set_width(const int p_width);
   int get_width() const;
 
+  void set_clipped_option(bool p_clipped_option);
+  bool get_clipped_option() const;
+
   void init_col_row_layout() override;
   int calculate_id(int row, int col) const override;
   BiomeGroups collect_biome_groups(Biome b) override;
+  ClipOptions get_clip_options(int row, int col) const override;
 
  protected:
   int height{0};
   int width{0};
+  bool clipped{false};
   static void _bind_methods();
 };
 
@@ -136,6 +150,7 @@ class HexagonalRidgeHexGridMap : public RidgeHexGridMap {
   void init_col_row_layout() override;
   int calculate_id(int row, int col) const override;
   BiomeGroups collect_biome_groups(Biome b) override;
+  ClipOptions get_clip_options(int row, int col) const override;
 
  protected:
   int size{0};

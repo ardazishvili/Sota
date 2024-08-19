@@ -27,7 +27,7 @@ class HexMesh : public gd::PrimitiveMesh {
   gd::Array _create_mesh_array() const override;
 
   void calculate_normals() const;
-  void init();
+  void init(bool clip_left = false, bool clip_right = false, bool clip_up = false, bool clip_bottom = false);
   void update();
 
   void set_frame_state(bool state) { frame_state = state; }
@@ -36,7 +36,8 @@ class HexMesh : public gd::PrimitiveMesh {
  protected:
   static void _bind_methods();
 
-  void calculate_vertices() const;
+  void calculate_vertices(bool clip_left = false, bool clip_right = false, bool clip_up = false,
+                          bool clip_bottom = false) const;
 
   mutable gd::PackedVector3Array vertices_;
   mutable gd::PackedVector3Array normals_;
@@ -72,6 +73,8 @@ class HexMesh : public gd::PrimitiveMesh {
   void calculate_indices() const;
   void calculate_color_custom() const;
   void calculate_bones_weights() const;
+
+  void z_clip(float boundary) const;
 };
 
 }  // namespace sota
