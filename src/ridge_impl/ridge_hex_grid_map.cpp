@@ -301,7 +301,9 @@ void RidgeHexGridMap::init_hexmesh() {
       m->set_divisions(divisions);
       m->set_offset(offsets[id]);
       m->set_material(mat);
-      m->init();
+
+      ClipOptions clip = get_clip_options(val.x, val.z);
+      m->init(clip.left, clip.right, clip.up, clip.down);
       _tiles_layout.back().push_back(
           std::make_unique<BiomeTile>(m, this, biome, OffsetCoordinates{.row = val.x, .col = val.z}));
     }
@@ -558,6 +560,21 @@ void RidgeHexGridMap::calculate_final_heights() {
   }
 }
 
+void RidgeHexGridMap::print_biomes() {
+  for (auto& [group, ridge_set] : _mountain_groups) {
+    std::cout << "mountain group of size " << group.size() << std::endl;
+  }
+  for (auto& [group, ridge_set] : _water_groups) {
+    std::cout << "water group of size " << group.size() << std::endl;
+  }
+  for (auto& group : _hill_groups) {
+    std::cout << "hill group of size " << group.size() << std::endl;
+  }
+  for (auto& group : _plain_groups) {
+    std::cout << "plain group of size " << group.size() << std::endl;
+  }
+}
+
 // RectRidgeHexGridMap definitions
 void RectRidgeHexGridMap::_bind_methods() {
   ClassDB::bind_method(D_METHOD("get_height"), &RectRidgeHexGridMap::get_height);
@@ -567,6 +584,10 @@ void RectRidgeHexGridMap::_bind_methods() {
   ClassDB::bind_method(D_METHOD("get_width"), &RectRidgeHexGridMap::get_width);
   ClassDB::bind_method(D_METHOD("set_width", "p_width"), &RectRidgeHexGridMap::set_width);
   ADD_PROPERTY(PropertyInfo(Variant::INT, "width"), "set_width", "get_width");
+
+  ClassDB::bind_method(D_METHOD("get_clipped_option"), &RectRidgeHexGridMap::get_clipped_option);
+  ClassDB::bind_method(D_METHOD("set_clipped_option", "p_clipped_option"), &RectRidgeHexGridMap::set_clipped_option);
+  ADD_PROPERTY(PropertyInfo(Variant::BOOL, "clipped"), "set_clipped_option", "get_clipped_option");
 }
 
 void RectRidgeHexGridMap::set_height(const int p_height) {
@@ -579,8 +600,14 @@ void RectRidgeHexGridMap::set_width(const int p_width) {
   init();
 }
 
+void RectRidgeHexGridMap::set_clipped_option(const bool p_clipped_option) {
+  clipped = p_clipped_option;
+  init();
+}
+
 int RectRidgeHexGridMap::get_height() const { return height; }
 int RectRidgeHexGridMap::get_width() const { return width; }
+bool RectRidgeHexGridMap::get_clipped_option() const { return clipped; }
 
 void RectRidgeHexGridMap::init_col_row_layout() {
   col_row_layout = RectangularUtility::get_offset_coords_layout(height, width);
@@ -620,6 +647,16 @@ BiomeGroups RectRidgeHexGridMap::collect_biome_groups(Biome b) {
     }
   }
   return u.groups();
+}
+
+ClipOptions RectRidgeHexGridMap::get_clip_options(int row, int col) const {
+  if (!clipped) {
+    return {.left = false, .right = false, .up = false, .down = false};
+  }
+  return {.left = col == 0 && !is_odd(row),
+          .right = col == (width - 1) && is_odd(row),
+          .up = row == (height - 1),
+          .down = row == 0};
 }
 
 // HexagonalRidgeHexGridMap definitions
@@ -676,19 +713,8 @@ BiomeGroups HexagonalRidgeHexGridMap::collect_biome_groups(Biome b) {
   return u.groups();
 }
 
-void RidgeHexGridMap::print_biomes() {
-  for (auto& [group, ridge_set] : _mountain_groups) {
-    std::cout << "mountain group of size " << group.size() << std::endl;
-  }
-  for (auto& [group, ridge_set] : _water_groups) {
-    std::cout << "water group of size " << group.size() << std::endl;
-  }
-  for (auto& group : _hill_groups) {
-    std::cout << "hill group of size " << group.size() << std::endl;
-  }
-  for (auto& group : _plain_groups) {
-    std::cout << "plain group of size " << group.size() << std::endl;
-  }
+ClipOptions HexagonalRidgeHexGridMap::get_clip_options(int row, int col) const {
+  return {.left = false, .right = false, .up = false, .down = false};
 }
 
 }  // namespace sota

@@ -29,8 +29,8 @@ HexMesh::HexMesh() {
   init();
 }
 
-void HexMesh::init() {
-  calculate_vertices();
+void HexMesh::init(bool clip_left, bool clip_right, bool clip_up, bool clip_bottom) {
+  calculate_vertices(clip_left, clip_right, clip_up, clip_bottom);
   if (frame_state) {
     add_frame();
   }
@@ -98,7 +98,63 @@ void HexMesh::set_diameter(const float p_diameter) {
 float HexMesh::get_diameter() const { return diameter; }
 int HexMesh::get_divisions() const { return divisions; }
 
-void HexMesh::calculate_vertices() const {
+void HexMesh::z_clip(float boundary) const {
+  float z_step = R / divisions;
+  float half_z_step = z_step / 2;
+
+  PackedVector3Array filtered;
+  int n = vertices_.size();
+  for (int i = 0; i < n; i += 3) {
+    Vector3& p0 = vertices_[i];
+    Vector3& p1 = vertices_[i + 1];
+    Vector3& p2 = vertices_[i + 2];
+    int vertices_to_fix = 0;
+    Vector3* to_fix;
+    if (boundary > 0) {
+      if (p0.z > (boundary + EPSILON)) {
+        ++vertices_to_fix;
+        to_fix = &p0;
+      }
+      if (p1.z > (boundary + EPSILON)) {
+        ++vertices_to_fix;
+        to_fix = &p1;
+      }
+      if (p2.z > (boundary + EPSILON)) {
+        ++vertices_to_fix;
+        to_fix = &p2;
+      }
+    } else {
+      if (p0.z < (boundary - EPSILON)) {
+        ++vertices_to_fix;
+        to_fix = &p0;
+      }
+      if (p1.z < (boundary - EPSILON)) {
+        ++vertices_to_fix;
+        to_fix = &p1;
+      }
+      if (p2.z < (boundary - EPSILON)) {
+        ++vertices_to_fix;
+        to_fix = &p2;
+      }
+    }
+
+    if (vertices_to_fix > 1) {
+      // don't add vertices of triangle to filtered
+      continue;
+    } else if (vertices_to_fix == 1) {
+      // just 1 vertex, fix it
+      if (boundary > 0) {
+        to_fix->z -= half_z_step;
+      } else {
+        to_fix->z += half_z_step;
+      }
+    }
+    filtered.append_array({p0, p1, p2});
+  }
+  vertices_ = filtered;
+}
+
+void HexMesh::calculate_vertices(bool clip_left, bool clip_right, bool clip_up, bool clip_bottom) const {
   vertices_.clear();
 
   float z_step = R / divisions;
@@ -157,6 +213,16 @@ void HexMesh::calculate_vertices() const {
     }
   }
 
+  if (clip_bottom) {
+    z_clip(-R / 2);
+  } else if (clip_up) {
+    z_clip(R / 2);
+  }
+
+  if (clip_left) {
+    return;
+  }
+
   PackedVector3Array copy = vertices_;
   int n = vertices_.size();
 
@@ -165,10 +231,13 @@ void HexMesh::calculate_vertices() const {
     return v;
   };
 
+  if (clip_right) {
+    vertices_.clear();
+  }
   for (int i = 0; i < n; i += 3) {
-    Vector3 p0 = left(vertices_[i]);
-    Vector3 p1 = left(vertices_[i + 1]);
-    Vector3 p2 = left(vertices_[i + 2]);
+    Vector3 p0 = left(copy[i]);
+    Vector3 p1 = left(copy[i + 1]);
+    Vector3 p2 = left(copy[i + 2]);
     vertices_.append_array({p0, p2, p1});
   }
 }

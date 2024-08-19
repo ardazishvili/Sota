@@ -1,4 +1,4 @@
-#include "ridge_hex_mesh.h"
+#include "ridge_impl/ridge_hex_mesh.h"
 
 #include <unordered_set>
 
