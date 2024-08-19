@@ -1,19 +1,27 @@
 #include "ridge_hex_grid_map.h"
 
 #include <algorithm>
+#include <limits>
 #include <memory>
+#include <unordered_map>
 
 #include "algo/dsu.h"
 #include "biome_calculator.h"
 #include "core/hex_mesh.h"
 #include "core/utils.h"
+#include "cube_coordinates.h"
+#include "general_utility.h"
 #include "godot_cpp/classes/grid_map.hpp"
 #include "godot_cpp/classes/shader_material.hpp"
 #include "godot_cpp/variant/plane.hpp"
 #include "godot_cpp/variant/transform3d.hpp"
+#include "godot_cpp/variant/vector3.hpp"
+#include "godot_cpp/variant/vector3i.hpp"
+#include "hexagonal_utility.h"
 #include "misc/tile.h"
 #include "misc/types.h"
 #include "misc/utilities.h"
+#include "rectangular_utility.h"
 #include "ridge_impl/ridge.h"
 #include "ridge_impl/ridge_config.h"
 #include "ridge_impl/ridge_hex_mesh.h"
@@ -32,12 +40,18 @@ RidgeHexGridMap::RidgeHexGridMap() {
 void RidgeHexGridMap::init() {
   set_cell_size(Vector3(pointy_top_x_offset(diameter), 1.0, pointy_top_y_offset(diameter)));
 
+  init_col_row_layout();
+  if (col_row_layout.empty()) {
+    return;
+  }
   init_hexmesh();
   init_mesh_lib();
   init_grid();
 
   assign_cube_coordinates_map();
   init_biomes();
+
+  /* print_biomes(); */
 
   prepare_heights_calculation();
   calculate_final_heights();
@@ -213,39 +227,50 @@ Ref<Texture> RidgeHexGridMap::get_water_texture() const { return texture.find(Bi
 Ref<Texture> RidgeHexGridMap::get_mountain_texture() const { return texture.find(Biome::MOUNTAIN)->second; }
 
 void RidgeHexGridMap::init_hexmesh() {
-  std::vector<Vector3> offsets;
-  for (int row = 0; row < height; ++row) {
-    for (int col = 0; col < width; ++col) {
-      auto x_offset = col * pointy_top_x_offset(diameter);
-      x_offset += is_odd(row) ? pointy_top_x_offset(diameter) / 2 : 0;
+  std::unordered_map<int, Vector3> offsets;
+  for (auto row : col_row_layout) {
+    for (auto val : row) {
+      auto x_offset = val.z * pointy_top_x_offset(diameter);
+      x_offset += is_odd(val.x) ? pointy_top_x_offset(diameter) / 2 : 0;
 
-      auto z_offset = row * pointy_top_y_offset(diameter);
-      offsets.push_back(Vector3(x_offset, 0, z_offset));
+      auto z_offset = val.x * pointy_top_y_offset(diameter);
+      offsets[calculate_id(val.x, val.z)] = Vector3(x_offset, 0, z_offset);
     }
   }
 
-  std::vector<float> altitudes;
-  for (int row = 0; row < height; ++row) {
-    for (int col = 0; col < width; ++col) {
-      int id = calculate_id(row, col);
+  std::unordered_map<int, float> altitudes;
+  for (auto row : col_row_layout) {
+    for (auto val : row) {
+      int id = calculate_id(val.x, val.z);
       Vector3 o = offsets[id];
       if (biomes_noise.ptr()) {
-        altitudes.push_back(biomes_noise->get_noise_2d(o.x, o.z));
+        altitudes[id] = biomes_noise->get_noise_2d(o.x, o.z);
       } else {
-        altitudes.push_back(0);
+        altitudes[id] = 0;
       }
     }
   }
 
-  auto [min_z, max_z] = std::minmax_element(altitudes.begin(), altitudes.end());
+  float min_z = std::numeric_limits<float>::max();
+  float max_z = std::numeric_limits<float>::min();
+  for (auto [id, a] : altitudes) {
+    min_z = std::min(min_z, a);
+    max_z = std::max(max_z, a);
+  }
 
   _tiles_layout.clear();
+  TypedArray<Node> children = get_children();
+  for (int i = 0; i < children.size(); ++i) {
+    Node* child = Object::cast_to<Node>(children[i].operator Object*());
+    remove_child(child);
+    child->queue_free();
+  }
   BiomeCalculator biome_calculator;
-  for (int row = 0; row < height; ++row) {
+  for (auto row : col_row_layout) {
     _tiles_layout.push_back({});
-    for (int col = 0; col < width; ++col) {
-      int id = calculate_id(row, col);
-      Biome biome = biome_calculator.calculate_biome(*min_z, *max_z, altitudes[id]);
+    for (auto val : row) {
+      int id = calculate_id(val.x, val.z);
+      Biome biome = biome_calculator.calculate_biome(min_z, max_z, altitudes[id]);
 
       Ref<ShaderMaterial> mat;
       mat.instantiate();
@@ -268,11 +293,37 @@ void RidgeHexGridMap::init_hexmesh() {
       m->set_plain_noise(plain_noise);
       m->set_ridge_noise(ridge_noise);
       m->set_diameter(diameter);
+
+      // TODO frame behaviour for RidgeHexGridMap and sub-classes is not clear. Address it in follow-up issue/PR
+      m->set_frame_state(false);
+      m->set_frame_value(0.0);
+
       m->set_divisions(divisions);
       m->set_offset(offsets[id]);
       m->set_material(mat);
       m->init();
-      _tiles_layout.back().push_back(std::make_unique<BiomeTile>(m, biome));
+      _tiles_layout.back().push_back(
+          std::make_unique<BiomeTile>(m, this, biome, OffsetCoordinates{.row = val.x, .col = val.z}));
+    }
+  }
+}
+
+void RidgeHexGridMap::init_mesh_lib() {
+  Ref<MeshLibrary> m = get_mesh_library();
+  m.instantiate();
+  _library = m;
+  set_mesh_library(m);
+
+  for (auto& row : _tiles_layout) {
+    for (auto& tile_ptr : row) {
+      int id = tile_ptr->id();
+      _library->create_item(id);
+      _library->set_item_mesh(id, tile_ptr->mesh());
+      if (tile_ptr->is_shifted()) {
+        Transform3D t;
+        t = t.translated(Vector3(pointy_top_x_offset(diameter) / 2, 0, 0));
+        _library->set_item_mesh_transform(id, t);
+      }
     }
   }
 }
@@ -287,87 +338,31 @@ void RidgeHexGridMap::calculate_normals() {
 }
 
 void RidgeHexGridMap::calculate_flat_normals() {
-  for (int row = 0; row < height; ++row) {
-    for (int col = 0; col < width; ++col) {
-      _tiles_layout[row][col]->mesh()->calculate_normals();
+  for (auto& row : _tiles_layout) {
+    for (auto& tile_ptr : row) {
+      tile_ptr->mesh()->calculate_normals();
     }
   }
 }
 
 void RidgeHexGridMap::meshes_update() {
-  for (int row = 0; row < height; ++row) {
-    for (int col = 0; col < width; ++col) {
-      _tiles_layout[row][col]->mesh()->update();
+  for (auto& row : _tiles_layout) {
+    for (auto& tile_ptr : row) {
+      tile_ptr->mesh()->update();
     }
   }
 }
 
 void RidgeHexGridMap::calculate_smooth_normals() {
-  std::vector<GroupedHexagonMeshVertices> vertex_groups(height * width);
-  for (int row = 0; row < height; ++row) {
-    for (int col = 0; col < width; ++col) {
-      RidgeHexMesh* mesh = dynamic_cast<RidgeHexMesh*>(_tiles_layout[row][col]->mesh().ptr());
-      vertex_groups[calculate_id(row, col)] = mesh->get_grouped_vertices();
+  std::vector<GroupedHexagonMeshVertices> vertex_groups;
+  for (auto& row : _tiles_layout) {
+    for (auto& tile_ptr : row) {
+      RidgeHexMesh* mesh = dynamic_cast<RidgeHexMesh*>(tile_ptr->mesh().ptr());
+      vertex_groups.push_back(mesh->get_grouped_vertices());
     }
   }
 
-  // TODO:Additional calculations for duplicated part of terrain
-
-  GroupedHexagonMeshVertices all;
-  for (auto& g : vertex_groups) {
-    for (auto it = g.begin(); it != g.end(); ++it) {
-      all[it->first].insert(all[it->first].end(), it->second.begin(), it->second.end());
-    }
-  }
-
-  for (auto it = all.begin(); it != all.end(); ++it) {
-    auto& series_of_normals = it->second;
-    Vector3 normal(0.0, 0.0, 0.0);
-    for (auto* n : series_of_normals) {
-      normal += *n;
-    }
-
-    normal /= series_of_normals.size();
-    normal.normalize();
-    for (auto* n : series_of_normals) {
-      *n = normal;
-    }
-  }
-}
-
-BiomeGroups RidgeHexGridMap::collect_biome_groups(Biome b, int row, int col) {
-  algo::DSU<RidgeHexMesh*> u(row, col);
-
-  auto flat = [col, row](int i, int j) { return i * col + j; };
-  int rows = _tiles_layout.size();
-  for (int i = 0; i < rows; ++i) {
-    int col = _tiles_layout[i].size();
-    for (int j = 0; j < col; ++j) {
-      BiomeTile* tile = dynamic_cast<BiomeTile*>(_tiles_layout[i][j].get());
-      Biome biome = tile->biome();
-      if (biome != b) {
-        continue;
-      }
-      RidgeHexMesh* mesh = dynamic_cast<RidgeHexMesh*>(tile->mesh().ptr());
-      u.push(flat(i, j), mesh);
-      if (i & 1) {
-        u.make_union(flat(i, j), flat(i - 1, j));
-        if (j != col - 1) {
-          u.make_union(flat(i, j), flat(i - 1, j + 1));
-        }
-      } else {
-        u.make_union(flat(i, j), flat(i - 1, j));
-        if (j != 0) {
-          u.make_union(flat(i, j), flat(i - 1, j - 1));
-        }
-      }
-
-      if (j != 0) {
-        u.make_union(flat(i, j), flat(i, j - 1));
-      }
-    }
-  }
-  return u.groups();
+  GeneralUtility::make_smooth_normals(vertex_groups);
 }
 
 void RidgeHexGridMap::init_biomes() {
@@ -375,15 +370,15 @@ void RidgeHexGridMap::init_biomes() {
   _water_groups.clear();
   _plain_groups.clear();
   _hill_groups.clear();
-  BiomeGroups mountain_groups = collect_biome_groups(Biome::MOUNTAIN, height, width);
+  BiomeGroups mountain_groups = collect_biome_groups(Biome::MOUNTAIN);
   for (auto group : mountain_groups) {
     _mountain_groups.emplace_back(group, std::make_unique<RidgeSet>(ridge_config));
   }
 
-  _plain_groups = collect_biome_groups(Biome::PLAIN, height, width);
-  _hill_groups = collect_biome_groups(Biome::HILL, height, width);
+  _plain_groups = collect_biome_groups(Biome::PLAIN);
+  _hill_groups = collect_biome_groups(Biome::HILL);
 
-  BiomeGroups water_groups = collect_biome_groups(Biome::WATER, height, width);
+  BiomeGroups water_groups = collect_biome_groups(Biome::WATER);
   for (auto group : water_groups) {
     _water_groups.emplace_back(group, std::make_unique<RidgeSet>(ridge_config));
   }
@@ -393,16 +388,14 @@ void RidgeHexGridMap::calculate_neighbours(GroupOfHexagonMeshes& group) {
   auto member_of_group = [&group](HexMesh& mesh) {
     return std::find(group.begin(), group.end(), &mesh) != group.end();
   };
-  int rows = _tiles_layout.size();
-  for (int i = 0; i < rows; ++i) {
-    int col = _tiles_layout[i].size();
-    for (int j = 0; j < col; ++j) {
-      BiomeTile* tile = dynamic_cast<BiomeTile*>(_tiles_layout[i][j].get());
+  for (auto& row : _tiles_layout) {
+    for (auto& tile_ptr : row) {
+      BiomeTile* tile = dynamic_cast<BiomeTile*>(tile_ptr.get());
       RidgeHexMesh* mesh = dynamic_cast<RidgeHexMesh*>(tile->mesh().ptr());
       if (std::find(group.begin(), group.end(), mesh) == group.end()) {
         continue;
       }
-      CubeCoordinates cube_cur = offsetToCube(OffsetCoordinates{.row = i, .col = j});
+      CubeCoordinates cube_cur = tile->get_cube_coords();
       HexagonNeighbours hexagon_neighbours = {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr};
       std::vector<CubeCoordinates> neighbours_hexes_coord = neighbours(cube_cur);
 
@@ -419,11 +412,9 @@ void RidgeHexGridMap::calculate_neighbours(GroupOfHexagonMeshes& group) {
 }
 
 void RidgeHexGridMap::assign_neighbours(GroupOfHexagonMeshes& group) {
-  int rows = _tiles_layout.size();
-  for (int i = 0; i < rows; ++i) {
-    int col = _tiles_layout[i].size();
-    for (int j = 0; j < col; ++j) {
-      BiomeTile* tile = dynamic_cast<BiomeTile*>(_tiles_layout[i][j].get());
+  for (auto& row : _tiles_layout) {
+    for (auto& tile_ptr : row) {
+      BiomeTile* tile = dynamic_cast<BiomeTile*>(tile_ptr.get());
       RidgeHexMesh* mesh = dynamic_cast<RidgeHexMesh*>(tile->mesh().ptr());
       if (std::find(group.begin(), group.end(), mesh) == group.end()) {
         continue;
@@ -446,17 +437,16 @@ void RidgeHexGridMap::assign_ridges(GroupOfHexagonMeshes& group, RidgeSet* ridge
 
 void RidgeHexGridMap::calculate_corner_points_distances_to_border(GroupOfHexagonMeshes& group) {
   std::vector<RidgeHexMesh*> meshes;
-  int rows = _tiles_layout.size();
-  for (int i = 0; i < rows; ++i) {
-    int col = _tiles_layout[i].size();
-    for (int j = 0; j < col; ++j) {
-      RidgeHexMesh* mesh = dynamic_cast<RidgeHexMesh*>(_tiles_layout[i][j]->mesh().ptr());
+  for (auto& row : _tiles_layout) {
+    for (auto& tile_ptr : row) {
+      RidgeHexMesh* mesh = dynamic_cast<RidgeHexMesh*>(tile_ptr->mesh().ptr());
       if (std::find(group.begin(), group.end(), mesh) == group.end()) {
         continue;
       }
       meshes.push_back(mesh);
     }
   }
+
   auto compare_increasing = [this](const RidgeHexMesh* lhs, const RidgeHexMesh* rhs) {
     return lhs->get_neighbours().size() < rhs->get_neighbours().size();
   };
@@ -548,44 +538,156 @@ void RidgeHexGridMap::prepare_heights_calculation() {
 }
 
 void RidgeHexGridMap::assign_cube_coordinates_map() {
-  int rows = _tiles_layout.size();
-  for (int i = 0; i < rows; ++i) {
-    int col = _tiles_layout[i].size();
-    for (int j = 0; j < col; ++j) {
-      CubeCoordinates cube_coord = offsetToCube(OffsetCoordinates{.row = i, .col = j});
-
-      _cube_to_hexagon[cube_coord] = _tiles_layout[i][j]->mesh().ptr();
-    }
-  }
-}
-
-void RidgeHexGridMap::init_mesh_lib() {
-  Ref<MeshLibrary> m = get_mesh_library();
-  m.instantiate();
-  _library = m;
-  set_mesh_library(m);
-
-  for (int row = 0; row < height; ++row) {
-    for (int col = 0; col < width; ++col) {
-      int id = calculate_id(row, col);
-      _library->create_item(id);
-      _library->set_item_mesh(id, _tiles_layout[row][col]->mesh());
-      if (is_odd(row)) {
-        Transform3D t;
-        t = t.translated(Vector3(pointy_top_x_offset(diameter) / 2, 0, 0));
-        _library->set_item_mesh_transform(id, t);
-      }
+  for (auto& row : _tiles_layout) {
+    for (auto& tile_ptr : row) {
+      BiomeTile* tile = dynamic_cast<BiomeTile*>(tile_ptr.get());
+      _cube_to_hexagon[tile->get_cube_coords()] = tile_ptr->mesh().ptr();
     }
   }
 }
 
 void RidgeHexGridMap::calculate_final_heights() {
-  for (int row = 0; row < height; ++row) {
-    for (int col = 0; col < width; ++col) {
-      RidgeHexMesh* mesh = dynamic_cast<RidgeHexMesh*>(_tiles_layout[row][col]->mesh().ptr());
+  for (auto& row : _tiles_layout) {
+    for (auto& tile_ptr : row) {
+      RidgeHexMesh* mesh = dynamic_cast<RidgeHexMesh*>(tile_ptr->mesh().ptr());
 
       mesh->calculate_final_heights();
+      mesh->calculate_normals();
+      mesh->update();
     }
+  }
+}
+
+// RectRidgeHexGridMap definitions
+void RectRidgeHexGridMap::_bind_methods() {
+  ClassDB::bind_method(D_METHOD("get_height"), &RectRidgeHexGridMap::get_height);
+  ClassDB::bind_method(D_METHOD("set_height", "p_height"), &RectRidgeHexGridMap::set_height);
+  ADD_PROPERTY(PropertyInfo(Variant::INT, "height"), "set_height", "get_height");
+
+  ClassDB::bind_method(D_METHOD("get_width"), &RectRidgeHexGridMap::get_width);
+  ClassDB::bind_method(D_METHOD("set_width", "p_width"), &RectRidgeHexGridMap::set_width);
+  ADD_PROPERTY(PropertyInfo(Variant::INT, "width"), "set_width", "get_width");
+}
+
+void RectRidgeHexGridMap::set_height(const int p_height) {
+  height = p_height > 1 ? p_height : 1;
+  init();
+}
+
+void RectRidgeHexGridMap::set_width(const int p_width) {
+  width = p_width > 1 ? p_width : 1;
+  init();
+}
+
+int RectRidgeHexGridMap::get_height() const { return height; }
+int RectRidgeHexGridMap::get_width() const { return width; }
+
+void RectRidgeHexGridMap::init_col_row_layout() {
+  col_row_layout = RectangularUtility::get_offset_coords_layout(height, width);
+}
+
+int RectRidgeHexGridMap::calculate_id(int row, int col) const {
+  return RectangularUtility::calculate_id(row, col, width);
+}
+
+BiomeGroups RectRidgeHexGridMap::collect_biome_groups(Biome b) {
+  int height = col_row_layout.size();
+  int width = col_row_layout[0].size();
+  algo::DSU<RidgeHexMesh*> u(height, width);
+
+  auto flat = [width](int i, int j) { return i * width + j; };
+  for (auto row : col_row_layout) {
+    for (Vector3i v : row) {
+      int i = v.x;
+      int j = v.z;
+      BiomeTile* tile = dynamic_cast<BiomeTile*>(_tiles_layout[i][j].get());
+      Biome biome = tile->biome();
+      if (biome != b) {
+        continue;
+      }
+      RidgeHexMesh* mesh = dynamic_cast<RidgeHexMesh*>(tile->mesh().ptr());
+      u.push(flat(i, j), mesh);
+      u.make_union(flat(i, j), flat(i - 1, j));
+      if (_cube_to_hexagon.contains(offsetToCube(OffsetCoordinates{i - 1, j + 1}))) {
+        u.make_union(flat(i, j), flat(i - 1, j + 1));
+      }
+      if (_cube_to_hexagon.contains(offsetToCube(OffsetCoordinates{i - 1, j - 1}))) {
+        u.make_union(flat(i, j), flat(i - 1, j - 1));
+      }
+      if (_cube_to_hexagon.contains(offsetToCube(OffsetCoordinates{i, j - 1}))) {
+        u.make_union(flat(i, j), flat(i, j - 1));
+      }
+    }
+  }
+  return u.groups();
+}
+
+// HexagonalRidgeHexGridMap definitions
+void HexagonalRidgeHexGridMap::_bind_methods() {
+  ClassDB::bind_method(D_METHOD("get_size"), &HexagonalRidgeHexGridMap::get_size);
+  ClassDB::bind_method(D_METHOD("set_size", "p_size"), &HexagonalRidgeHexGridMap::set_size);
+  ADD_PROPERTY(PropertyInfo(Variant::INT, "size"), "set_size", "get_size");
+}
+
+void HexagonalRidgeHexGridMap::set_size(const int p_size) {
+  size = p_size > 1 ? p_size : 1;
+  init();
+}
+
+int HexagonalRidgeHexGridMap::get_size() const { return size; }
+
+void HexagonalRidgeHexGridMap::init_col_row_layout() {
+  col_row_layout = HexagonalUtility::get_offset_coords_layout(size);
+}
+
+int HexagonalRidgeHexGridMap::calculate_id(int row, int col) const {
+  return HexagonalUtility::calculate_id(row, col, size);
+}
+
+BiomeGroups HexagonalRidgeHexGridMap::collect_biome_groups(Biome b) {
+  int width = size * 2 + 1;
+  algo::DSU<RidgeHexMesh*> u(width, width);
+
+  auto flat = [width](int i, int j) { return i * width + j; };
+  for (auto& row : _tiles_layout) {
+    for (auto& tile_ptr : row) {
+      BiomeTile* tile = dynamic_cast<BiomeTile*>(tile_ptr.get());
+      Biome biome = tile->biome();
+      if (biome != b) {
+        continue;
+      }
+      auto offset_coords = tile->get_offset_coords();
+      int i = offset_coords.row;
+      int j = offset_coords.col;
+      RidgeHexMesh* mesh = dynamic_cast<RidgeHexMesh*>(tile->mesh().ptr());
+      u.push(flat(i, j), mesh);
+      u.make_union(flat(i, j), flat(i - 1, j));
+      if (_cube_to_hexagon.contains(offsetToCube(OffsetCoordinates{i - 1, j + 1}))) {
+        u.make_union(flat(i, j), flat(i - 1, j + 1));
+      }
+      if (_cube_to_hexagon.contains(offsetToCube(OffsetCoordinates{i - 1, j - 1}))) {
+        u.make_union(flat(i, j), flat(i - 1, j - 1));
+      }
+      if (_cube_to_hexagon.contains(offsetToCube(OffsetCoordinates{i, j - 1}))) {
+        u.make_union(flat(i, j), flat(i, j - 1));
+      }
+    }
+  }
+  return u.groups();
+}
+
+void RidgeHexGridMap::print_biomes() {
+  for (auto& [group, ridge_set] : _mountain_groups) {
+    std::cout << "mountain group of size " << group.size() << std::endl;
+  }
+  for (auto& [group, ridge_set] : _water_groups) {
+    std::cout << "water group of size " << group.size() << std::endl;
+  }
+  for (auto& group : _hill_groups) {
+    std::cout << "hill group of size " << group.size() << std::endl;
+  }
+  for (auto& group : _plain_groups) {
+    std::cout << "plain group of size " << group.size() << std::endl;
   }
 }
 

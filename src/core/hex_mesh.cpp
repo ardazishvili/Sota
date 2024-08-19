@@ -4,6 +4,7 @@
 #include <numbers>
 
 #include "core/utils.h"
+#include "godot_cpp/core/class_db.hpp"
 #include "godot_cpp/variant/array.hpp"
 #include "godot_cpp/variant/callable.hpp"
 #include "godot_cpp/variant/color.hpp"
@@ -30,6 +31,9 @@ HexMesh::HexMesh() {
 
 void HexMesh::init() {
   calculate_vertices();
+  if (frame_state) {
+    add_frame();
+  }
   calculate_indices();  // normals depends on indices. Calculate them first
   calculate_normals();
   calculate_tangents();
@@ -48,12 +52,33 @@ void HexMesh::_bind_methods() {
   ClassDB::bind_method(D_METHOD("get_diameter"), &HexMesh::get_diameter);
   ClassDB::bind_method(D_METHOD("set_diameter", "p_diameter"), &HexMesh::set_diameter);
   ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "diameter"), "set_diameter", "get_diameter");
+
+  // Interface
+  ClassDB::bind_method(D_METHOD("get_id"), &HexMesh::get_id);
 }
 
 void HexMesh::set_divisions(const int p_divisions) {
   divisions = p_divisions > 1 ? p_divisions : 1;
   init();
   request_update();
+}
+
+void HexMesh::add_frame() const {
+  for (int i = 0; i < 6; ++i) {
+    // rectangle consists from 4 points: a, b, c, d => 2 triangles
+    auto a = _corner_points[i];
+    auto b = _corner_points[(i + 1) % 6];
+
+    auto c = _corner_points[i] + Vector3(0, -frame_offset, 0);
+    auto d = _corner_points[(i + 1) % 6] + Vector3(0, -frame_offset, 0);
+    vertices_.push_back(b);
+    vertices_.push_back(a);
+    vertices_.push_back(c);
+
+    vertices_.push_back(b);
+    vertices_.push_back(c);
+    vertices_.push_back(d);
+  }
 }
 
 void HexMesh::set_diameter(const float p_diameter) {

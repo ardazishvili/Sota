@@ -4,6 +4,7 @@
 
 #include "core/hex_mesh.h"
 #include "core/utils.h"
+#include "cube_coordinates.h"
 #include "godot_cpp/classes/ref.hpp"
 #include "godot_cpp/classes/shader.hpp"
 #include "godot_cpp/classes/shader_material.hpp"
@@ -11,8 +12,11 @@
 #include "godot_cpp/core/memory.hpp"
 #include "godot_cpp/core/object.hpp"
 #include "godot_cpp/variant/callable.hpp"
+#include "godot_cpp/variant/vector2.hpp"
 #include "godot_cpp/variant/vector3.hpp"
 #include "godot_cpp/variant/vector3i.hpp"
+#include "hexagonal_utility.h"
+#include "rectangular_utility.h"
 
 namespace sota {
 
@@ -29,23 +33,24 @@ void HexGridMap::_bind_methods() {
   ClassDB::bind_method(D_METHOD("set_diameter", "p_diameter"), &HexGridMap::set_diameter);
   ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "diameter"), "set_diameter", "get_diameter");
 
-  ClassDB::bind_method(D_METHOD("get_height"), &HexGridMap::get_height);
-  ClassDB::bind_method(D_METHOD("set_height", "p_height"), &HexGridMap::set_height);
-  ADD_PROPERTY(PropertyInfo(Variant::INT, "height"), "set_height", "get_height");
-
-  ClassDB::bind_method(D_METHOD("get_width"), &HexGridMap::get_width);
-  ClassDB::bind_method(D_METHOD("set_width", "p_width"), &HexGridMap::set_width);
-  ADD_PROPERTY(PropertyInfo(Variant::INT, "width"), "set_width", "get_width");
-
   ClassDB::bind_method(D_METHOD("get_shader"), &HexGridMap::get_shader);
   ClassDB::bind_method(D_METHOD("set_shader", "p_shader"), &HexGridMap::set_shader);
   ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "shader", PROPERTY_HINT_RESOURCE_TYPE, "Shader"), "set_shader",
                "get_shader");
+
+  ClassDB::bind_method(D_METHOD("get_frame_state"), &HexGridMap::get_frame_state);
+  ClassDB::bind_method(D_METHOD("set_frame_state", "p_frame_state"), &HexGridMap::set_frame_state);
+  ADD_PROPERTY(PropertyInfo(Variant::BOOL, "enable_frame"), "set_frame_state", "get_frame_state");
+
+  ClassDB::bind_method(D_METHOD("get_frame_offset"), &HexGridMap::get_frame_offset);
+  ClassDB::bind_method(D_METHOD("set_frame_offset", "p_frame_offset"), &HexGridMap::set_frame_offset);
+  ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "frame_offset"), "set_frame_offset", "get_frame_offset");
 }
 
 void HexGridMap::init() {
   set_cell_size(Vector3(pointy_top_x_offset(diameter), 1.0, pointy_top_y_offset(diameter)));
 
+  init_col_row_layout();
   init_hexmesh();
   init_mesh_lib();
   init_grid();
@@ -63,35 +68,32 @@ void HexGridMap::set_diameter(const float p_diameter) {
   init();
 }
 
-void HexGridMap::set_height(const int p_height) {
-  height = p_height > 1 ? p_height : 1;
-  init();
-}
-
-void HexGridMap::set_width(const int p_width) {
-  width = p_width > 1 ? p_width : 1;
-  init();
-}
-
 void HexGridMap::set_shader(const Ref<Shader> p_shader) {
   shader = p_shader;
+  init();
+}
+void HexGridMap::set_frame_state(const bool p_state) {
+  frame_state = p_state;
+  init();
+}
+
+void HexGridMap::set_frame_offset(const float p_offset) {
+  frame_offset = p_offset;
   init();
 }
 
 float HexGridMap::get_diameter() const { return diameter; }
 int HexGridMap::get_divisions() const { return divisions; }
-int HexGridMap::get_height() const { return height; }
-int HexGridMap::get_width() const { return width; }
 Ref<Shader> HexGridMap::get_shader() const { return shader; }
-
-int HexGridMap::calculate_id(int row, int col) const { return row * width + col; }
+bool HexGridMap::get_frame_state() const { return frame_state; }
+float HexGridMap::get_frame_offset() const { return frame_offset; }
 
 void HexGridMap::init_hexmesh() {
   _tiles_layout.clear();
-  for (int row = 0; row < height; ++row) {
+  for (auto row : col_row_layout) {
     _tiles_layout.push_back({});
-    for (int col = 0; col < width; ++col) {
-      int id = calculate_id(row, col);
+    for (auto val : row) {
+      int id = calculate_id(val.x, val.z);
 
       Ref<ShaderMaterial> mat;
       mat.instantiate();
@@ -104,8 +106,10 @@ void HexGridMap::init_hexmesh() {
       m->set_diameter(diameter);
       m->set_divisions(divisions);
       m->set_material(mat);
+      m->set_frame_state(frame_state);
+      m->set_frame_value(frame_offset);
       m->init();
-      _tiles_layout.back().push_back(std::make_unique<Tile>(m));
+      _tiles_layout.back().push_back(std::make_unique<Tile>(m, OffsetCoordinates{.row = val.x, .col = val.z}));
     }
   }
 }
@@ -116,12 +120,12 @@ void HexGridMap::init_mesh_lib() {
   _library = m;
   set_mesh_library(m);
 
-  for (int row = 0; row < height; ++row) {
-    for (int col = 0; col < width; ++col) {
-      int id = calculate_id(row, col);
+  for (auto& row : _tiles_layout) {
+    for (auto& tile_ptr : row) {
+      int id = tile_ptr->id();
       _library->create_item(id);
-      _library->set_item_mesh(id, _tiles_layout[row][col]->mesh());
-      if (is_odd(row)) {
+      _library->set_item_mesh(id, tile_ptr->mesh());
+      if (tile_ptr->is_shifted()) {
         Transform3D t;
         t = t.translated(Vector3(pointy_top_x_offset(diameter) / 2, 0, 0));
         _library->set_item_mesh_transform(id, t);
@@ -132,14 +136,62 @@ void HexGridMap::init_mesh_lib() {
 
 void HexGridMap::init_grid() {
   clear();
-  for (int row = 0; row < height; ++row) {
-    for (int col = 0; col < width; ++col) {
-      int id = calculate_id(row, col);
-      set_cell_item(Vector3i(col, 0, row), id);
+  for (auto row : col_row_layout) {
+    for (auto val : row) {
+      int id = calculate_id(val.x, val.z);
+      set_cell_item(Vector3i(val.z, 0, val.x), id);
     }
   }
 }
 
 void HexGridMap::_ready() { init(); }
+
+// RectHexGridMap definitions
+void RectHexGridMap::_bind_methods() {
+  ClassDB::bind_method(D_METHOD("get_height"), &RectHexGridMap::get_height);
+  ClassDB::bind_method(D_METHOD("set_height", "p_height"), &RectHexGridMap::set_height);
+  ADD_PROPERTY(PropertyInfo(Variant::INT, "height"), "set_height", "get_height");
+
+  ClassDB::bind_method(D_METHOD("get_width"), &RectHexGridMap::get_width);
+  ClassDB::bind_method(D_METHOD("set_width", "p_width"), &RectHexGridMap::set_width);
+  ADD_PROPERTY(PropertyInfo(Variant::INT, "width"), "set_width", "get_width");
+}
+
+void RectHexGridMap::set_height(const int p_height) {
+  height = p_height > 1 ? p_height : 1;
+  init();
+}
+
+void RectHexGridMap::set_width(const int p_width) {
+  width = p_width > 1 ? p_width : 1;
+  init();
+}
+
+int RectHexGridMap::get_height() const { return height; }
+int RectHexGridMap::get_width() const { return width; }
+
+void RectHexGridMap::init_col_row_layout() {
+  col_row_layout = RectangularUtility::get_offset_coords_layout(height, width);
+}
+
+int RectHexGridMap::calculate_id(int row, int col) const { return RectangularUtility::calculate_id(row, col, width); }
+
+// HexagonalHexGridMap definitions
+void HexagonalHexGridMap::_bind_methods() {
+  ClassDB::bind_method(D_METHOD("get_size"), &HexagonalHexGridMap::get_size);
+  ClassDB::bind_method(D_METHOD("set_size", "p_size"), &HexagonalHexGridMap::set_size);
+  ADD_PROPERTY(PropertyInfo(Variant::INT, "size"), "set_size", "get_size");
+}
+
+void HexagonalHexGridMap::set_size(const int p_size) {
+  size = p_size > 1 ? p_size : 1;
+  init();
+}
+
+int HexagonalHexGridMap::get_size() const { return size; }
+
+void HexagonalHexGridMap::init_col_row_layout() { col_row_layout = HexagonalUtility::get_offset_coords_layout(size); }
+
+int HexagonalHexGridMap::calculate_id(int row, int col) const { return HexagonalUtility::calculate_id(row, col, size); }
 
 }  // namespace sota
