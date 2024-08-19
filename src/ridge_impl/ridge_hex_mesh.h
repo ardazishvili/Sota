@@ -7,6 +7,7 @@
 #include "core/hex_mesh.h"
 #include "godot_cpp/classes/fast_noise_lite.hpp"
 #include "godot_cpp/classes/wrapped.hpp"
+#include "godot_cpp/variant/vector3.hpp"
 #include "misc/types.h"
 #include "ridge_impl/ridge.h"
 
@@ -22,6 +23,7 @@ class RidgeHexMesh : public HexMesh {
   gd::Vector3 center() const { return offset; }
   GroupedHexagonMeshVertices get_grouped_vertices();
   std::pair<float, float> get_min_max_height() const { return {_min_y, _max_y}; }
+  gd::Vector3 get_offset() const { return offset; }
 
   // setters
   void set_plain_noise(gd::Ref<gd::FastNoiseLite> plain_noise);
@@ -56,20 +58,6 @@ class RidgeHexMesh : public HexMesh {
 
  private:
   std::map<gd::Vector3, float> _corner_points_to_border_dist;
-  std::pair<std::vector<std::array<float, 3>>, std::vector<float>>
-  get_border_line_coeffs();  // to calculate distance from vertice to line (border)
-};
-
-struct HexBorderLineParams {
-  HexBorderLineParams(float R, float r) {
-    coeffs = {std::array<float, 3>{-R / (2 * r), 1.0f, R}, std::array<float, 3>{1.0f, 0.0f, -r},
-              std::array<float, 3>{R / (2 * r), 1.0f, -R}, std::array<float, 3>{-R / (2 * r), 1.0f, -R},
-              std::array<float, 3>{1.0f, 0.0f, r},         std::array<float, 3>{R / (2 * r), 1.0f, R}};
-  }
-  std::array<std::array<float, 3>, 6> get_coeffs() { return coeffs; }
-
- private:
-  std::array<std::array<float, 3>, 6> coeffs;
 };
 
 }  // namespace sota

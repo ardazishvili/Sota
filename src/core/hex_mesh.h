@@ -14,7 +14,6 @@ class HexMesh : public gd::PrimitiveMesh {
 
  public:
   HexMesh();
-  virtual ~HexMesh() = default;
 
   void set_divisions(const int p_divisions);
   int get_divisions() const;
@@ -31,8 +30,13 @@ class HexMesh : public gd::PrimitiveMesh {
   void init();
   void update();
 
+  void set_frame_state(bool state) { frame_state = state; }
+  void set_frame_value(float value) { frame_offset = value; }
+
  protected:
   static void _bind_methods();
+
+  void calculate_vertices() const;
 
   mutable gd::PackedVector3Array vertices_;
   mutable gd::PackedVector3Array normals_;
@@ -43,6 +47,9 @@ class HexMesh : public gd::PrimitiveMesh {
   float diameter{1};
   int divisions{3};
   std::array<gd::Vector3, 6> _corner_points;
+
+  bool frame_state{false};
+  float frame_offset{0.0};
 
  private:
   mutable gd::PackedFloat32Array tangents_;
@@ -57,8 +64,8 @@ class HexMesh : public gd::PrimitiveMesh {
   mutable gd::PackedInt32Array bones_;
   mutable gd::PackedFloat32Array weights_;
 
-  void calculate_vertices() const;
   void calculate_tangents() const;
+  void add_frame() const;
   void calculate_colors() const;
   void calculate_tex_uv1() const;
   void calculate_tex_uv2() const;

@@ -13,6 +13,7 @@ BiomeCalculator::BiomeCalculator() {
 
 Biome BiomeCalculator::calculate_biome(float min_z, float max_z, float cur_z) const {
   auto amplitude = max_z - min_z;
+
   auto water_max_z = min_z + amplitude * BIOMES_HEIGHT_BOUND.find(Biome::WATER)->second;
   auto plain_max_z = min_z + amplitude * BIOMES_HEIGHT_BOUND.find(Biome::PLAIN)->second;
   auto hill_max_z = min_z + amplitude * BIOMES_HEIGHT_BOUND.find(Biome::HILL)->second;

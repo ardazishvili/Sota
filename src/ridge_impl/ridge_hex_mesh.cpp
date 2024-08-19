@@ -1,6 +1,9 @@
 #include "ridge_hex_mesh.h"
 
+#include <unordered_set>
+
 #include "core/utils.h"
+#include "general_utility.h"
 #include "misc/utilities.h"
 
 namespace sota {
@@ -31,7 +34,13 @@ void RidgeHexMesh::set_offset(Vector3 p_offset) {
 }
 
 void RidgeHexMesh::calculate_corner_points_distances_to_border() {
-  auto [coeffs, coeffs_precalc] = get_border_line_coeffs();
+  std::unordered_set<int> exclude_list;
+  for (int i = 0; i < 6; ++i) {
+    if (neighbours[i]) {
+      exclude_list.insert(i);
+    }
+  }
+  auto [coeffs, coeffs_precalc] = GeneralUtility::get_border_line_coeffs(R, r, exclude_list);
 
   std::map<Vector3, float> neighbours_corner_points_distances_to_border;
   for (const auto& n : neighbours) {
@@ -56,35 +65,7 @@ void RidgeHexMesh::calculate_corner_points_distances_to_border() {
   }
 }
 
-std::pair<std::vector<std::array<float, 3>>, std::vector<float>> RidgeHexMesh::get_border_line_coeffs() {
-  auto get_coeffs = [this]() -> std::vector<std::array<float, 3>> {
-    std::array<std::array<float, 3>, 6> all = HexBorderLineParams(R, r).get_coeffs();
-
-    std::vector<std::array<float, 3>> coeffs;
-    for (int i = 0; i < 6; ++i) {
-      if (!neighbours[i]) {
-        coeffs.push_back(all[i]);
-      }
-    }
-    return coeffs;
-  };
-  std::vector<std::array<float, 3>> coeffs = get_coeffs();
-  unsigned int coeffs_size = coeffs.size();
-  std::vector<float> coeffs_precalc(coeffs_size);
-  for (unsigned int i = 0; i < coeffs_size; ++i) {
-    coeffs_precalc[i] = Vector2(coeffs[i][0], coeffs[i][1]).length();
-  }
-
-  return {coeffs, coeffs_precalc};
-}
-
-void RidgeHexMesh::shift_compress() {
-  for (auto& v : vertices_) {
-    v.y += _y_shift;
-    v.y *= _y_compress;
-    v.y += offset.y;
-  }
-}
+void RidgeHexMesh::shift_compress() { GeneralUtility::shift_compress(vertices_, _y_shift, _y_compress, offset.y); }
 
 void RidgeHexMesh::calculate_ridge_based_heights(std::function<double(double, double, double)> interpolation_func,
                                                  float ridge_offset) {
@@ -101,7 +82,13 @@ void RidgeHexMesh::calculate_ridge_based_heights(std::function<double(double, do
       ridge_points.insert(ridge_points.end(), p.begin(), p.end());
     }
   }
-  auto [coeffs, coeffs_precalc] = get_border_line_coeffs();
+  std::unordered_set<int> exclude_list;
+  for (int i = 0; i < 6; ++i) {
+    if (neighbours[i]) {
+      exclude_list.insert(i);
+    }
+  }
+  auto [coeffs, coeffs_precalc] = GeneralUtility::get_border_line_coeffs(R, r, exclude_list);
 
   std::map<Vector3, float> neighbours_corner_points_distances_to_border;
   for (const HexMesh* n : neighbours) {
@@ -156,9 +143,6 @@ void RidgeHexMesh::calculate_ridge_based_heights(std::function<double(double, do
   _max_y = std::max_element(vertices_.begin(), vertices_.end(), [](const auto& v1, const auto& v2) {
              return v1.y < v2.y;
            })->y;
-
-  calculate_normals();
-  request_update();
 }
 
 void RidgeHexMesh::calculate_initial_heights() {
@@ -183,6 +167,7 @@ GroupedHexagonMeshVertices RidgeHexMesh::get_grouped_vertices() {
   }
   return vertex_groups;
 }
+
 std::vector<HexMesh*> RidgeHexMesh::get_neighbours() const {
   std::vector<HexMesh*> res;
   std::copy_if(neighbours.begin(), neighbours.end(), std::back_inserter(res), [](HexMesh* n) { return n != nullptr; });

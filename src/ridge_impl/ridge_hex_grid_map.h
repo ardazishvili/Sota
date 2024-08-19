@@ -5,6 +5,7 @@
 
 #include "core/hex_grid_map.h"
 #include "godot_cpp/classes/fast_noise_lite.hpp"
+#include "godot_cpp/classes/grid_map.hpp"
 #include "godot_cpp/classes/texture.hpp"
 #include "godot_cpp/classes/wrapped.hpp"
 #include "ridge_impl/ridge_set.h"
@@ -64,6 +65,11 @@ class RidgeHexGridMap : public HexGridMap {
   bool get_smooth_normals() const;
 
  protected:
+  std::vector<BiomeRidgeGroup> _mountain_groups;
+  std::vector<BiomeRidgeGroup> _water_groups;
+  BiomeGroups _plain_groups;
+  BiomeGroups _hill_groups;
+
   static void _bind_methods();
 
   void init() override;
@@ -77,11 +83,6 @@ class RidgeHexGridMap : public HexGridMap {
   gd::Ref<gd::FastNoiseLite> plain_noise;
   gd::Ref<gd::FastNoiseLite> ridge_noise;
 
-  std::vector<BiomeRidgeGroup> _mountain_groups;
-  std::vector<BiomeRidgeGroup> _water_groups;
-  BiomeGroups _plain_groups;
-  BiomeGroups _hill_groups;
-
   bool smooth_normals{false};
   RidgeConfig ridge_config;
   float biomes_hill_level_ratio{0.7};
@@ -93,7 +94,7 @@ class RidgeHexGridMap : public HexGridMap {
   void create_biome_ridges(std::vector<BiomeRidgeGroup>& group, float ridge_offset);
   void calculate_corner_points_distances_to_border(GroupOfHexagonMeshes& group);
 
-  BiomeGroups collect_biome_groups(Biome b, int row, int col);
+  virtual BiomeGroups collect_biome_groups(Biome b) = 0;
 
   void init_biomes();
   void prepare_heights_calculation();
@@ -104,6 +105,42 @@ class RidgeHexGridMap : public HexGridMap {
   void calculate_smooth_normals();
   void calculate_flat_normals();
   void meshes_update();
+  void print_biomes();
 };
 
+class RectRidgeHexGridMap : public RidgeHexGridMap {
+  GDCLASS(RectRidgeHexGridMap, RidgeHexGridMap)
+ public:
+  void set_height(const int p_height);
+  int get_height() const;
+
+  void set_width(const int p_width);
+  int get_width() const;
+
+  void init_col_row_layout() override;
+  int calculate_id(int row, int col) const override;
+  BiomeGroups collect_biome_groups(Biome b) override;
+
+ protected:
+  int height{0};
+  int width{0};
+  static void _bind_methods();
+};
+
+class HexagonalRidgeHexGridMap : public RidgeHexGridMap {
+  GDCLASS(HexagonalRidgeHexGridMap, RidgeHexGridMap)
+ public:
+  void set_size(const int p_size);
+  int get_size() const;
+
+  void init_col_row_layout() override;
+  int calculate_id(int row, int col) const override;
+  BiomeGroups collect_biome_groups(Biome b) override;
+
+ protected:
+  int size{0};
+  static void _bind_methods();
+
+ private:
+};
 }  // namespace sota
