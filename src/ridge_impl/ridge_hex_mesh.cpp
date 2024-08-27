@@ -137,12 +137,12 @@ void RidgeHexMesh::calculate_ridge_based_heights(std::function<double(double, do
     v.y -= std::lerp(0, n, t_perlin(v.y));
   }
 
-  _min_y = std::min_element(vertices_.begin(), vertices_.end(), [](const auto& v1, const auto& v2) {
-             return v1.y < v2.y;
-           })->y;
-  _max_y = std::max_element(vertices_.begin(), vertices_.end(), [](const auto& v1, const auto& v2) {
-             return v1.y < v2.y;
-           })->y;
+  for (auto& v : vertices_) {
+    _min_y = std::min(_min_y, v.y);
+  }
+  for (auto& v : vertices_) {
+    _max_y = std::max(_max_y, v.y);
+  }
 }
 
 void RidgeHexMesh::calculate_initial_heights() {

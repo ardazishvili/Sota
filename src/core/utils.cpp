@@ -1,7 +1,8 @@
 #include "core/utils.h"
 
 #include <cmath>
-#include <numbers>
+
+#include "algo/constants.h"  //
 
 namespace sota {
 
@@ -16,8 +17,7 @@ bool epsilonEqual(float lhs, float rhs) { return std::abs(lhs - rhs) < EPSILON; 
 bool epsilonEqual(float lhs, float rhs, float tol) { return std::abs(lhs - rhs) < tol; }
 bool epsilonNotEqual(float lhs, float rhs) { return !epsilonEqual(lhs, rhs); }
 double cosrp(double a, double b, double mu) {
-  constexpr double pi = std::numbers::pi;
-  double mu2 = (1 - std::cos(mu * pi)) / 2;
+  double mu2 = (1 - std::cos(mu * PI)) / 2;
   return a * (1 - mu2) + b * mu2;
 };
 

@@ -1,8 +1,8 @@
 #include "hex_mesh.h"
 
 #include <array>
-#include <numbers>
 
+#include "algo/constants.h"
 #include "core/utils.h"
 #include "godot_cpp/core/class_db.hpp"
 #include "godot_cpp/variant/array.hpp"
@@ -86,8 +86,7 @@ void HexMesh::set_diameter(const float p_diameter) {
   R = radius(diameter);
   r = small_radius(diameter);
 
-  constexpr double pi = std::numbers::pi;
-  for (float i = -pi / 6; i < 11 * pi / 6; i += pi / 3) {
+  for (float i = -PI / 6; i < 11 * PI / 6; i += PI / 3) {
     _corner_points[i] = {std::cos(i) * R, 0, std::sin(i) * R};
   }
 

@@ -8,14 +8,14 @@ namespace sota {
 OffsetCoordinates cubeToOffset(CubeCoordinates coord) {
   int col = coord.q + (coord.r - (coord.r & 1)) / 2;
   int row = -coord.r;
-  return OffsetCoordinates(row, col);
+  return OffsetCoordinates{.row = row, .col = col};
 }
 
 // odd-r to cube conversion
 CubeCoordinates offsetToCube(OffsetCoordinates coord) {
   int q = coord.col + ((coord.row & 1) + coord.row) / 2;
   int r = -coord.row;
-  return CubeCoordinates(q, r, -q - r);
+  return CubeCoordinates{.q = q, .r = r, .s = -q - r};
 }
 
 bool operator==(const CubeCoordinates& lhs, const CubeCoordinates& rhs) {
