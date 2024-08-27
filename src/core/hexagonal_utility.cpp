@@ -14,7 +14,7 @@ std::vector<std::vector<Vector3i>> HexagonalUtility::get_offset_coords_layout(in
   auto r_end = [size](int q) { return q <= 0 ? size : size - q; };
   for (int q = -size; q <= size; ++q) {
     for (int r = r_start(q); r <= r_end(q); ++r) {
-      auto cube = CubeCoordinates(q, r, -q - r);
+      auto cube = CubeCoordinates{.q = q, .r = r, .s = -q - r};
       auto offset_coord = cubeToOffset(cube);
       if (is_odd(size) && is_odd(offset_coord.row)) {
         ++offset_coord.col;
