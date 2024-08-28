@@ -2,6 +2,7 @@
 Below is just a zero approximation of proper contribution guidelines. Will be updated if needed.
 
 ## System setup
+Under Linux
 ### Linux build
 Prerequisites are: python, scons, gcc/clang compiler
 ```bash
@@ -9,8 +10,20 @@ git clone https://github.com/ardazishvili/Sota.git
 git submodule update --init # init godot-cpp
 scons platform=linux target=template_debug -j 15
 ```
+
 ### Windows build
-To be updated. Feel free to make PR with steps to build under Windows.
+Prerequisites are: python, scons, mingw toolchain
+```bash
+git clone https://github.com/ardazishvili/Sota.git
+git submodule update --init # init godot-cpp
+scons platform=windows target=template_debug -j 15
+```
+
+### Android build
+Prerequisites are: python, scons, [Android setup](https://docs.godotengine.org/en/stable/contributing/development/compiling/compiling_for_android.html)
+git clone https://github.com/ardazishvili/Sota.git
+git submodule update --init # init godot-cpp
+scons platform=android target=template_debug -j 15
 
 ## Workflow
 Please use existing [Godot pull request workflow](https://docs.godotengine.org/en/stable/contributing/workflow/pr_workflow.html)

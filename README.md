@@ -1,19 +1,27 @@
 ![pic](doc/pics/screen0.png)
 # Sota
 
-Editable hexagonal terrain generator for Godot 4
+Editable generator of discrete structures for Godot 4
 
 ## Features
-1. Different types of tiles: plain, hill, water, moutain. Easy to add new type.
-2. Adjustable number of rows/columns of terrain.
-3. Adjustable boundaries: top of moutains, bottom of water, hill level.
-4. Adjustable curvature of moutains.
-5. Adjustable tesselation level of hexagons.
-6. Smooth shading ON/OFF.
-7. Separate noises to make:
-    - Different configuration of terrain types.
-    - Shapes of mountain/water tiles
-    - Shapes of hill/plain tiles
+* Terrain
+  1. Different types of tiles: plain, hill, water, moutain. Easy to add new type.
+  2. Adjustable number of rows/columns of terrain.
+  3. Adjustable boundaries: top of moutains, bottom of water, hill level.
+  4. Adjustable curvature of moutains.
+  5. Adjustable tesselation level of hexagons.
+  6. Possible to clip first/last row/column to make terrain rectangular
+  7. Separate noises to make:
+      - Different configuration of terrain types.
+      - Shapes of mountain/water tiles
+      - Shapes of hill/plain tiles
+* Honeycomb
+  1. Consist of 2 parts: cells and filler
+  2. Adjustable parameters of cells and their filler
+  3. Filler level may be randomized or set to minimum
+* Common
+  1. Smooth shading ON/OFF.
+  2. Rectangular (rows and columns) and Hexagonal (single parameter - size) configurations of hexagons
    
 
 ## Getting started
