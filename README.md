@@ -5,11 +5,11 @@ Editable generator of discrete structures for Godot 4
 
 ## Features
 * Terrain
-  1. Different types of tiles: plain, hill, water, moutain. Easy to add new type.
+  1. Different types of tiles: plain, hill, water, mountain. Easy to add new type.
   2. Adjustable number of rows/columns of terrain.
-  3. Adjustable boundaries: top of moutains, bottom of water, hill level.
-  4. Adjustable curvature of moutains.
-  5. Adjustable tesselation level of hexagons.
+  3. Adjustable boundaries: top of mountains, bottom of water, hill level.
+  4. Adjustable curvature of mountains.
+  5. Adjustable tessellation level of hexagons.
   6. Possible to clip first/last row/column to make terrain rectangular
   7. Separate noises to make:
       - Different configuration of terrain types.
