@@ -2,79 +2,84 @@
 
 #include <godot_cpp/classes/primitive_mesh.hpp>
 
+#include "godot_cpp/classes/material.hpp"
+#include "godot_cpp/classes/ref.hpp"
 #include "godot_cpp/classes/wrapped.hpp"
-#include "godot_cpp/variant/array.hpp"
 #include "godot_cpp/variant/packed_vector3_array.hpp"
+#include "godot_cpp/variant/vector3.hpp"
+#include "mesh.h"
 #include "misc/types.h"
+#include "primitives/Hexagon.h"
 
 namespace sota {
 
-class HexMesh : public gd::PrimitiveMesh {
-  GDCLASS(HexMesh, gd::PrimitiveMesh)
+enum class TesselationMode { Iterative = 0, Recursive };
+
+struct HexMeshParams {
+  int id{0};
+  float diameter{1};
+
+  // TODO frame behaviour for RidgeHexGridMap and sub-classes is not clear. Address it in follow-up issue/PR
+  bool frame_state{false};
+  float frame_offset{0.0};
+
+  godot::Ref<godot::Material> material;
+  int divisions{3};
+  ClipOptions clip_options;
+};
+
+class HexMesh : public SotaMesh {
+  GDCLASS(HexMesh, SotaMesh)
 
  public:
-  HexMesh();
+  enum class TesselationType { Plane = 0, Polyhedron };
 
-  void set_divisions(const int p_divisions);
-  int get_divisions() const;
+  HexMesh();
 
   void set_diameter(const float p_diameter);
   float get_diameter() const;
+  gd::Vector3 get_center() const { return _hex.center(); }
 
-  void set_id(int p_id) { id = p_id; }
-  int get_id() const { return id; }
-
-  gd::Array _create_mesh_array() const override;
-
-  void calculate_normals() const;
-  void init(bool clip_left = false, bool clip_right = false, bool clip_up = false, bool clip_bottom = false);
+  void init_impl() override;
   void update();
 
   void set_frame_state(bool state) { frame_state = state; }
   void set_frame_value(float value) { frame_offset = value; }
 
+  void set_tesselation_type(TesselationType p_tesselation_type) { tesselation_type = p_tesselation_type; }
+  void set_clip_options(ClipOptions p_options) { clip_options = p_options; }
+  void set_tesselation_mode(TesselationMode p_tesselation_mode) { tesselation_mode = p_tesselation_mode; }
+
  protected:
+  HexMesh(Hexagon hex, HexMeshParams params);
+  HexMesh(Hexagon hex);
   static void _bind_methods();
 
-  void calculate_vertices(bool clip_left = false, bool clip_right = false, bool clip_up = false,
-                          bool clip_bottom = false) const;
+  void calculate_vertices_recursion();  // not tested e.g. for clips
+  void calculate_vertices_iteration() const;
 
-  mutable gd::PackedVector3Array vertices_;
-  mutable gd::PackedVector3Array normals_;
-
-  int id;
-  float R;
-  float r;
-  float diameter{1};
-  int divisions{3};
-  std::array<gd::Vector3, 6> _corner_points;
+  float _R;
+  float _r;
+  float _diameter{1};
+  Hexagon _hex = make_unit_hexagon();
+  TesselationType tesselation_type{TesselationType::Plane};
+  TesselationMode tesselation_mode{TesselationMode::Iterative};
 
   bool frame_state{false};
   float frame_offset{0.0};
 
- private:
-  mutable gd::PackedFloat32Array tangents_;
-  mutable gd::PackedColorArray colors_;
-  mutable gd::PackedVector2Array tex_uv1_;
-  mutable gd::PackedVector2Array tex_uv2_;
-  mutable gd::PackedInt32Array indices_;
-  mutable gd::PackedByteArray color_custom0_;
-  mutable gd::PackedByteArray color_custom1_;
-  mutable gd::PackedByteArray color_custom2_;
-  mutable gd::PackedByteArray color_custom3_;
-  mutable gd::PackedInt32Array bones_;
-  mutable gd::PackedFloat32Array weights_;
+  ClipOptions clip_options;
 
-  void calculate_tangents() const;
+ private:
+  void init_from_hex(Hexagon hex);
   void add_frame() const;
-  void calculate_colors() const;
-  void calculate_tex_uv1() const;
-  void calculate_tex_uv2() const;
-  void calculate_indices() const;
-  void calculate_color_custom() const;
-  void calculate_bones_weights() const;
+  void calculate_tex_uv1() const override;
 
   void z_clip(float boundary) const;
+
+  friend godot::Ref<HexMesh> make_hex_mesh(Hexagon hex, HexMeshParams params);
 };
+
+godot::Ref<HexMesh> make_hex_mesh(Hexagon hex, HexMeshParams params);
 
 }  // namespace sota

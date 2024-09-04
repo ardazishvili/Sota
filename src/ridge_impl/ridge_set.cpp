@@ -16,7 +16,7 @@ using namespace gd;
 RidgeSet::RidgeSet(RidgeConfig config) : _config(config) {}
 
 void RidgeSet::create_single(RidgeHexMesh* mesh, float y_coord) {
-  Vector3 center = mesh->center();
+  Vector3 center = mesh->get_center();
   Vector3 start = center;
   start.x -= 0.02;
   start.y = y_coord;

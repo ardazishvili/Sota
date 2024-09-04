@@ -11,20 +11,20 @@
 #include "core/utils.h"
 #include "cube_coordinates.h"
 #include "general_utility.h"
-#include "godot_cpp/classes/grid_map.hpp"
 #include "godot_cpp/classes/shader_material.hpp"
 #include "godot_cpp/variant/plane.hpp"
-#include "godot_cpp/variant/transform3d.hpp"
+#include "godot_cpp/variant/utility_functions.hpp"
 #include "godot_cpp/variant/vector3.hpp"
 #include "godot_cpp/variant/vector3i.hpp"
 #include "hexagonal_utility.h"
 #include "misc/tile.h"
 #include "misc/types.h"
-#include "misc/utilities.h"
+#include "primitives/Hexagon.h"
 #include "rectangular_utility.h"
 #include "ridge_impl/ridge.h"
 #include "ridge_impl/ridge_config.h"
 #include "ridge_impl/ridge_hex_mesh.h"
+#include "utilities.h"
 
 namespace sota {
 
@@ -38,20 +38,16 @@ RidgeHexGridMap::RidgeHexGridMap() {
 }
 
 void RidgeHexGridMap::init() {
-  set_cell_size(Vector3(pointy_top_x_offset(diameter), 1.0, pointy_top_y_offset(diameter)));
-
   init_col_row_layout();
   if (col_row_layout.empty()) {
     return;
   }
   init_hexmesh();
-  init_mesh_lib();
-  init_grid();
 
   assign_cube_coordinates_map();
   init_biomes();
 
-  /* print_biomes(); */
+  // print_biomes();
 
   prepare_heights_calculation();
   calculate_final_heights();
@@ -288,44 +284,23 @@ void RidgeHexGridMap::init_hexmesh() {
         mat->set_shader_parameter("hill_level_ratio", biomes_hill_level_ratio);
       }
 
-      Ref<RidgeHexMesh> m = create_hex_mesh(biome);
-      m->set_id(id);
-      m->set_plain_noise(plain_noise);
-      m->set_ridge_noise(ridge_noise);
-      m->set_diameter(diameter);
+      Hexagon hex = make_hexagon_at_position(offsets[id], diameter);
 
-      // TODO frame behaviour for RidgeHexGridMap and sub-classes is not clear. Address it in follow-up issue/PR
-      m->set_frame_state(false);
-      m->set_frame_value(0.0);
-
-      m->set_divisions(divisions);
-      m->set_offset(offsets[id]);
-      m->set_material(mat);
-
-      ClipOptions clip = get_clip_options(val.x, val.z);
-      m->init(clip.left, clip.right, clip.up, clip.down);
+      ClipOptions clip_options = get_clip_options(val.x, val.z);
+      RidgeHexMeshParams params{
+          .hex_mesh_params = HexMeshParams{.id = id,
+                                           .diameter = diameter,
+                                           .frame_state = frame_state,
+                                           .frame_offset = frame_offset,
+                                           .material = mat,
+                                           .divisions = divisions,
+                                           .clip_options = clip_options},
+          .plain_noise = plain_noise,
+          .ridge_noise = ridge_noise,
+      };
+      Ref<RidgeHexMesh> m = create_hex_mesh(biome, hex, params);
       _tiles_layout.back().push_back(
           std::make_unique<BiomeTile>(m, this, biome, OffsetCoordinates{.row = val.x, .col = val.z}));
-    }
-  }
-}
-
-void RidgeHexGridMap::init_mesh_lib() {
-  Ref<MeshLibrary> m = get_mesh_library();
-  m.instantiate();
-  _library = m;
-  set_mesh_library(m);
-
-  for (auto& row : _tiles_layout) {
-    for (auto& tile_ptr : row) {
-      int id = tile_ptr->id();
-      _library->create_item(id);
-      _library->set_item_mesh(id, tile_ptr->mesh());
-      if (tile_ptr->is_shifted()) {
-        Transform3D t;
-        t = t.translated(Vector3(pointy_top_x_offset(diameter) / 2, 0, 0));
-        _library->set_item_mesh_transform(id, t);
-      }
     }
   }
 }

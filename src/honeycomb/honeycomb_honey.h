@@ -4,26 +4,40 @@
 #include "godot_cpp/classes/ref.hpp"
 #include "godot_cpp/classes/wrapped.hpp"
 #include "hex_mesh.h"
+#include "types.h"
 namespace sota {
+
+struct HoneycombHoneyMeshParams {
+  HexMeshParams hex_mesh_params;
+  godot::Ref<godot::FastNoiseLite> noise{nullptr};
+  int max_level{0};
+  float fill_delta{0};
+  float min_offset{0.0};
+};
 
 class HoneycombHoney : public HexMesh {
   GDCLASS(HoneycombHoney, HexMesh)
 
  public:
+  HoneycombHoney() : HexMesh(make_unit_hexagon()) {}
+  HoneycombHoney(Hexagon hex, HoneycombHoneyMeshParams params) : HexMesh(hex, params.hex_mesh_params) {
+    noise = params.noise;
+    max_level = params.max_level;
+    fill_delta = params.fill_delta;
+    min_offset = params.min_offset;
+  }
+
   // getters
   GroupedHexagonMeshVertices get_grouped_vertices();
   std::pair<float, float> get_min_max_height() const { return {_min_y, _max_y}; }
 
-  gd::Vector3 get_offset() const { return offset; }
-
   // setters
   void set_noise(gd::Ref<gd::FastNoiseLite> noise);
-  void set_xz_offset(gd::Vector2 offset);
   void set_min_offset(float p_offset);
   void set_max_level(float p_max_level);
 
   void set_fill_delta(float d);
-  void set_level(int p_level, float y_level);
+  void set_level(int p_level);
   void fill();
   void clear();
   int get_level() const;
@@ -44,7 +58,6 @@ class HoneycombHoney : public HexMesh {
 
  private:
   gd::Ref<gd::FastNoiseLite> noise;
-  gd::Vector3 offset;
   int level{0};
   int max_level{0};
   float fill_delta{0};
@@ -58,5 +71,7 @@ class HoneycombHoney : public HexMesh {
   float _y_shift = 0.0f;     // no shift
   float _y_compress = 1.0f;  // no compress
 };
+
+godot::Ref<HoneycombHoney> make_honeycomb_honey(Hexagon hex, HoneycombHoneyMeshParams params);
 
 }  // namespace sota

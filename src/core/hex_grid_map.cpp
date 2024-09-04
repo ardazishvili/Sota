@@ -16,7 +16,9 @@
 #include "godot_cpp/variant/vector3.hpp"
 #include "godot_cpp/variant/vector3i.hpp"
 #include "hexagonal_utility.h"
+#include "primitives/Hexagon.h"
 #include "rectangular_utility.h"
+#include "types.h"
 
 namespace sota {
 
@@ -48,12 +50,8 @@ void HexGridMap::_bind_methods() {
 }
 
 void HexGridMap::init() {
-  set_cell_size(Vector3(pointy_top_x_offset(diameter), 1.0, pointy_top_y_offset(diameter)));
-
   init_col_row_layout();
   init_hexmesh();
-  init_mesh_lib();
-  init_grid();
 
   calculate_normals();
 }
@@ -90,6 +88,13 @@ float HexGridMap::get_frame_offset() const { return frame_offset; }
 
 void HexGridMap::init_hexmesh() {
   _tiles_layout.clear();
+  TypedArray<Node> children = get_children();
+  for (int i = 0; i < children.size(); ++i) {
+    Node* child = Object::cast_to<Node>(children[i].operator Object*());
+    remove_child(child);
+    child->queue_free();
+  }
+
   for (auto row : col_row_layout) {
     _tiles_layout.push_back({});
     for (auto val : row) {
@@ -101,45 +106,23 @@ void HexGridMap::init_hexmesh() {
         mat->set_shader(shader);
       }
 
-      Ref<HexMesh> m = Ref(memnew(HexMesh()));
-      m->set_id(id);
-      m->set_diameter(diameter);
-      m->set_divisions(divisions);
-      m->set_material(mat);
-      m->set_frame_state(frame_state);
-      m->set_frame_value(frame_offset);
-      m->init();
-      _tiles_layout.back().push_back(std::make_unique<Tile>(m, OffsetCoordinates{.row = val.x, .col = val.z}));
-    }
-  }
-}
+      Vector3 offset = Vector3(0, 0, 0);
+      offset.x = val.z * pointy_top_x_offset(diameter);
+      offset.x += is_odd(val.x) ? pointy_top_x_offset(diameter) / 2 : 0;
+      offset.z = val.x * pointy_top_y_offset(diameter);
 
-void HexGridMap::init_mesh_lib() {
-  Ref<MeshLibrary> m = get_mesh_library();
-  m.instantiate();
-  _library = m;
-  set_mesh_library(m);
+      HexMeshParams params{.id = id,
+                           .diameter = diameter,
+                           .frame_state = frame_state,
+                           .frame_offset = frame_offset,
+                           .material = mat,
+                           .divisions = divisions,
+                           .clip_options = ClipOptions{}};
+      Hexagon hex = make_hexagon_at_position(offset, diameter);
+      Ref<HexMesh> m = make_hex_mesh(hex, params);
 
-  for (auto& row : _tiles_layout) {
-    for (auto& tile_ptr : row) {
-      int id = tile_ptr->id();
-      _library->create_item(id);
-      _library->set_item_mesh(id, tile_ptr->mesh());
-      if (tile_ptr->is_shifted()) {
-        Transform3D t;
-        t = t.translated(Vector3(pointy_top_x_offset(diameter) / 2, 0, 0));
-        _library->set_item_mesh_transform(id, t);
-      }
-    }
-  }
-}
-
-void HexGridMap::init_grid() {
-  clear();
-  for (auto row : col_row_layout) {
-    for (auto val : row) {
-      int id = calculate_id(val.x, val.z);
-      set_cell_item(Vector3i(val.z, 0, val.x), id);
+      _tiles_layout.back().push_back(
+          std::make_unique<Tile>(m, offset, this, OffsetCoordinates{.row = val.x, .col = val.z}));
     }
   }
 }

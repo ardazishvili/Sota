@@ -4,10 +4,11 @@
 
 namespace sota {
 
-using namespace gd;
+using namespace godot;
 
 class PlainHexMesh : public RidgeHexMesh {
  public:
+  PlainHexMesh(Hexagon hex, RidgeHexMeshParams params) : RidgeHexMesh(hex, params) {}
   void calculate_final_heights() override;
 };
 

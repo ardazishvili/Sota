@@ -4,6 +4,7 @@
 #include "general_utility.h"
 #include "godot_cpp/classes/input_event_mouse.hpp"
 #include "godot_cpp/classes/shader_material.hpp"
+#include "godot_cpp/variant/vector3.hpp"
 #include "misc/utilities.h"
 
 namespace sota {
@@ -40,34 +41,32 @@ void HoneycombCell::set_noise(Ref<FastNoiseLite> p_noise) {
   }
 }
 
-void HoneycombCell::set_offset(Vector3 p_offset) {
-  offset = p_offset;
-  request_update();
-}
-
 void HoneycombCell::set_selection_material(Ref<ShaderMaterial> p_selection_material) {
   selection_material = p_selection_material;
 }
 
 void HoneycombCell::calculate_heights(float bottom_offset) {
-  auto [coeffs, coeffs_precalc] = GeneralUtility::get_border_line_coeffs(R, r, {});
+  auto [coeffs, coeffs_precalc] = GeneralUtility::get_border_line_coeffs(_R, _r, {});
+
+  auto center = _hex.center();
 
   float distance_to_border;
   unsigned int coeffs_size = coeffs.size();
   for (auto& v : vertices_) {
     distance_to_border = std::numeric_limits<float>::max();
     for (unsigned int i = 0; i < coeffs_size; ++i) {
-      distance_to_border = std::min(
-          distance_to_border, std::abs(coeffs[i][0] * v.x + coeffs[i][1] * v.z + coeffs[i][2]) / coeffs_precalc[i]);
+      distance_to_border = std::min(distance_to_border, std::abs(coeffs[i][0] * (v.x - center.x) +
+                                                                 coeffs[i][1] * (v.z - center.z) + coeffs[i][2]) /
+                                                            coeffs_precalc[i]);
     }
 
-    Vector3 center_point(0, bottom_offset, 0);
+    Vector3 center_point = center + Vector3(0, bottom_offset, 0);
 
     float distance_to_center = Vector2(center_point.x, center_point.z).distance_to(Vector2(v.x, v.z));
     float approx_end = center_point.y;
     auto t = [](float to_border, float to_projection) { return to_border / (to_border + to_projection); };
 
-    v.y = offset.y + cosrp(v.y, approx_end, t(distance_to_border, distance_to_center));
+    v.y = center.y + cosrp(v.y, approx_end, t(distance_to_border, distance_to_center));
   }
 }
 
@@ -78,10 +77,16 @@ GroupedHexagonMeshVertices HoneycombCell::get_grouped_vertices() {
   for (int i = 0; i < size; ++i) {
     Vector3& v = vertices_[i];
     Vector3& n = normals_[i];
-    auto p = to_point_divisioned_position(Vector3(offset.x + v.x, offset.y + v.y, offset.z + v.z), diameter, divisions);
+    auto p = to_point_divisioned_position(v, _diameter, divisions);
     vertex_groups[p].push_back(&n);
   }
   return vertex_groups;
+}
+
+Ref<HoneycombCell> make_honeycomb_cell(Hexagon hex, HoneycombCellMeshParams params) {
+  Ref<HoneycombCell> mesh = memnew(HoneycombCell(hex, params));
+  mesh->init();
+  return mesh;
 }
 
 }  // namespace sota

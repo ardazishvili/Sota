@@ -1,4 +1,4 @@
-#include "honeycomb/honeycomb.h"
+#include "honeycomb.h"
 
 #include <unistd.h>
 
@@ -32,6 +32,7 @@
 #include "hexagonal_utility.h"
 #include "honeycomb/honeycomb_cell.h"
 #include "honeycomb/honeycomb_honey.h"
+#include "primitives/Hexagon.h"
 #include "rectangular_utility.h"
 #include "tile.h"
 #include "types.h"
@@ -104,17 +105,11 @@ void Honeycomb::_bind_methods() {
 }
 
 void Honeycomb::init() {
-  set_cell_size(Vector3(pointy_top_x_offset(diameter), 1.0, pointy_top_y_offset(diameter)));
-
   init_col_row_layout();
   if (col_row_layout.empty()) {
     return;
   }
   init_hexmesh();
-  init_mesh_lib();
-  init_grid();
-
-  init_grid_honey();
 
   calculate_cells();
 
@@ -330,17 +325,17 @@ void Honeycomb::init_hexmesh() {
       if (selection_texture.ptr()) {
         cell_selection_material->set_shader_parameter("cell_texture", selection_texture.ptr());
       }
-      Ref<HoneycombCell> cell = Ref(memnew(HoneycombCell()));
-      cell->set_id(id);
-      cell->set_noise(noise);
-      cell->set_diameter(diameter);
-      cell->set_frame_state(frame_state);
-      cell->set_frame_value(frame_offset);
-      cell->set_divisions(divisions);
-      cell->set_offset(cells_offsets[id]);
-      cell->set_material(cell_material);
-      cell->set_selection_material(cell_selection_material);
-      cell->init();
+      Hexagon cell_hex = make_hexagon_at_position(cells_offsets[id], diameter);
+      HoneycombCellMeshParams cell_params{.hex_mesh_params = HexMeshParams{.id = id,
+                                                                           .diameter = diameter,
+                                                                           .frame_state = frame_state,
+                                                                           .frame_offset = frame_offset,
+                                                                           .material = cell_material,
+                                                                           .divisions = divisions,
+                                                                           .clip_options = ClipOptions{}},
+                                          .noise = noise,
+                                          .selection_material = cell_selection_material};
+      Ref<HoneycombCell> cell = make_honeycomb_cell(cell_hex, cell_params);
 
       Ref<ShaderMaterial> honey_material;
       honey_material.instantiate();
@@ -350,57 +345,28 @@ void Honeycomb::init_hexmesh() {
       if (honey_texture.ptr()) {
         honey_material->set_shader_parameter("honey_texture", honey_texture.ptr());
       }
-      Ref<HoneycombHoney> honey = Ref(memnew(HoneycombHoney()));
-      honey->set_id(id + calculate_honey_id_offset());
-      honey->set_noise(noise);
-      honey->set_diameter(diameter);
-      honey->set_frame_state(false);
-      honey->set_frame_value(0.0);
-      honey->set_divisions(divisions);
-      honey->set_xz_offset(honey_offsets[id + calculate_honey_id_offset()]);
-      honey->set_min_offset(honey_min_offset);
-      honey->set_max_level(honey_fill_steps);
+
       int honey_level = honey_random_level ? generate_random_honey_step() : generate_min_honey_step();
-      float honey_y_offset = generate_offset(honey_level);
-      honey->set_level(honey_level, honey_y_offset);
-      honey->set_fill_delta(get_honey_step_value());
-      honey->set_material(honey_material);
-      honey->init();
+      Vector2 xz = honey_offsets[id + calculate_honey_id_offset()];
+      float y = generate_offset(honey_level);
+      Vector3 honey_offset(xz.x, y, xz.y);
+      Hexagon honey_hex = make_hexagon_at_position(honey_offset, diameter);
+
+      HoneycombHoneyMeshParams honey_params{.hex_mesh_params = HexMeshParams{.id = id + calculate_honey_id_offset(),
+                                                                             .diameter = diameter,
+                                                                             .frame_state = frame_state,
+                                                                             .frame_offset = frame_offset,
+                                                                             .material = honey_material,
+                                                                             .divisions = divisions,
+                                                                             .clip_options = ClipOptions{}},
+                                            .noise = noise,
+                                            .max_level = honey_fill_steps,
+                                            .fill_delta = get_honey_step_value(),
+                                            .min_offset = honey_min_offset};
+      Ref<HoneycombHoney> honey = make_honeycomb_honey(honey_hex, honey_params);
 
       _tiles_layout.back().push_back(
           std::make_unique<HoneycombTile>(cell, honey, this, OffsetCoordinates{.row = val.x, .col = val.z}));
-    }
-  }
-}
-
-void Honeycomb::init_mesh_lib() {
-  Ref<MeshLibrary> m = get_mesh_library();
-  m.instantiate();
-  _library = m;
-  set_mesh_library(m);
-
-  for (auto& row : _tiles_layout) {
-    for (auto& tile_ptr : row) {
-      int cell_id = tile_ptr->id();
-      _library->create_item(cell_id);
-      _library->set_item_mesh(cell_id, tile_ptr->mesh());
-      if (tile_ptr->is_shifted()) {
-        Transform3D t;
-        t = t.translated(Vector3(pointy_top_x_offset(diameter) / 2, 0, 0));
-        _library->set_item_mesh_transform(cell_id, t);
-      }
-
-      int honey_id = tile_ptr->id() + calculate_honey_id_offset();
-      HoneycombTile* tile = dynamic_cast<HoneycombTile*>(tile_ptr.get());
-      Ref<HoneycombHoney> honey_mesh = tile->honey_mesh();
-      _library->create_item(honey_id);
-      _library->set_item_mesh(honey_id, honey_mesh);
-      Transform3D t;
-      t = t.translated(Vector3(0, 1, 0));
-      if (tile_ptr->is_shifted()) {
-        t = t.translated(Vector3(pointy_top_x_offset(diameter) / 2, 0, 0));
-      }
-      _library->set_item_mesh_transform(honey_id, t);
     }
   }
 }
@@ -536,15 +502,6 @@ void RectHoneycomb::init_col_row_layout() {
 
 int RectHoneycomb::calculate_id(int row, int col) const { return RectangularUtility::calculate_id(row, col, width); }
 
-void RectHoneycomb::init_grid_honey() {
-  for (auto row : col_row_layout) {
-    for (auto val : row) {
-      int id = calculate_id(val.x, val.z) + calculate_honey_id_offset();
-      set_cell_item(Vector3i(val.z, -1, val.x), id);
-    }
-  }
-}
-
 int RectHoneycomb::calculate_honey_id_offset() { return height * width; }
 
 // HexagonalHoneycomb definitions
@@ -570,7 +527,7 @@ Vector3 HexagonalHoneycomb::get_center() const {
       if (i == middle) {
         HoneycombTile* tile = dynamic_cast<HoneycombTile*>(tile_ptr.get());
         HoneycombHoney* cell = tile->honey_mesh().ptr();
-        return cell->get_offset() + Vector3(0, 0, radius(diameter));  // + upper half of 0-row
+        return cell->get_center() + Vector3(0, 0, radius(diameter));  // + upper half of 0-row
       }
       ++i;
     }
@@ -589,15 +546,6 @@ int HexagonalHoneycomb::get_size() const { return size; }
 void HexagonalHoneycomb::init_col_row_layout() { col_row_layout = HexagonalUtility::get_offset_coords_layout(size); }
 
 int HexagonalHoneycomb::calculate_id(int row, int col) const { return HexagonalUtility::calculate_id(row, col, size); }
-
-void HexagonalHoneycomb::init_grid_honey() {
-  for (auto row : col_row_layout) {
-    for (auto val : row) {
-      int id = calculate_id(val.x, val.z) + calculate_honey_id_offset();
-      set_cell_item(Vector3i(val.z, -1, val.x), id);
-    }
-  }
-}
 
 int HexagonalHoneycomb::calculate_honey_id_offset() { return std::pow(2 * size + 1, 2); }
 

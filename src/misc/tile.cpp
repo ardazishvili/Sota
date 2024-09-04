@@ -1,12 +1,8 @@
 #include "tile.h"
 
-#include <memory>
-
 #include "cube_coordinates.h"
-#include "godot_cpp/classes/collision_shape2d.hpp"
 #include "godot_cpp/classes/editor_interface.hpp"
 #include "godot_cpp/classes/engine.hpp"
-#include "godot_cpp/classes/grid_map.hpp"
 #include "godot_cpp/classes/sphere_shape3d.hpp"
 #include "godot_cpp/classes/static_body3d.hpp"
 #include "godot_cpp/core/memory.hpp"
@@ -19,14 +15,15 @@ namespace sota {
 
 using namespace gd;
 
+// Tile definitions
 Tile::~Tile() {}
 
 Tile::Tile(gd::Ref<HexMesh> mesh, OffsetCoordinates offset_coord)
     : _mesh(mesh), offset_coord(offset_coord), shifted(is_odd(offset_coord.row)) {}
 
-Tile::Tile(gd::Ref<HexMesh> mesh, Vector3 offset, gd::GridMap* parent, OffsetCoordinates offset_coord)
+Tile::Tile(gd::Ref<HexMesh> mesh, Vector3 offset, gd::Node3D* parent, OffsetCoordinates offset_coord)
     : _mesh(mesh), offset_coord(offset_coord), shifted(is_odd(offset_coord.row)) {
-  _mesh_instance3d = memnew(MeshInstance3D());
+  _main_mesh_instance = memnew(MeshInstance3D());
   _sphere_shaped3d = Ref(memnew(SphereShape3D()));
 
   _sphere_shaped3d->set_radius(small_radius(mesh->get_diameter()));
@@ -35,16 +32,16 @@ Tile::Tile(gd::Ref<HexMesh> mesh, Vector3 offset, gd::GridMap* parent, OffsetCoo
   _collision_shape3d->set_shape(_sphere_shaped3d);
 
   _static_body = memnew(StaticBody3D());
+  _static_body->set_position(offset);
 
-  _mesh_instance3d->set_position(offset);
-  _mesh_instance3d->set_mesh(mesh);
+  _main_mesh_instance->set_mesh(mesh);
 
-  parent->add_child(_mesh_instance3d);
-  _mesh_instance3d->add_child(_static_body);
+  parent->add_child(_main_mesh_instance);
+  _main_mesh_instance->add_child(_static_body);
   _static_body->add_child(_collision_shape3d);
   if (Engine::get_singleton()->is_editor_hint()) {
     Node* root_scene = EditorInterface::get_singleton()->get_edited_scene_root();
-    _mesh_instance3d->set_owner(root_scene);
+    _main_mesh_instance->set_owner(root_scene);
     _static_body->set_owner(root_scene);
     _collision_shape3d->set_owner(root_scene);
   }
@@ -56,11 +53,22 @@ Tile::Tile(gd::Ref<HexMesh> mesh, Vector3 offset, gd::GridMap* parent, OffsetCoo
 
 Ref<HexMesh> Tile::mesh() const { return _mesh; }
 
+// BiomeTile definitions
 Biome BiomeTile::biome() const { return _biome; }
 
 HexagonNeighbours BiomeTile::neighbours() const { return _neighbours; }
 void BiomeTile::set_neighbours(HexagonNeighbours neighbours) { _neighbours = neighbours; }
 
+// HoneycombTile definitions
 Ref<HoneycombHoney> HoneycombTile::honey_mesh() const { return _honey; }
+HoneycombTile::HoneycombTile(gd::Ref<HoneycombCell> walls, gd::Ref<HoneycombHoney> honey, gd::Node3D* parent,
+                             OffsetCoordinates offset_coord)
+    : Tile(walls, walls->get_center(), parent, offset_coord), _honey(honey) {
+  _second_mesh_instance = memnew(MeshInstance3D());
+
+  _second_mesh_instance->set_mesh(honey);
+
+  parent->add_child(_second_mesh_instance);
+}
 
 }  // namespace sota

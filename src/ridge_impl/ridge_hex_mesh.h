@@ -7,29 +7,47 @@
 
 #include "core/hex_mesh.h"
 #include "godot_cpp/classes/fast_noise_lite.hpp"
+#include "godot_cpp/classes/material.hpp"
+#include "godot_cpp/classes/ref.hpp"
 #include "godot_cpp/classes/wrapped.hpp"
+#include "godot_cpp/variant/packed_vector3_array.hpp"
 #include "godot_cpp/variant/vector3.hpp"
 #include "misc/types.h"
 #include "ridge_impl/ridge.h"
 
 namespace sota {
 
-//'vertices_' stored without offset. But client code get any vertice with offset applied
+struct RidgeHexMeshParams {
+  HexMeshParams hex_mesh_params;
+  godot::Ref<godot::FastNoiseLite> plain_noise{nullptr};
+  godot::Ref<godot::FastNoiseLite> ridge_noise{nullptr};
+};
+
 class RidgeHexMesh : public HexMesh {
   GDCLASS(RidgeHexMesh, HexMesh)
  public:
+  RidgeHexMesh() : HexMesh() {}
+  RidgeHexMesh(Hexagon hex, RidgeHexMeshParams params) : HexMesh(hex, params.hex_mesh_params) {
+    id = params.hex_mesh_params.id;
+    plain_noise = params.plain_noise;
+    ridge_noise = params.ridge_noise;
+    _diameter = params.hex_mesh_params.diameter;
+    frame_state = params.hex_mesh_params.frame_state;
+    frame_offset = params.hex_mesh_params.frame_offset;
+    divisions = params.hex_mesh_params.divisions;
+    set_material(params.hex_mesh_params.material);
+    clip_options = params.hex_mesh_params.clip_options;
+  }
+
   // getters
   std::vector<HexMesh*> get_neighbours() const;
   std::map<gd::Vector3, float> get_corner_points_distances_to_border() const { return _corner_points_to_border_dist; }
-  gd::Vector3 center() const { return offset; }
   GroupedHexagonMeshVertices get_grouped_vertices();
   std::pair<float, float> get_min_max_height() const { return {_min_y, _max_y}; }
-  gd::Vector3 get_offset() const { return offset; }
 
   // setters
   void set_plain_noise(gd::Ref<gd::FastNoiseLite> plain_noise);
   void set_ridge_noise(gd::Ref<gd::FastNoiseLite> ridge_noise);
-  void set_offset(gd::Vector3 offset);
   void set_neighbours(HexagonNeighbours p_neighbours) { neighbours = p_neighbours; }
   void set_ridges(std::vector<Ridge*> r) { ridges = r; }
   void set_shift_compress(float y_shift, float y_compress);
@@ -42,11 +60,12 @@ class RidgeHexMesh : public HexMesh {
  protected:
   static void _bind_methods();
 
+  godot::PackedVector3Array initial_vertices_;
+
   void shift_compress();
   void calculate_ridge_based_heights(std::function<double(double, double, double)> interpolation_func,
                                      float ridge_offset);
 
-  gd::Vector3 offset;
   gd::Ref<gd::FastNoiseLite> plain_noise;
   gd::Ref<gd::FastNoiseLite> ridge_noise;
   std::vector<Ridge*> ridges;

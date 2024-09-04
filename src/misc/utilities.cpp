@@ -1,26 +1,29 @@
 #include "utilities.h"
 
+#include "Hexagon.h"
 #include "core/hex_mesh.h"
 #include "core/utils.h"
 #include "godot_cpp/core/memory.hpp"
 #include "godot_cpp/variant/utility_functions.hpp"
+#include "ridge_hex_mesh.h"
 #include "ridge_impl/hill_hex_mesh.h"
 #include "ridge_impl/mountain_hex_mesh.h"
 #include "ridge_impl/plain_hex_mesh.h"
 #include "ridge_impl/water_hex_mesh.h"
+#include "types.h"
 
 namespace sota {
 
-Ref<HexMesh> create_hex_mesh(Biome biome) {
+Ref<HexMesh> create_hex_mesh(Biome biome, Hexagon hex, RidgeHexMeshParams params) {
   switch (biome) {
     case Biome::MOUNTAIN:
-      return Ref(memnew(MountainHexMesh()));
+      return make_impl<MountainHexMesh>(hex, params);
     case Biome::PLAIN:
-      return Ref(memnew(PlainHexMesh()));
+      return make_impl<PlainHexMesh>(hex, params);
     case Biome::HILL:
-      return Ref(memnew(HillHexMesh()));
+      return make_impl<HillHexMesh>(hex, params);
     case Biome::WATER:
-      return Ref(memnew(WaterHexMesh()));
+      return make_impl<WaterHexMesh>(hex, params);
     default:
       UtilityFunctions::printerr("Unreachable biome");
   }

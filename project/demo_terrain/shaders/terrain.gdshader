@@ -1,6 +1,6 @@
 shader_type spatial;
 
-//render_mode wireframe;
+//render_mode wireframe, unshaded;
 
 uniform sampler2D water_texture : source_color;
 uniform sampler2D plain_texture : source_color;
@@ -16,9 +16,7 @@ void vertex() {
 }
 
 void fragment() {
-  //float min_y = -0.07;
   float amplitude = abs(top_offset) + abs(bottom_offset);
-  //float middle_border = 0.7;
   float first_coef = 1.0 / hill_level_ratio;
   float second_coef = 1.0 / (1.0 - hill_level_ratio);
 
@@ -32,8 +30,3 @@ void fragment() {
     ALBEDO = mix(texture(hill_texture, UV), texture(mountain_texture, UV), (h - hill_level_ratio) * second_coef).rgb;
   }
 }
-
-//void light() {
-        // Called for every pixel for every light affecting the material.
-        // Uncomment to replace the default light processing function with this one.
-//}

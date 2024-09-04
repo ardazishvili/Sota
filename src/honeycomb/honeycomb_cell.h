@@ -8,19 +8,30 @@
 #include "godot_cpp/classes/wrapped.hpp"
 #include "godot_cpp/variant/vector3.hpp"
 #include "hex_mesh.h"
+#include "types.h"
 namespace sota {
+
+struct HoneycombCellMeshParams {
+  HexMeshParams hex_mesh_params;
+  godot::Ref<godot::FastNoiseLite> noise{nullptr};
+  godot::Ref<godot::ShaderMaterial> selection_material{nullptr};
+};
 
 class HoneycombCell : public HexMesh {
   GDCLASS(HoneycombCell, HexMesh)
 
  public:
+  HoneycombCell() : HexMesh() {}
+  HoneycombCell(Hexagon hex, HoneycombCellMeshParams params) : HexMesh(hex, params.hex_mesh_params) {
+    noise = params.noise;
+    selection_material = params.selection_material;
+  }
+
   // getters
   GroupedHexagonMeshVertices get_grouped_vertices();
-  gd::Vector3 get_offset() const { return offset; }
 
   // setters
   void set_noise(gd::Ref<gd::FastNoiseLite> noise);
-  void set_offset(gd::Vector3 offset);
   void set_selection_material(gd::Ref<gd::ShaderMaterial> p_selection_material);
 
   void calculate_heights(float bottom_offset);
@@ -30,7 +41,6 @@ class HoneycombCell : public HexMesh {
 
  private:
   gd::Ref<gd::FastNoiseLite> noise;
-  gd::Vector3 offset;
   gd::Ref<gd::ShaderMaterial> selection_material;
 
   void handle_mouse_entered();
@@ -38,5 +48,7 @@ class HoneycombCell : public HexMesh {
   void handle_input_event(gd::Camera3D* p_camera, const gd::Ref<gd::InputEvent>& p_event,
                           const gd::Vector3& p_event_position, const gd::Vector3& p_normal, int32_t p_shape_idx);
 };
+
+godot::Ref<HoneycombCell> make_honeycomb_cell(Hexagon hex, HoneycombCellMeshParams params);
 
 }  // namespace sota
