@@ -5,8 +5,8 @@
 #include "core/hex_mesh.h"
 #include "cube_coordinates.h"
 #include "godot_cpp/classes/collision_shape3d.hpp"
-#include "godot_cpp/classes/grid_map.hpp"
 #include "godot_cpp/classes/mesh_instance3d.hpp"
+#include "godot_cpp/classes/node3d.hpp"
 #include "godot_cpp/classes/ref.hpp"
 #include "godot_cpp/classes/sphere_shape3d.hpp"
 #include "godot_cpp/classes/static_body3d.hpp"
@@ -24,7 +24,7 @@ class Tile {
   virtual ~Tile();
 
   Tile(gd::Ref<HexMesh> mesh, OffsetCoordinates offset_coord);  // used by HexGridMap. Delete?
-  Tile(gd::Ref<HexMesh> mesh, gd::Vector3 offset, gd::GridMap* parent, OffsetCoordinates offset_coord);
+  Tile(gd::Ref<HexMesh> mesh, gd::Vector3 offset, gd::Node3D* parent, OffsetCoordinates offset_coord);
 
   gd::Ref<HexMesh> mesh() const;
   int id() const { return _mesh->get_id(); }
@@ -36,7 +36,7 @@ class Tile {
   gd::Ref<gd::SphereShape3D> _sphere_shaped3d{nullptr};
   gd::CollisionShape3D* _collision_shape3d{nullptr};
   gd::StaticBody3D* _static_body{nullptr};
-  gd::MeshInstance3D* _mesh_instance3d{nullptr};
+  gd::MeshInstance3D* _main_mesh_instance{nullptr};
 
   gd::Ref<HexMesh> _mesh;
   OffsetCoordinates offset_coord;
@@ -46,8 +46,8 @@ class Tile {
 class BiomeTile : public Tile {
  public:
   BiomeTile() = delete;
-  BiomeTile(gd::Ref<RidgeHexMesh> mesh, gd::GridMap* parent, Biome biome, OffsetCoordinates offset_coord)
-      : Tile(mesh, mesh->get_offset(), parent, offset_coord), _biome(biome) {}
+  BiomeTile(gd::Ref<RidgeHexMesh> mesh, gd::Node3D* parent, Biome biome, OffsetCoordinates offset_coord)
+      : Tile(mesh, mesh->get_center(), parent, offset_coord), _biome(biome) {}
 
   // getters
   Biome biome() const;
@@ -64,15 +64,15 @@ class BiomeTile : public Tile {
 class HoneycombTile : public Tile {
  public:
   HoneycombTile() = delete;
-  HoneycombTile(gd::Ref<HoneycombCell> walls, gd::Ref<HoneycombHoney> honey, gd::GridMap* parent,
-                OffsetCoordinates offset_coord)
-      : Tile(walls, walls->get_offset(), parent, offset_coord), _honey(honey) {}
+  HoneycombTile(gd::Ref<HoneycombCell> walls, gd::Ref<HoneycombHoney> honey, gd::Node3D* parent,
+                OffsetCoordinates offset_coord);
 
   // getters
   gd::Ref<HoneycombHoney> honey_mesh() const;
 
  private:
   gd::Ref<HoneycombHoney> _honey;
+  gd::MeshInstance3D* _second_mesh_instance{nullptr};
 };
 
 }  // namespace sota

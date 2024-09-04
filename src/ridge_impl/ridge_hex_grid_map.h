@@ -6,19 +6,11 @@
 #include "core/hex_grid_map.h"
 #include "cube_coordinates.h"
 #include "godot_cpp/classes/fast_noise_lite.hpp"
-#include "godot_cpp/classes/grid_map.hpp"
 #include "godot_cpp/classes/texture.hpp"
 #include "godot_cpp/classes/wrapped.hpp"
 #include "ridge_impl/ridge_set.h"
 
 namespace sota {
-
-struct ClipOptions {
-  bool left{false};
-  bool right{false};
-  bool up{false};
-  bool down{false};
-};
 
 using GroupOfHexagonMeshes = std::vector<RidgeHexMesh*>;
 using BiomeGroups = std::vector<GroupOfHexagonMeshes>;
@@ -82,7 +74,6 @@ class RidgeHexGridMap : public HexGridMap {
 
   void init() override;
   void init_hexmesh() override;
-  void init_mesh_lib() override;
 
  private:
   std::unordered_map<Biome, gd::Ref<gd::Texture>> texture;

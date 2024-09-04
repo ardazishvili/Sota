@@ -54,9 +54,9 @@ std::vector<std::pair<Vector3, Vector3>> RidgeSetMaker::construct(float y_coord)
       }
       unsigned int next_idx = int_dist(random_generator) % neighbours.size();
 
-      Vector3 cur_position = cur->center();
+      Vector3 cur_position = cur->get_center();
       cur_position.y = y_coord;
-      Vector3 next_position = neighbours[next_idx]->center();
+      Vector3 next_position = neighbours[next_idx]->get_center();
       next_position.y = y_coord;
 
       res.emplace_back(cur_position, next_position);

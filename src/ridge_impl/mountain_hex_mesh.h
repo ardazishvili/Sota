@@ -6,6 +6,7 @@ namespace sota {
 
 class MountainHexMesh : public RidgeHexMesh {
  public:
+  MountainHexMesh(Hexagon hex, RidgeHexMeshParams params) : RidgeHexMesh(hex, params) {}
   void calculate_final_heights() override;
 };
 

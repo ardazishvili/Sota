@@ -9,6 +9,8 @@ namespace sota {
 class GeneralUtility {
  public:
   static void shift_compress(godot::PackedVector3Array& vertices, float shift, float compress, float offset);
+  static void shift_compress_polyhedron(godot::PackedVector3Array& vertices, godot::PackedVector3Array initial_vertices,
+                                        float shift, float compress, float offset);
   static void make_smooth_normals(std::vector<GroupedHexagonMeshVertices>& vertex_groups);
   static std::pair<std::vector<std::array<float, 3>>, std::vector<float>> get_border_line_coeffs(
       float R, float r, std::unordered_set<int> exclude_list);

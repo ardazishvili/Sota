@@ -17,4 +17,11 @@ using GroupedHexagonMeshVertices = std::map<std::pair<int, int>, std::vector<gd:
 
 enum class Biome { PLAIN = 0, HILL, MOUNTAIN, WATER };
 
+struct ClipOptions {
+  bool left{false};
+  bool right{false};
+  bool up{false};
+  bool down{false};
+};
+
 }  // namespace sota

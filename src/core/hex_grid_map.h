@@ -6,6 +6,7 @@
 #include "core/hex_mesh.h"
 #include "godot_cpp/classes/grid_map.hpp"
 #include "godot_cpp/classes/mesh_library.hpp"
+#include "godot_cpp/classes/node3d.hpp"
 #include "godot_cpp/classes/shader.hpp"
 #include "godot_cpp/classes/wrapped.hpp"
 #include "godot_cpp/variant/vector3i.hpp"
@@ -17,8 +18,8 @@ namespace sota {
 
 using TilesLayout = std::vector<std::vector<std::unique_ptr<Tile>>>;
 
-class HexGridMap : public gd::GridMap {
-  GDCLASS(HexGridMap, gd::GridMap)
+class HexGridMap : public gd::Node3D {
+  GDCLASS(HexGridMap, gd::Node3D)
 
  public:
   HexGridMap() = default;
@@ -54,10 +55,8 @@ class HexGridMap : public gd::GridMap {
   static void _bind_methods();
   virtual void init();
 
-  void init_grid();
   virtual void init_col_row_layout() = 0;
   virtual void init_hexmesh();
-  virtual void init_mesh_lib();
   std::map<CubeCoordinates, HexMesh*> _cube_to_hexagon;
 
   gd::Ref<gd::MeshLibrary> _library;

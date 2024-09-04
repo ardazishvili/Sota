@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="sota"
-run/main_scene="res://demo/scene.tscn"
+run/main_scene="res://demo_terrain/flat_terrain_scene.tscn"
 config/features=PackedStringArray("4.3", "Forward Plus")
 
 [editor_plugins]

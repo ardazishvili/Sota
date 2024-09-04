@@ -1,0 +1,31 @@
+[gd_scene load_steps=8 format=3 uid="uid://rpx4ec8rasko"]
+
+[ext_resource type="Shader" path="res://demo_polyhedron/shaders/polyhedron.gdshader" id="1_42jpl"]
+[ext_resource type="Texture2D" uid="uid://cqn3jvt05yx4p" path="res://demo_polyhedron/textures/icon.svg" id="2_o1xav"]
+[ext_resource type="Texture2D" uid="uid://0bxhi1aa1xfw" path="res://demo_polyhedron/textures/plain.png" id="3_nwdgo"]
+[ext_resource type="Texture2D" uid="uid://olwh45ciau2a" path="res://demo_polyhedron/textures/hill.png" id="4_xechd"]
+[ext_resource type="Texture2D" uid="uid://cgkvja8dj8r3" path="res://demo_polyhedron/textures/mountain.png" id="5_7m6kv"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_sn14i"]
+noise_type = 3
+frequency = 0.7
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_v48fv"]
+noise_type = 3
+frequency = 0.4035
+
+[node name="Node3D" type="Node3D"]
+
+[node name="PolyhedronMesh" type="PolyhedronMesh" parent="."]
+patch_resolution = 5
+shader = ExtResource("1_42jpl")
+noise_biomes = SubResource("FastNoiseLite_sn14i")
+noise = SubResource("FastNoiseLite_v48fv")
+texture_water = ExtResource("2_o1xav")
+texture_plain = ExtResource("3_nwdgo")
+texture_hill = ExtResource("4_xechd")
+texture_mountain = ExtResource("5_7m6kv")
+height_water = 0.0
+height_plain = 0.035
+height_hill = 0.065
+height_mountain = 0.095

@@ -6,6 +6,7 @@ namespace sota {
 
 class WaterHexMesh : public RidgeHexMesh {
  public:
+  WaterHexMesh(Hexagon hex, RidgeHexMeshParams params) : RidgeHexMesh(hex, params) {}
   void calculate_final_heights() override;
 };
 

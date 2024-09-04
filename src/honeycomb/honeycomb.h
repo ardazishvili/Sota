@@ -1,6 +1,5 @@
 #pragma once
 
-#include "godot_cpp/classes/mesh_library.hpp"
 #include "godot_cpp/classes/texture.hpp"
 #include "godot_cpp/classes/wrapped.hpp"
 #include "godot_cpp/variant/array.hpp"
@@ -60,9 +59,7 @@ class Honeycomb : public HexGridMap {
 
   void init() override;
   void init_hexmesh() override;
-  void init_mesh_lib() override;
 
-  virtual void init_grid_honey() = 0;
   virtual int calculate_honey_id_offset() = 0;
 
  private:
@@ -77,7 +74,7 @@ class Honeycomb : public HexGridMap {
   bool smooth_normals{false};
   bool honey_random_level{false};
 
-  float honey_min_offset{-0.4};
+  float honey_min_offset{-0.45};
   float honey_max_gain{0.3};
   int honey_fill_steps{8};
 
@@ -122,7 +119,6 @@ class RectHoneycomb : public Honeycomb {
 
   void init_col_row_layout() override;
   int calculate_id(int row, int col) const override;
-  void init_grid_honey() override;
   int calculate_honey_id_offset() override;
 
  protected:
@@ -139,7 +135,6 @@ class HexagonalHoneycomb : public Honeycomb {
 
   void init_col_row_layout() override;
   int calculate_id(int row, int col) const override;
-  void init_grid_honey() override;
   int calculate_honey_id_offset() override;
 
   gd::Vector3 get_center() const;

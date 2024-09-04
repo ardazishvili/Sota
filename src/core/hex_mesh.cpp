@@ -1,18 +1,12 @@
 #include "hex_mesh.h"
 
-#include <array>
-
-#include "algo/constants.h"
+#include "Hexagon.h"
 #include "core/utils.h"
 #include "godot_cpp/core/class_db.hpp"
+#include "godot_cpp/core/memory.hpp"
 #include "godot_cpp/variant/array.hpp"
 #include "godot_cpp/variant/callable.hpp"
-#include "godot_cpp/variant/color.hpp"
-#include "godot_cpp/variant/packed_byte_array.hpp"
-#include "godot_cpp/variant/packed_color_array.hpp"
 #include "godot_cpp/variant/packed_float32_array.hpp"
-#include "godot_cpp/variant/packed_int32_array.hpp"
-#include "godot_cpp/variant/packed_vector2_array.hpp"
 #include "godot_cpp/variant/packed_vector3_array.hpp"
 #include "godot_cpp/variant/variant.hpp"
 #include "godot_cpp/variant/vector2.hpp"
@@ -20,35 +14,63 @@
 
 namespace sota {
 
-using namespace gd;
+using namespace godot;
 
-HexMesh::HexMesh() {
-  R = radius(diameter);
-  r = small_radius(diameter);
-
-  init();
+void HexMesh::init_from_hex(Hexagon hex) {
+  hex.check();
+  _hex = hex;
 }
 
-void HexMesh::init(bool clip_left, bool clip_right, bool clip_up, bool clip_bottom) {
-  calculate_vertices(clip_left, clip_right, clip_up, clip_bottom);
-  if (frame_state) {
-    add_frame();
+HexMesh::HexMesh() {
+  _hex = make_unit_hexagon();
+  _R = radius(_diameter);
+  _r = small_radius(_diameter);
+
+  init();  // for init in godot
+}
+
+HexMesh::HexMesh(Hexagon hex, HexMeshParams params) {
+  init_from_hex(hex);
+  _R = radius(_diameter);
+  _r = small_radius(_diameter);
+
+  id = params.id;
+  _diameter = params.diameter;
+  frame_state = params.frame_state;
+  frame_offset = params.frame_offset;
+  set_material(params.material);
+  divisions = params.divisions;
+  clip_options = params.clip_options;
+}
+
+HexMesh::HexMesh(Hexagon hex) {
+  auto params = HexMeshParams{};
+  init_from_hex(hex);
+  _R = radius(_diameter);
+  _r = small_radius(_diameter);
+
+  id = params.id;
+  _diameter = params.diameter;
+  frame_state = params.frame_state;
+  frame_offset = params.frame_offset;
+  set_material(params.material);
+  divisions = params.divisions;
+  clip_options = params.clip_options;
+}
+
+void HexMesh::init_impl() {
+  if (tesselation_mode == TesselationMode::Iterative) {
+    calculate_vertices_iteration();
+    if (frame_state) {
+      add_frame();
+    }
+  } else if (tesselation_mode == TesselationMode::Recursive) {
+    calculate_vertices_recursion();
   }
-  calculate_indices();  // normals depends on indices. Calculate them first
-  calculate_normals();
-  calculate_tangents();
-  calculate_colors();
-  calculate_tex_uv1();
-  calculate_tex_uv2();
-  calculate_color_custom();
-  calculate_bones_weights();
+  recalculate_all_except_vertices();
 }
 
 void HexMesh::_bind_methods() {
-  ClassDB::bind_method(D_METHOD("get_divisions"), &HexMesh::get_divisions);
-  ClassDB::bind_method(D_METHOD("set_divisions", "p_divisions"), &HexMesh::set_divisions);
-  ADD_PROPERTY(PropertyInfo(Variant::INT, "divisions"), "set_divisions", "get_divisions");
-
   ClassDB::bind_method(D_METHOD("get_diameter"), &HexMesh::get_diameter);
   ClassDB::bind_method(D_METHOD("set_diameter", "p_diameter"), &HexMesh::set_diameter);
   ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "diameter"), "set_diameter", "get_diameter");
@@ -57,20 +79,15 @@ void HexMesh::_bind_methods() {
   ClassDB::bind_method(D_METHOD("get_id"), &HexMesh::get_id);
 }
 
-void HexMesh::set_divisions(const int p_divisions) {
-  divisions = p_divisions > 1 ? p_divisions : 1;
-  init();
-  request_update();
-}
-
 void HexMesh::add_frame() const {
   for (int i = 0; i < 6; ++i) {
     // rectangle consists from 4 points: a, b, c, d => 2 triangles
-    auto a = _corner_points[i];
-    auto b = _corner_points[(i + 1) % 6];
+    auto corner_points = _hex.points();
+    auto a = corner_points[i];
+    auto b = corner_points[(i + 1) % 6];
 
-    auto c = _corner_points[i] + Vector3(0, -frame_offset, 0);
-    auto d = _corner_points[(i + 1) % 6] + Vector3(0, -frame_offset, 0);
+    auto c = corner_points[i] + Vector3(0, -frame_offset, 0);
+    auto d = corner_points[(i + 1) % 6] + Vector3(0, -frame_offset, 0);
     vertices_.push_back(b);
     vertices_.push_back(a);
     vertices_.push_back(c);
@@ -82,23 +99,18 @@ void HexMesh::add_frame() const {
 }
 
 void HexMesh::set_diameter(const float p_diameter) {
-  diameter = p_diameter > 0 ? p_diameter : 0;
-  R = radius(diameter);
-  r = small_radius(diameter);
+  _diameter = p_diameter > 0 ? p_diameter : 0;
+  _R = radius(_diameter);
+  _r = small_radius(_diameter);
 
-  for (float i = -PI / 6; i < 11 * PI / 6; i += PI / 3) {
-    _corner_points[i] = {std::cos(i) * R, 0, std::sin(i) * R};
-  }
-
+  init_from_hex(make_hexagon_at_position(_hex.center(), p_diameter));
   init();
-  request_update();
 }
 
-float HexMesh::get_diameter() const { return diameter; }
-int HexMesh::get_divisions() const { return divisions; }
+float HexMesh::get_diameter() const { return _diameter; }
 
 void HexMesh::z_clip(float boundary) const {
-  float z_step = R / divisions;
+  float z_step = _R / divisions;
   float half_z_step = z_step / 2;
 
   PackedVector3Array filtered;
@@ -153,193 +165,122 @@ void HexMesh::z_clip(float boundary) const {
   vertices_ = filtered;
 }
 
-void HexMesh::calculate_vertices(bool clip_left, bool clip_right, bool clip_up, bool clip_bottom) const {
+void HexMesh::calculate_vertices_recursion() {
+  vertices_.clear();
+  auto corner_points = _hex.points();
+  Vector3 c = (corner_points[0] + corner_points[3]) / 2;
+  for (int i = 0; i < 6; ++i) {
+    tesselate_into_triangles(corner_points[i], corner_points[(i + 1) % 6], c, divisions);
+  }
+  return;
+}
+
+void HexMesh::calculate_vertices_iteration() const {
   vertices_.clear();
 
-  float z_step = R / divisions;
-  float half_z_step = z_step / 2;
-  float x_step = z_step * std::sqrt(3) / 2;
+  auto corner_points = _hex.points();
+  auto center = _hex.center();
+  auto normal = _hex.normal();
 
-  float z_init_even = diameter / 2;
-  float z_init_odd = diameter / 2 - half_z_step;
+  Vector3 pivot = corner_points[2];
   unsigned int triangles_count = divisions * 2 + (divisions * 2 - 1);
+  float d0_step = (pivot - center).length() / divisions;
+  float half_d0_step = d0_step / 2;
+  float d1_step = d0_step * std::sqrt(3) / 2;
+
+  Vector3 direction0 = (center - pivot).normalized();
+  Vector3 direction1 = direction0.cross(normal).normalized();
+
+  Vector3 d0_inc = d0_step * direction0;
+  Vector3 d1_inc = d1_step * direction1;
+  Vector3 half_d0_inc = d0_inc / 2;
+
+  Vector3 start_point_even = pivot;
+  Vector3 start_point_odd = pivot + half_d0_inc + d1_inc;
 
   for (int layer = 0; layer < divisions; ++layer, triangles_count -= 2) {
-    float z_even = z_init_even - (layer * half_z_step);
-    float z_odd = z_init_odd - (layer * half_z_step);
-    int even_cnt = 0;
-    int odd_cnt = 0;
+    Vector3 point_even = start_point_even + (layer * half_d0_inc) + (layer * d1_inc);
+    Vector3 point_odd = start_point_odd + (layer * half_d0_inc) + (layer * d1_inc);
     for (unsigned int i = 0; i < triangles_count; ++i) {
       if (is_odd(i)) {
-        Vector3 v1;
-        v1.x = x_step * layer + x_step;
-        v1.z = z_odd;
-        vertices_.push_back(v1);
+        vertices_.push_back(point_odd);
+        vertices_.push_back(point_odd + half_d0_inc - d1_inc);
+        vertices_.push_back(point_odd + d0_inc);
 
-        Vector3 v2;
-        v2.x = x_step * layer;
-        v2.z = z_odd - half_z_step;
-        vertices_.push_back(v2);
+        point_odd += d0_inc;
 
-        Vector3 v3;
-        v3.x = x_step * layer + x_step;
-        v3.z = z_odd - z_step;
-        vertices_.push_back(v3);
-
-        z_odd -= z_step;
-
-        ++odd_cnt;
       } else {
-        Vector3 v1;
-        v1.x = x_step * layer;
-        v1.z = z_even;
-        vertices_.push_back(v1);
+        vertices_.push_back(point_even);
+        vertices_.push_back(point_even + d0_inc);
+        vertices_.push_back(point_even + half_d0_inc + d1_inc);
 
-        Vector3 v3;
-        v3.x = x_step * layer;
-        v3.z = z_even - z_step;
-        vertices_.push_back(v3);
-
-        Vector3 v2;
-        v2.x = x_step * layer + x_step;
-        v2.z = z_even - half_z_step;
-        vertices_.push_back(v2);
-
-        z_even -= z_step;
-
-        ++even_cnt;
+        point_even += d0_inc;
       }
     }
   }
 
-  if (clip_bottom) {
-    z_clip(-R / 2);
-  } else if (clip_up) {
-    z_clip(R / 2);
+  if (clip_options.down) {
+    z_clip(-_R / 2);
+  } else if (clip_options.up) {
+    z_clip(_R / 2);
   }
 
-  if (clip_left) {
+  if (clip_options.left) {
     return;
   }
 
   PackedVector3Array copy = vertices_;
   int n = vertices_.size();
 
-  auto left = [this](Vector3 v) -> Vector3 {
-    v.x = -v.x;
-    return v;
-  };
+  auto reflected = [center, direction0](Vector3 v) -> Vector3 { return (v - center).reflect(direction0) + center; };
 
-  if (clip_right) {
+  if (clip_options.right) {
     vertices_.clear();
   }
   for (int i = 0; i < n; i += 3) {
-    Vector3 p0 = left(copy[i]);
-    Vector3 p1 = left(copy[i + 1]);
-    Vector3 p2 = left(copy[i + 2]);
+    Vector3 p0 = reflected(copy[i]);
+    Vector3 p1 = reflected(copy[i + 1]);
+    Vector3 p2 = reflected(copy[i + 2]);
     vertices_.append_array({p0, p2, p1});
-  }
-}
-
-void HexMesh::calculate_indices() const {
-  indices_.clear();
-  int n = vertices_.size();
-  for (int i = 0; i < n; i += 3) {
-    indices_.append_array({i, i + 1, i + 2});
-  }
-}
-
-void HexMesh::calculate_normals() const {
-  normals_.clear();
-  int n = vertices_.size();
-  for (int i = 0; i < n; i += 3) {
-    Vector3& p0 = vertices_[i];
-    Vector3& p1 = vertices_[i + 1];
-    Vector3& p2 = vertices_[i + 2];
-
-    Vector3 normal = (p0 - p1).cross(p2 - p1);
-    normal = normal.normalized();
-
-    normals_.append_array({normal, normal, normal});
-  }
-}
-
-void HexMesh::calculate_tangents() const {
-  tangents_.clear();
-  int n = vertices_.size();
-  for (int i = 0; i < n; ++i) {
-    tangents_.append_array({1, 0, 0, 1});
-  }
-}
-
-void HexMesh::calculate_colors() const {
-  colors_.clear();
-  int n = vertices_.size();
-  for (int i = 0; i < n; ++i) {
-    colors_.push_back(Color(0, 0, 0));
   }
 }
 
 void HexMesh::calculate_tex_uv1() const {
   tex_uv1_.clear();
-  Vector3 offset(0, 0, 0);
-  auto tex_coord_mapper = [this](Vector3 v) -> Vector2 { return {(v.x + r) / (2 * r), (v.z + R) / (2 * R)}; };
+
+  auto corner_points = _hex.points();
+  auto normal = _hex.normal();
+
+  Vector3 c = (corner_points[0] + corner_points[3]) / 2;
+  float diameter = (corner_points[3] - corner_points[0]).length();
+  float R = radius(diameter);
+  float r = small_radius(diameter);
+  Vector3 direction0 = (corner_points[3] - corner_points[0]).normalized();
+  Vector3 direction1 =
+      tesselation_type == TesselationType::Plane ? direction0.cross(normal) : direction0.cross(c.normalized());
+
+  Vector3 p0 = c - direction1 * r - direction0 * R;
+  Vector3 p1 = c - direction1 * r + direction0 * R;
+  Vector3 p2 = c + direction1 * r - direction0 * R;
+
+  Vector3 r_line = (p2 - p0).normalized();
+  Vector3 R_line = (p1 - p0).normalized();
+
+  auto tex_coord_mapper = [R, r, r_line, R_line, p0](Vector3 v) -> Vector2 {
+    Vector3 v_rel_p0 = v - p0;
+    return {r_line.dot(v_rel_p0) / (2 * r), R_line.dot(v_rel_p0) / (2 * R)};
+  };
   for (const auto& v : vertices_) {
     tex_uv1_.push_back(tex_coord_mapper(v));
   }
 }
 
-void HexMesh::calculate_tex_uv2() const {
-  tex_uv2_.clear();
-  Vector3 offset(0, 0, 0);
-  auto tex_coord_mapper = [this](Vector3 v) -> Vector2 { return {(v.x + r) / (2 * r), (v.z + R) / (2 * R)}; };
-  for (const auto& v : vertices_) {
-    tex_uv2_.push_back(tex_coord_mapper(v));
-  }
-}
-
-void HexMesh::calculate_color_custom() const {
-  color_custom0_.clear();
-  color_custom1_.clear();
-  color_custom2_.clear();
-  color_custom3_.clear();
-  int n = vertices_.size();
-  for (int i = 0; i < n; ++i) {
-    color_custom0_.append_array({0, 0, 0, 0});
-    color_custom1_.append_array({0, 0, 0, 0});
-    color_custom2_.append_array({0, 0, 0, 0});
-    color_custom3_.append_array({0, 0, 0, 0});
-  }
-}
-
-void HexMesh::calculate_bones_weights() const {
-  bones_.clear();
-  weights_.clear();
-  int n = vertices_.size();
-  for (int i = 0; i < n; ++i) {
-    bones_.append_array({0, 0, 0, 0});
-    weights_.append_array({0, 0, 0, 0});
-  }
-}
-
-Array HexMesh::_create_mesh_array() const {
-  Array res;
-  res.append(vertices_);
-  res.append(normals_);
-  res.append(tangents_);
-  res.append(colors_);
-  res.append(tex_uv1_);
-  res.append(tex_uv2_);
-  res.append(color_custom0_);
-  res.append(color_custom1_);
-  res.append(color_custom2_);
-  res.append(color_custom3_);
-  res.append(bones_);
-  res.append(weights_);
-  res.append(indices_);
-  return res;
-}
-
 void HexMesh::update() { request_update(); }
+
+Ref<HexMesh> make_hex_mesh(Hexagon hex, HexMeshParams params) {
+  Ref<HexMesh> mesh = memnew(HexMesh(hex, params));
+  mesh->init();
+  return mesh;
+}
 
 }  // namespace sota

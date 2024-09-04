@@ -1,6 +1,10 @@
 #include "core/general_utility.h"
 
+#include <cstdlib>
+
+#include "godot_cpp/variant/packed_vector3_array.hpp"
 #include "godot_cpp/variant/vector2.hpp"
+#include "godot_cpp/variant/vector3.hpp"
 #include "misc/types.h"
 
 namespace sota {
@@ -12,6 +16,16 @@ void GeneralUtility::shift_compress(godot::PackedVector3Array& vertices, float s
     v.y += shift;
     v.y *= compress;
     v.y += offset;
+  }
+}
+
+void GeneralUtility::shift_compress_polyhedron(godot::PackedVector3Array& vertices,
+                                               godot::PackedVector3Array initial_vertices, float shift, float compress,
+                                               float offset) {
+  int n = vertices.size();
+  for (int i = 0; i < n; ++i) {
+    Vector3 dir = initial_vertices[i].normalized();
+    vertices[i] = initial_vertices[i] + dir * std::abs(vertices[i].length() - initial_vertices[i].length()) * compress;
   }
 }
 
