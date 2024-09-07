@@ -34,7 +34,7 @@ Please, see [CONTRIBUTING.md](CONTRIBUTING.md) if you want to make pull request.
 Apart from making PR I will also highly appreciate if you:
 1. Raise an issue about bug or suggest new feature.
 2. Star repo if you like it.
-3. Use discord [link](https://discord.gg/6ZKQ8BfM) or ardazishvili.roma@gmail.com for your positive/negative feedback.
+3. Use discord [link](https://discord.gg/UcaFzF9S) or ardazishvili.roma@gmail.com for your positive/negative feedback.
 4. Make a donation: [boosty](https://boosty.to/ardazishvili/donate), [patreon](https://patreon.com/RomanArdazishvili?utm_medium=unknown&utm_source=join_link&utm_campaign=creatorshare_creator&utm_content=copyLink).
 
 ## Roadmap
