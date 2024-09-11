@@ -1,6 +1,6 @@
 #include "core/mesh.h"
 
-#include "godot_cpp/variant/vector2.hpp"
+#include "dummy_mesher.h"
 #include "godot_cpp/variant/vector3.hpp"
 
 namespace sota {
@@ -50,21 +50,9 @@ void SotaMesh::calculate_normals() const {
   }
 }
 
-void SotaMesh::calculate_tangents() const {
-  tangents_.clear();
-  int n = vertices_.size();
-  for (int i = 0; i < n; ++i) {
-    tangents_.append_array({1, 0, 0, 1});
-  }
-}
+void SotaMesh::calculate_tangents() const { tangents_ = DummyMesher::calculate_tangents(vertices_.size()); }
 
-void SotaMesh::calculate_colors() const {
-  colors_.clear();
-  int n = vertices_.size();
-  for (int i = 0; i < n; ++i) {
-    colors_.push_back(Color(0, 0, 0));
-  }
-}
+void SotaMesh::calculate_colors() const { colors_ = DummyMesher::calculate_colors(vertices_.size()); }
 
 void SotaMesh::calculate_indices() const {
   indices_.clear();
@@ -73,35 +61,18 @@ void SotaMesh::calculate_indices() const {
     indices_.append_array({i, i + 1, i + 2});
   }
 }
-void SotaMesh::calculate_tex_uv2() const {
-  tex_uv2_.clear();
-  for (const auto& v : vertices_) {
-    tex_uv2_.push_back(Vector2{0, 0});
-  }
-}
+void SotaMesh::calculate_tex_uv2() const { tex_uv2_ = DummyMesher::calculate_tex_uv2(vertices_.size()); }
 
 void SotaMesh::calculate_color_custom() const {
-  color_custom0_.clear();
-  color_custom1_.clear();
-  color_custom2_.clear();
-  color_custom3_.clear();
-  int n = vertices_.size();
-  for (int i = 0; i < n; ++i) {
-    color_custom0_.append_array({0, 0, 0, 0});
-    color_custom1_.append_array({0, 0, 0, 0});
-    color_custom2_.append_array({0, 0, 0, 0});
-    color_custom3_.append_array({0, 0, 0, 0});
-  }
+  color_custom0_ = DummyMesher::calculate_color_custom0(vertices_.size());
+  color_custom1_ = DummyMesher::calculate_color_custom0(vertices_.size());
+  color_custom2_ = DummyMesher::calculate_color_custom0(vertices_.size());
+  color_custom3_ = DummyMesher::calculate_color_custom0(vertices_.size());
 }
 
 void SotaMesh::calculate_bones_weights() const {
-  bones_.clear();
-  weights_.clear();
-  int n = vertices_.size();
-  for (int i = 0; i < n; ++i) {
-    bones_.append_array({0, 0, 0, 0});
-    weights_.append_array({0, 0, 0, 0});
-  }
+  bones_ = DummyMesher::calculate_bones(vertices_.size());
+  weights_ = DummyMesher::calculate_weights(vertices_.size());
 }
 
 Array SotaMesh::_create_mesh_array() const {
@@ -123,11 +94,11 @@ Array SotaMesh::_create_mesh_array() const {
 }
 
 void SotaMesh::recalculate_all_except_vertices() const {
-  calculate_indices();  // normals depends on indices. Calculate them first
+  calculate_indices();
   calculate_normals();
+  calculate_tex_uv1();
   calculate_tangents();
   calculate_colors();
-  calculate_tex_uv1();
   calculate_tex_uv2();
   calculate_color_custom();
   calculate_bones_weights();
