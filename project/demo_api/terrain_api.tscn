@@ -1,0 +1,17 @@
+[gd_scene load_steps=4 format=3 uid="uid://dbklmh0noh04f"]
+
+[ext_resource type="Shader" path="res://demo_terrain/shaders/wireframe.gdshader" id="1_rxou3"]
+[ext_resource type="Script" path="res://demo_api/scripts/rect_hex_grid_api_test.gd" id="2_brekk"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_4edwr"]
+noise_type = 3
+frequency = 0.3901
+
+[node name="Node3D" type="Node3D"]
+
+[node name="RectHexGridMap" type="RectHexGridMap" parent="."]
+height = 5
+width = 5
+shader = ExtResource("1_rxou3")
+script = ExtResource("2_brekk")
+noise = SubResource("FastNoiseLite_4edwr")

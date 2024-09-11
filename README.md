@@ -1,4 +1,4 @@
-![pic](doc/pics/screen0.png)
+![pic](docs/pics/screen0.png)
 # Sota
 
 Editable generator of discrete structures for Godot 4

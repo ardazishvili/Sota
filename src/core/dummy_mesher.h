@@ -8,6 +8,9 @@
 
 namespace sota {
 
+/**
+ * @brief Class to provide dummy information for godot::PrimitiveMesh
+ */
 class DummyMesher {
  public:
   static godot::PackedFloat32Array calculate_tangents(int n);

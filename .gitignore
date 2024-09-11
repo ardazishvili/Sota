@@ -19,3 +19,9 @@ compile_commands.json
 
 # Vim
 .swp
+
+# Docs
+docs/_build/**
+docs/_templates/**
+docs/_doxygen/**
+docs/api/**
