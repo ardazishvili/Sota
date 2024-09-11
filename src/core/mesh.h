@@ -35,9 +35,6 @@ class SotaMesh : public godot::PrimitiveMesh {
   int id;
   int divisions{1};
 
-  static void _bind_methods();
-  virtual void init_impl() = 0;
-
   mutable godot::PackedVector3Array vertices_;
   mutable godot::PackedVector3Array normals_;
   mutable godot::PackedFloat32Array tangents_;
@@ -51,6 +48,9 @@ class SotaMesh : public godot::PrimitiveMesh {
   mutable godot::PackedByteArray color_custom3_;
   mutable godot::PackedInt32Array bones_;
   mutable godot::PackedFloat32Array weights_;
+
+  static void _bind_methods();
+  virtual void init_impl() = 0;
 
   void calculate_tangents() const;
   void calculate_colors() const;
