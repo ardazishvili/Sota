@@ -3,6 +3,7 @@
 #include "cube_coordinates.h"
 #include "godot_cpp/classes/editor_interface.hpp"
 #include "godot_cpp/classes/engine.hpp"
+#include "godot_cpp/classes/mesh_instance3d.hpp"
 #include "godot_cpp/classes/sphere_shape3d.hpp"
 #include "godot_cpp/classes/static_body3d.hpp"
 #include "godot_cpp/core/memory.hpp"
@@ -17,9 +18,6 @@ using namespace gd;
 
 // Tile definitions
 Tile::~Tile() {}
-
-Tile::Tile(gd::Ref<HexMesh> mesh, OffsetCoordinates offset_coord)
-    : _mesh(mesh), offset_coord(offset_coord), shifted(is_odd(offset_coord.row)) {}
 
 Tile::Tile(gd::Ref<HexMesh> mesh, Vector3 offset, gd::Node3D* parent, OffsetCoordinates offset_coord)
     : _mesh(mesh), offset_coord(offset_coord), shifted(is_odd(offset_coord.row)) {
@@ -36,7 +34,9 @@ Tile::Tile(gd::Ref<HexMesh> mesh, Vector3 offset, gd::Node3D* parent, OffsetCoor
 
   _main_mesh_instance->set_mesh(mesh);
 
-  parent->add_child(_main_mesh_instance);
+  add_child(_main_mesh_instance);
+  parent->add_child(this);
+
   _main_mesh_instance->add_child(_static_body);
   _static_body->add_child(_collision_shape3d);
   if (Engine::get_singleton()->is_editor_hint()) {

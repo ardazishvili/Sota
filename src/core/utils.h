@@ -1,5 +1,6 @@
 #pragma once
 
+#include "godot_cpp/core/memory.hpp"
 #include "godot_cpp/variant/array.hpp"
 #include "godot_cpp/variant/packed_vector3_array.hpp"
 #include "godot_cpp/variant/vector2.hpp"
@@ -29,5 +30,10 @@ auto ico_points() -> godot::PackedVector3Array;
 auto ico_indices() -> godot::Array;
 auto barycentric(godot::Vector2 point) -> godot::Vector3;
 auto map2d_to_3d(godot::Vector2 point, godot::Vector3 s1, godot::Vector3 s2, godot::Vector3 s3) -> godot::Vector3;
+
+template <typename T, typename... Args>
+T* make_non_ref(Args... args) {
+  return memnew(T(args...));
+}
 
 }  // namespace sota

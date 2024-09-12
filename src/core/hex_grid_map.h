@@ -9,6 +9,7 @@
 #include "godot_cpp/classes/node3d.hpp"
 #include "godot_cpp/classes/shader.hpp"
 #include "godot_cpp/classes/wrapped.hpp"
+#include "godot_cpp/variant/array.hpp"
 #include "godot_cpp/variant/vector3i.hpp"
 #include "misc/cube_coordinates.h"
 #include "misc/tile.h"
@@ -16,15 +17,13 @@
 
 namespace sota {
 
-using TilesLayout = std::vector<std::vector<std::unique_ptr<Tile>>>;
+using TilesLayout = std::vector<std::vector<Tile*>>;
 
 class HexGridMap : public gd::Node3D {
   GDCLASS(HexGridMap, gd::Node3D)
 
  public:
   HexGridMap() = default;
-
-  void _ready() override;
 
   void set_shader(const gd::Ref<gd::Shader> p_shader);
   gd::Ref<gd::Shader> get_shader() const;
