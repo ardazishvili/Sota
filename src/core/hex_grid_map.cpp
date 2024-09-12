@@ -47,6 +47,9 @@ void HexGridMap::_bind_methods() {
   ClassDB::bind_method(D_METHOD("get_frame_offset"), &HexGridMap::get_frame_offset);
   ClassDB::bind_method(D_METHOD("set_frame_offset", "p_frame_offset"), &HexGridMap::set_frame_offset);
   ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "frame_offset"), "set_frame_offset", "get_frame_offset");
+
+  // API
+  ClassDB::bind_method(D_METHOD("get_hex_meshes"), &HexGridMap::get_hex_meshes);
 }
 
 void HexGridMap::init() {
@@ -127,7 +130,15 @@ void HexGridMap::init_hexmesh() {
   }
 }
 
-void HexGridMap::_ready() { init(); }
+Array HexGridMap::get_hex_meshes() {
+  Array result;
+  for (std::vector<Tile*>& row : _tiles_layout) {
+    for (Tile* tile : row) {
+      result.append(tile->mesh());
+    }
+  }
+  return result;
+}
 
 // RectHexGridMap definitions
 void RectHexGridMap::_bind_methods() {
