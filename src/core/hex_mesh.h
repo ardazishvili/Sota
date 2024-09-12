@@ -40,7 +40,6 @@ class HexMesh : public SotaMesh {
   float get_diameter() const;
   gd::Vector3 get_center() const { return _hex.center(); }
 
-  void init_impl() override;
   void update();
 
   void set_frame_state(bool state) { frame_state = state; }
@@ -54,6 +53,7 @@ class HexMesh : public SotaMesh {
   HexMesh(Hexagon hex, HexMeshParams params);
   HexMesh(Hexagon hex);
   static void _bind_methods();
+  void init_impl() override;
 
   void calculate_vertices_recursion();  // not tested e.g. for clips
   void calculate_vertices_iteration() const;

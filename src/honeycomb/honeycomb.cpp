@@ -221,7 +221,7 @@ Array Honeycomb::get_cells_by_order(SortingOrder order, std::function<bool(Honey
   std::vector<std::pair<int, HoneycombHoney*>> all_cells;
   for (auto& row : _tiles_layout) {
     for (auto& tile_ptr : row) {
-      HoneycombTile* tile = dynamic_cast<HoneycombTile*>(tile_ptr.get());
+      HoneycombTile* tile = dynamic_cast<HoneycombTile*>(tile_ptr);
       HoneycombHoney* cell = tile->honey_mesh().ptr();
       if (pred(cell)) {
         all_cells.emplace_back(cell->get_level(), cell);
@@ -244,7 +244,7 @@ Array Honeycomb::get_cells() const {
   Array res;
   for (auto& row : _tiles_layout) {
     for (auto& tile_ptr : row) {
-      HoneycombTile* tile = dynamic_cast<HoneycombTile*>(tile_ptr.get());
+      HoneycombTile* tile = dynamic_cast<HoneycombTile*>(tile_ptr);
       HoneycombHoney* cell = tile->honey_mesh().ptr();
       res.append(Ref(cell));
     }
@@ -269,7 +269,7 @@ Array Honeycomb::get_max_cells() const {
 bool Honeycomb::all_cells_empty() const {
   for (auto& row : _tiles_layout) {
     for (auto& tile_ptr : row) {
-      HoneycombTile* tile = dynamic_cast<HoneycombTile*>(tile_ptr.get());
+      HoneycombTile* tile = dynamic_cast<HoneycombTile*>(tile_ptr);
       HoneycombHoney* cell = tile->honey_mesh().ptr();
       if (!cell->is_empty()) {
         return false;
@@ -366,7 +366,7 @@ void Honeycomb::init_hexmesh() {
       Ref<HoneycombHoney> honey = make_honeycomb_honey(honey_hex, honey_params);
 
       _tiles_layout.back().push_back(
-          std::make_unique<HoneycombTile>(cell, honey, this, OffsetCoordinates{.row = val.x, .col = val.z}));
+          make_non_ref<HoneycombTile>(cell, honey, this, OffsetCoordinates{.row = val.x, .col = val.z}));
     }
   }
 }
@@ -397,7 +397,7 @@ void Honeycomb::calculate_flat_normals() {
     for (auto& tile_ptr : row) {
       tile_ptr->mesh()->calculate_normals();
 
-      HoneycombTile* tile = dynamic_cast<HoneycombTile*>(tile_ptr.get());
+      HoneycombTile* tile = dynamic_cast<HoneycombTile*>(tile_ptr);
       tile->honey_mesh()->calculate_normals();
     }
   }
@@ -407,7 +407,7 @@ void Honeycomb::meshes_update() {
   for (auto& row : _tiles_layout) {
     for (auto& tile_ptr : row) {
       tile_ptr->mesh()->update();
-      dynamic_cast<HoneycombTile*>(tile_ptr.get())->honey_mesh()->update();
+      dynamic_cast<HoneycombTile*>(tile_ptr)->honey_mesh()->update();
     }
   }
 }
@@ -423,7 +423,7 @@ void Honeycomb::calculate_smooth_normals() {
   std::vector<GroupedHexagonMeshVertices> honey_vertex_groups;
   for (auto& row : _tiles_layout) {
     for (auto& tile_ptr : row) {
-      HoneycombTile* tile = dynamic_cast<HoneycombTile*>(tile_ptr.get());
+      HoneycombTile* tile = dynamic_cast<HoneycombTile*>(tile_ptr);
       honey_vertex_groups.push_back(tile->honey_mesh()->get_grouped_vertices());
     }
   }
@@ -437,7 +437,7 @@ void Honeycomb::prepare_heights_calculation() {
   float global_max_y = std::numeric_limits<float>::min();
   for (auto& row : _tiles_layout) {
     for (auto& tile_ptr : row) {
-      HoneycombTile* tile = dynamic_cast<HoneycombTile*>(tile_ptr.get());
+      HoneycombTile* tile = dynamic_cast<HoneycombTile*>(tile_ptr);
       HoneycombHoney* honey_mesh = tile->honey_mesh().ptr();
 
       honey_mesh->calculate_initial_heights();
@@ -452,7 +452,7 @@ void Honeycomb::prepare_heights_calculation() {
 
   for (auto& row : _tiles_layout) {
     for (auto& tile_ptr : row) {
-      HoneycombTile* tile = dynamic_cast<HoneycombTile*>(tile_ptr.get());
+      HoneycombTile* tile = dynamic_cast<HoneycombTile*>(tile_ptr);
       HoneycombHoney* honey_mesh = tile->honey_mesh().ptr();
 
       honey_mesh->set_shift_compress(-global_min_y, compression_factor);
@@ -463,7 +463,7 @@ void Honeycomb::prepare_heights_calculation() {
 void Honeycomb::calculate_final_heights() {
   for (auto& row : _tiles_layout) {
     for (auto& tile_ptr : row) {
-      HoneycombTile* tile = dynamic_cast<HoneycombTile*>(tile_ptr.get());
+      HoneycombTile* tile = dynamic_cast<HoneycombTile*>(tile_ptr);
       HoneycombHoney* honey_mesh = tile->honey_mesh().ptr();
 
       honey_mesh->calculate_heights();
@@ -516,7 +516,7 @@ void HexagonalHoneycomb::_bind_methods() {
 Vector3 HexagonalHoneycomb::get_center() const {
   int total = 0;
   for (auto& row : _tiles_layout) {
-    for (auto& tile_ptr : row) {
+    for (auto* tile_ptr : row) {
       ++total;
     }
   }
@@ -525,7 +525,7 @@ Vector3 HexagonalHoneycomb::get_center() const {
   for (auto& row : _tiles_layout) {
     for (auto& tile_ptr : row) {
       if (i == middle) {
-        HoneycombTile* tile = dynamic_cast<HoneycombTile*>(tile_ptr.get());
+        HoneycombTile* tile = dynamic_cast<HoneycombTile*>(tile_ptr);
         HoneycombHoney* cell = tile->honey_mesh().ptr();
         return cell->get_center() + Vector3(0, 0, radius(diameter));  // + upper half of 0-row
       }

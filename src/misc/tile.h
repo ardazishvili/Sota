@@ -18,12 +18,11 @@
 
 namespace sota {
 
-class Tile {
+class Tile : public godot::Node3D {
  public:
   Tile() = delete;
   virtual ~Tile();
 
-  Tile(gd::Ref<HexMesh> mesh, OffsetCoordinates offset_coord);  // used by HexGridMap. Delete?
   Tile(gd::Ref<HexMesh> mesh, gd::Vector3 offset, gd::Node3D* parent, OffsetCoordinates offset_coord);
 
   gd::Ref<HexMesh> mesh() const;

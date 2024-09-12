@@ -13,7 +13,6 @@
 #include "general_utility.h"
 #include "godot_cpp/classes/shader_material.hpp"
 #include "godot_cpp/variant/plane.hpp"
-#include "godot_cpp/variant/utility_functions.hpp"
 #include "godot_cpp/variant/vector3.hpp"
 #include "godot_cpp/variant/vector3i.hpp"
 #include "hexagonal_utility.h"
@@ -300,7 +299,7 @@ void RidgeHexGridMap::init_hexmesh() {
       };
       Ref<RidgeHexMesh> m = create_hex_mesh(biome, hex, params);
       _tiles_layout.back().push_back(
-          std::make_unique<BiomeTile>(m, this, biome, OffsetCoordinates{.row = val.x, .col = val.z}));
+          make_non_ref<BiomeTile>(m, this, biome, OffsetCoordinates{.row = val.x, .col = val.z}));
     }
   }
 }
@@ -367,7 +366,7 @@ void RidgeHexGridMap::calculate_neighbours(GroupOfHexagonMeshes& group) {
   };
   for (auto& row : _tiles_layout) {
     for (auto& tile_ptr : row) {
-      BiomeTile* tile = dynamic_cast<BiomeTile*>(tile_ptr.get());
+      BiomeTile* tile = dynamic_cast<BiomeTile*>(tile_ptr);
       RidgeHexMesh* mesh = dynamic_cast<RidgeHexMesh*>(tile->mesh().ptr());
       if (std::find(group.begin(), group.end(), mesh) == group.end()) {
         continue;
@@ -391,7 +390,7 @@ void RidgeHexGridMap::calculate_neighbours(GroupOfHexagonMeshes& group) {
 void RidgeHexGridMap::assign_neighbours(GroupOfHexagonMeshes& group) {
   for (auto& row : _tiles_layout) {
     for (auto& tile_ptr : row) {
-      BiomeTile* tile = dynamic_cast<BiomeTile*>(tile_ptr.get());
+      BiomeTile* tile = dynamic_cast<BiomeTile*>(tile_ptr);
       RidgeHexMesh* mesh = dynamic_cast<RidgeHexMesh*>(tile->mesh().ptr());
       if (std::find(group.begin(), group.end(), mesh) == group.end()) {
         continue;
@@ -517,7 +516,7 @@ void RidgeHexGridMap::prepare_heights_calculation() {
 void RidgeHexGridMap::assign_cube_coordinates_map() {
   for (auto& row : _tiles_layout) {
     for (auto& tile_ptr : row) {
-      BiomeTile* tile = dynamic_cast<BiomeTile*>(tile_ptr.get());
+      BiomeTile* tile = dynamic_cast<BiomeTile*>(tile_ptr);
       _cube_to_hexagon[tile->get_cube_coords()] = tile_ptr->mesh().ptr();
     }
   }
@@ -602,7 +601,7 @@ BiomeGroups RectRidgeHexGridMap::collect_biome_groups(Biome b) {
     for (Vector3i v : row) {
       int i = v.x;
       int j = v.z;
-      BiomeTile* tile = dynamic_cast<BiomeTile*>(_tiles_layout[i][j].get());
+      BiomeTile* tile = dynamic_cast<BiomeTile*>(_tiles_layout[i][j]);
       Biome biome = tile->biome();
       if (biome != b) {
         continue;
@@ -663,7 +662,7 @@ BiomeGroups HexagonalRidgeHexGridMap::collect_biome_groups(Biome b) {
   auto flat = [width](int i, int j) { return i * width + j; };
   for (auto& row : _tiles_layout) {
     for (auto& tile_ptr : row) {
-      BiomeTile* tile = dynamic_cast<BiomeTile*>(tile_ptr.get());
+      BiomeTile* tile = dynamic_cast<BiomeTile*>(tile_ptr);
       Biome biome = tile->biome();
       if (biome != b) {
         continue;

@@ -1,7 +1,5 @@
 #include "core/hex_grid_map.h"
 
-#include <memory>
-
 #include "core/hex_mesh.h"
 #include "core/utils.h"
 #include "cube_coordinates.h"
@@ -9,8 +7,8 @@
 #include "godot_cpp/classes/shader.hpp"
 #include "godot_cpp/classes/shader_material.hpp"
 #include "godot_cpp/core/class_db.hpp"
-#include "godot_cpp/core/memory.hpp"
 #include "godot_cpp/core/object.hpp"
+#include "godot_cpp/variant/array.hpp"
 #include "godot_cpp/variant/callable.hpp"
 #include "godot_cpp/variant/vector2.hpp"
 #include "godot_cpp/variant/vector3.hpp"
@@ -27,6 +25,7 @@ using namespace gd;
 void HexGridMap::_bind_methods() {
   ClassDB::bind_method(D_METHOD("init"), &HexGridMap::init);
 
+  // Properties
   ClassDB::bind_method(D_METHOD("get_divisions"), &HexGridMap::get_divisions);
   ClassDB::bind_method(D_METHOD("set_divisions", "p_divisions"), &HexGridMap::set_divisions);
   ADD_PROPERTY(PropertyInfo(Variant::INT, "divisions"), "set_divisions", "get_divisions");
@@ -90,13 +89,13 @@ bool HexGridMap::get_frame_state() const { return frame_state; }
 float HexGridMap::get_frame_offset() const { return frame_offset; }
 
 void HexGridMap::init_hexmesh() {
-  _tiles_layout.clear();
   TypedArray<Node> children = get_children();
   for (int i = 0; i < children.size(); ++i) {
     Node* child = Object::cast_to<Node>(children[i].operator Object*());
     remove_child(child);
     child->queue_free();
   }
+  _tiles_layout.clear();
 
   for (auto row : col_row_layout) {
     _tiles_layout.push_back({});
@@ -125,7 +124,7 @@ void HexGridMap::init_hexmesh() {
       Ref<HexMesh> m = make_hex_mesh(hex, params);
 
       _tiles_layout.back().push_back(
-          std::make_unique<Tile>(m, offset, this, OffsetCoordinates{.row = val.x, .col = val.z}));
+          make_non_ref<Tile>(m, offset, this, OffsetCoordinates{.row = val.x, .col = val.z}));
     }
   }
 }
