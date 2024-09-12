@@ -6,11 +6,18 @@
 namespace sota {
 
 using namespace godot;
+void SotaMesh::init() {
+  init_impl();
+  request_update();
+}
 
 void SotaMesh::_bind_methods() {
   ClassDB::bind_method(D_METHOD("get_divisions"), &SotaMesh::get_divisions);
   ClassDB::bind_method(D_METHOD("set_divisions", "p_divisions"), &SotaMesh::set_divisions);
   ADD_PROPERTY(PropertyInfo(Variant::INT, "divisions"), "set_divisions", "get_divisions");
+
+  ClassDB::bind_method(D_METHOD("get_vertices"), &SotaMesh::get_vertices);
+  ClassDB::bind_method(D_METHOD("set_vertices", "vertices"), &SotaMesh::set_vertices);
 }
 
 void SotaMesh::set_divisions(const int p_divisions) {
@@ -102,6 +109,14 @@ void SotaMesh::recalculate_all_except_vertices() const {
   calculate_tex_uv2();
   calculate_color_custom();
   calculate_bones_weights();
+}
+
+godot::PackedVector3Array SotaMesh::get_vertices() const { return vertices_; }
+
+void SotaMesh::set_vertices(PackedVector3Array vertices) {
+  vertices_ = vertices;
+  recalculate_all_except_vertices();
+  request_update();
 }
 
 }  // namespace sota

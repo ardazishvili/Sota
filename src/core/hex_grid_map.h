@@ -45,6 +45,8 @@ class HexGridMap : public gd::Node3D {
 
   virtual void calculate_normals() {}
 
+  godot::Array get_hex_meshes();
+
  protected:
   float diameter{1};
   int divisions{3};
