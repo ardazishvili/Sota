@@ -21,7 +21,7 @@ class PrismHexMesh : public HexMesh {
   static void _bind_methods();
 
  private:
-  float height{0.0};
+  float _height{0.0};
 };
 
 }  // namespace sota

@@ -34,13 +34,13 @@ HexMesh::HexMesh(Hexagon hex, HexMeshParams params) {
   _R = radius(_diameter);
   _r = small_radius(_diameter);
 
-  id = params.id;
+  _id = params.id;
   _diameter = params.diameter;
-  frame_state = params.frame_state;
-  frame_offset = params.frame_offset;
+  _frame_state = params.frame_state;
+  _frame_offset = params.frame_offset;
   set_material(params.material);
-  divisions = params.divisions;
-  clip_options = params.clip_options;
+  _divisions = params.divisions;
+  _clip_options = params.clip_options;
 }
 
 HexMesh::HexMesh(Hexagon hex) {
@@ -49,19 +49,19 @@ HexMesh::HexMesh(Hexagon hex) {
   _R = radius(_diameter);
   _r = small_radius(_diameter);
 
-  id = params.id;
+  _id = params.id;
   _diameter = params.diameter;
-  frame_state = params.frame_state;
-  frame_offset = params.frame_offset;
+  _frame_state = params.frame_state;
+  _frame_offset = params.frame_offset;
   set_material(params.material);
-  divisions = params.divisions;
-  clip_options = params.clip_options;
+  _divisions = params.divisions;
+  _clip_options = params.clip_options;
 }
 
 void HexMesh::init_impl() {
   if (tesselation_mode == TesselationMode::Iterative) {
     calculate_vertices_iteration();
-    if (frame_state) {
+    if (_frame_state) {
       add_frame();
     }
   } else if (tesselation_mode == TesselationMode::Recursive) {
@@ -86,8 +86,8 @@ void HexMesh::add_frame() const {
     auto a = corner_points[i];
     auto b = corner_points[(i + 1) % 6];
 
-    auto c = corner_points[i] + Vector3(0, -frame_offset, 0);
-    auto d = corner_points[(i + 1) % 6] + Vector3(0, -frame_offset, 0);
+    auto c = corner_points[i] + Vector3(0, -_frame_offset, 0);
+    auto d = corner_points[(i + 1) % 6] + Vector3(0, -_frame_offset, 0);
     vertices_.push_back(b);
     vertices_.push_back(a);
     vertices_.push_back(c);
@@ -110,7 +110,7 @@ void HexMesh::set_diameter(const float p_diameter) {
 float HexMesh::get_diameter() const { return _diameter; }
 
 void HexMesh::z_clip(float boundary) const {
-  float z_step = _R / divisions;
+  float z_step = _R / _divisions;
   float half_z_step = z_step / 2;
 
   PackedVector3Array filtered;
@@ -170,7 +170,7 @@ void HexMesh::calculate_vertices_recursion() {
   auto corner_points = _hex.points();
   Vector3 c = (corner_points[0] + corner_points[3]) / 2;
   for (int i = 0; i < 6; ++i) {
-    tesselate_into_triangles(corner_points[i], corner_points[(i + 1) % 6], c, divisions);
+    tesselate_into_triangles(corner_points[i], corner_points[(i + 1) % 6], c, _divisions);
   }
   return;
 }
@@ -183,8 +183,8 @@ void HexMesh::calculate_vertices_iteration() const {
   auto normal = _hex.normal();
 
   Vector3 pivot = corner_points[2];
-  unsigned int triangles_count = divisions * 2 + (divisions * 2 - 1);
-  float d0_step = (pivot - center).length() / divisions;
+  unsigned int triangles_count = _divisions * 2 + (_divisions * 2 - 1);
+  float d0_step = (pivot - center).length() / _divisions;
   float half_d0_step = d0_step / 2;
   float d1_step = d0_step * std::sqrt(3) / 2;
 
@@ -198,7 +198,7 @@ void HexMesh::calculate_vertices_iteration() const {
   Vector3 start_point_even = pivot;
   Vector3 start_point_odd = pivot + half_d0_inc + d1_inc;
 
-  for (int layer = 0; layer < divisions; ++layer, triangles_count -= 2) {
+  for (int layer = 0; layer < _divisions; ++layer, triangles_count -= 2) {
     Vector3 point_even = start_point_even + (layer * half_d0_inc) + (layer * d1_inc);
     Vector3 point_odd = start_point_odd + (layer * half_d0_inc) + (layer * d1_inc);
     for (unsigned int i = 0; i < triangles_count; ++i) {
@@ -219,13 +219,13 @@ void HexMesh::calculate_vertices_iteration() const {
     }
   }
 
-  if (clip_options.down) {
+  if (_clip_options.down) {
     z_clip(-_R / 2);
-  } else if (clip_options.up) {
+  } else if (_clip_options.up) {
     z_clip(_R / 2);
   }
 
-  if (clip_options.left) {
+  if (_clip_options.left) {
     return;
   }
 
@@ -234,7 +234,7 @@ void HexMesh::calculate_vertices_iteration() const {
 
   auto reflected = [center, direction0](Vector3 v) -> Vector3 { return (v - center).reflect(direction0) + center; };
 
-  if (clip_options.right) {
+  if (_clip_options.right) {
     vertices_.clear();
   }
   for (int i = 0; i < n; i += 3) {

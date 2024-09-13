@@ -21,7 +21,7 @@ void HoneycombCell::handle_input_event(Camera3D* p_camera, const Ref<InputEvent>
                                        const Vector3& p_event_position, const Vector3& p_normal, int32_t p_shape_idx) {
   if (auto* mouse_event = dynamic_cast<InputEventMouse*>(p_event.ptr()); mouse_event) {
     if (mouse_event->get_button_mask().has_flag(MOUSE_BUTTON_MASK_LEFT) && mouse_event->is_pressed()) {
-      set_material(selection_material);
+      set_material(_selection_material);
     }
   }
 }
@@ -34,15 +34,15 @@ void HoneycombCell::handle_mouse_exited() {
 }
 
 void HoneycombCell::set_noise(Ref<FastNoiseLite> p_noise) {
-  noise = p_noise;
-  if (noise.ptr()) {
-    noise->connect("changed", Callable(this, "request_update"));
+  _noise = p_noise;
+  if (_noise.ptr()) {
+    _noise->connect("changed", Callable(this, "request_update"));
     request_update();
   }
 }
 
 void HoneycombCell::set_selection_material(Ref<ShaderMaterial> p_selection_material) {
-  selection_material = p_selection_material;
+  _selection_material = p_selection_material;
 }
 
 void HoneycombCell::calculate_heights(float bottom_offset) {
@@ -77,7 +77,7 @@ GroupedHexagonMeshVertices HoneycombCell::get_grouped_vertices() {
   for (int i = 0; i < size; ++i) {
     Vector3& v = vertices_[i];
     Vector3& n = normals_[i];
-    auto p = to_point_divisioned_position(v, _diameter, divisions);
+    auto p = to_point_divisioned_position(v, _diameter, _divisions);
     vertex_groups[p].push_back(&n);
   }
   return vertex_groups;

@@ -42,11 +42,11 @@ class HexMesh : public SotaMesh {
 
   void update();
 
-  void set_frame_state(bool state) { frame_state = state; }
-  void set_frame_value(float value) { frame_offset = value; }
+  void set_frame_state(bool state) { _frame_state = state; }
+  void set_frame_value(float value) { _frame_offset = value; }
 
   void set_tesselation_type(TesselationType p_tesselation_type) { tesselation_type = p_tesselation_type; }
-  void set_clip_options(ClipOptions p_options) { clip_options = p_options; }
+  void set_clip_options(ClipOptions p_options) { _clip_options = p_options; }
   void set_tesselation_mode(TesselationMode p_tesselation_mode) { tesselation_mode = p_tesselation_mode; }
 
  protected:
@@ -65,10 +65,10 @@ class HexMesh : public SotaMesh {
   TesselationType tesselation_type{TesselationType::Plane};
   TesselationMode tesselation_mode{TesselationMode::Iterative};
 
-  bool frame_state{false};
-  float frame_offset{0.0};
+  bool _frame_state{false};
+  float _frame_offset{0.0};
 
-  ClipOptions clip_options;
+  ClipOptions _clip_options;
 
  private:
   void init_from_hex(Hexagon hex);

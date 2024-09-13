@@ -14,15 +14,15 @@ void PrismHexMesh::_bind_methods() {
 }
 
 void PrismHexMesh::set_height(const float p_height) {
-  height = p_height;
+  _height = p_height;
   init();
 }
 
-float PrismHexMesh::get_height() const { return height; }
+float PrismHexMesh::get_height() const { return _height; }
 
 void PrismHexMesh::calculate_heights() {
   for (auto& v : vertices_) {
-    v += v.normalized() * height;
+    v += v.normalized() * _height;
   }
 
   for (int i = 0; i < 6; ++i) {
@@ -31,8 +31,8 @@ void PrismHexMesh::calculate_heights() {
     auto a = corner_points[i];
     auto b = corner_points[(i + 1) % 6];
 
-    auto c = a + a.normalized() * height;
-    auto d = b + b.normalized() * height;
+    auto c = a + a.normalized() * _height;
+    auto d = b + b.normalized() * _height;
 
     vertices_.push_back(a);
     vertices_.push_back(b);

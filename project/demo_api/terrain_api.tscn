@@ -9,9 +9,9 @@ frequency = 0.3901
 
 [node name="Node3D" type="Node3D"]
 
-[node name="RectHexGridMap" type="RectHexGridMap" parent="."]
-height = 5
+[node name="RectHexGrid" type="RectHexGrid" parent="."]
+_height = 5
 width = 5
-shader = ExtResource("1_rxou3")
+_shader = ExtResource("1_rxou3")
 script = ExtResource("2_brekk")
 noise = SubResource("FastNoiseLite_4edwr")

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "godot_cpp/classes/node3d.hpp"
 #include "godot_cpp/core/memory.hpp"
 #include "godot_cpp/variant/array.hpp"
 #include "godot_cpp/variant/packed_vector3_array.hpp"

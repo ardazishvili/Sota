@@ -21,10 +21,10 @@ class HoneycombHoney : public HexMesh {
  public:
   HoneycombHoney() : HexMesh(make_unit_hexagon()) {}
   HoneycombHoney(Hexagon hex, HoneycombHoneyMeshParams params) : HexMesh(hex, params.hex_mesh_params) {
-    noise = params.noise;
-    max_level = params.max_level;
-    fill_delta = params.fill_delta;
-    min_offset = params.min_offset;
+    _noise = params.noise;
+    _max_level = params.max_level;
+    _fill_delta = params.fill_delta;
+    _min_offset = params.min_offset;
   }
 
   // getters
@@ -47,9 +47,9 @@ class HoneycombHoney : public HexMesh {
 
   void set_shift_compress(float y_shift, float y_compress);
 
-  void lock() { locked = true; }
-  void unlock() { locked = false; }
-  bool is_locked() const { return locked; }
+  void lock() { _locked = true; }
+  void unlock() { _locked = false; }
+  bool is_locked() const { return _locked; }
   bool is_full() const;
   bool is_empty() const;
 
@@ -57,12 +57,12 @@ class HoneycombHoney : public HexMesh {
   static void _bind_methods();
 
  private:
-  gd::Ref<gd::FastNoiseLite> noise;
-  int level{0};
-  int max_level{0};
-  float fill_delta{0};
-  float min_offset{0.0};
-  bool locked{false};
+  gd::Ref<gd::FastNoiseLite> _noise;
+  int _level{0};
+  int _max_level{0};
+  float _fill_delta{0};
+  float _min_offset{0.0};
+  bool _locked{false};
 
   void recalculate_vertices_update(float surplus);
 

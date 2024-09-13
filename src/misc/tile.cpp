@@ -20,7 +20,7 @@ using namespace gd;
 Tile::~Tile() {}
 
 Tile::Tile(gd::Ref<HexMesh> mesh, Vector3 offset, gd::Node3D* parent, OffsetCoordinates offset_coord)
-    : _mesh(mesh), offset_coord(offset_coord), shifted(is_odd(offset_coord.row)) {
+    : _mesh(mesh), _offset_coord(offset_coord), _shifted(is_odd(offset_coord.row)) {
   _main_mesh_instance = memnew(MeshInstance3D());
   _sphere_shaped3d = Ref(memnew(SphereShape3D()));
 

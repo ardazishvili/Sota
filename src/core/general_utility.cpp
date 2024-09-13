@@ -57,23 +57,23 @@ std::pair<std::vector<std::array<float, 3>>, std::vector<float>> GeneralUtility:
   auto get_coeffs = [R, r, exclude_list]() -> std::vector<std::array<float, 3>> {
     std::array<std::array<float, 3>, 6> all = HexBorderLineParams(R, r).get_coeffs();
 
-    std::vector<std::array<float, 3>> coeffs;
+    std::vector<std::array<float, 3>> _coeffs;
     for (int i = 0; i < 6; ++i) {
       if (!exclude_list.empty() && exclude_list.contains(i)) {
         continue;
       }
-      coeffs.push_back(all[i]);
+      _coeffs.push_back(all[i]);
     }
-    return coeffs;
+    return _coeffs;
   };
-  std::vector<std::array<float, 3>> coeffs = get_coeffs();
-  unsigned int coeffs_size = coeffs.size();
+  std::vector<std::array<float, 3>> _coeffs = get_coeffs();
+  unsigned int coeffs_size = _coeffs.size();
   std::vector<float> coeffs_precalc(coeffs_size);
   for (unsigned int i = 0; i < coeffs_size; ++i) {
-    coeffs_precalc[i] = Vector2(coeffs[i][0], coeffs[i][1]).length();
+    coeffs_precalc[i] = Vector2(_coeffs[i][0], _coeffs[i][1]).length();
   }
 
-  return {coeffs, coeffs_precalc};
+  return {_coeffs, coeffs_precalc};
 }
 
 }  // namespace sota

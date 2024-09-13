@@ -23,8 +23,8 @@ class HoneycombCell : public HexMesh {
  public:
   HoneycombCell() : HexMesh() {}
   HoneycombCell(Hexagon hex, HoneycombCellMeshParams params) : HexMesh(hex, params.hex_mesh_params) {
-    noise = params.noise;
-    selection_material = params.selection_material;
+    _noise = params.noise;
+    _selection_material = params.selection_material;
   }
 
   // getters
@@ -40,8 +40,8 @@ class HoneycombCell : public HexMesh {
   static void _bind_methods();
 
  private:
-  gd::Ref<gd::FastNoiseLite> noise;
-  gd::Ref<gd::ShaderMaterial> selection_material;
+  gd::Ref<gd::FastNoiseLite> _noise;
+  gd::Ref<gd::ShaderMaterial> _selection_material;
 
   void handle_mouse_entered();
   void handle_mouse_exited();

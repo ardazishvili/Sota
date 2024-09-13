@@ -29,8 +29,8 @@ class SotaMesh : public godot::PrimitiveMesh {
   void set_divisions(const int p_divisions);
   int get_divisions() const;
 
-  void set_id(int p_id) { id = p_id; }
-  int get_id() const { return id; }
+  void set_id(int p_id) { _id = p_id; }
+  int get_id() const { return _id; }
 
   void init();
 
@@ -54,12 +54,12 @@ class SotaMesh : public godot::PrimitiveMesh {
   void set_vertices(godot::PackedVector3Array vertices);
 
  protected:
-  int id{0};
+  int _id{0};
   /**
    * @brief Opaque field to define tesselation level of particular shape. For different shapes may have different
    * meaning
    */
-  int divisions{1};
+  int _divisions{1};
 
   mutable godot::PackedVector3Array vertices_;
   mutable godot::PackedVector3Array normals_;

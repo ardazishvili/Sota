@@ -19,11 +19,11 @@ namespace sota {
 
 using TilesLayout = std::vector<std::vector<Tile*>>;
 
-class HexGridMap : public gd::Node3D {
-  GDCLASS(HexGridMap, gd::Node3D)
+class HexGrid : public gd::Node3D {
+  GDCLASS(HexGrid, gd::Node3D)
 
  public:
-  HexGridMap() = default;
+  HexGrid() = default;
 
   void set_shader(const gd::Ref<gd::Shader> p_shader);
   gd::Ref<gd::Shader> get_shader() const;
@@ -47,10 +47,10 @@ class HexGridMap : public gd::Node3D {
   godot::Array get_hex_meshes();
 
  protected:
-  float diameter{1};
-  int divisions{3};
-  gd::Ref<gd::Shader> shader;
-  std::vector<std::vector<gd::Vector3i>> col_row_layout;
+  float _diameter{1};
+  int _divisions{3};
+  gd::Ref<gd::Shader> _shader;
+  std::vector<std::vector<gd::Vector3i>> _col_row_layout;
   TilesLayout _tiles_layout;
 
   static void _bind_methods();
@@ -62,14 +62,14 @@ class HexGridMap : public gd::Node3D {
 
   gd::Ref<gd::MeshLibrary> _library;
 
-  bool frame_state{false};
-  float frame_offset{0.0};
+  bool _frame_state{false};
+  float _frame_offset{0.0};
 
  private:
 };
 
-class RectHexGridMap : public HexGridMap {
-  GDCLASS(RectHexGridMap, HexGridMap)
+class RectHexGrid : public HexGrid {
+  GDCLASS(RectHexGrid, HexGrid)
  public:
   void init_col_row_layout() override;
   int calculate_id(int row, int col) const override;
@@ -81,13 +81,13 @@ class RectHexGridMap : public HexGridMap {
   int get_width() const;
 
  protected:
-  int height{0};
-  int width{0};
+  int _height{0};
+  int _width{0};
   static void _bind_methods();
 };
 
-class HexagonalHexGridMap : public HexGridMap {
-  GDCLASS(HexagonalHexGridMap, HexGridMap)
+class HexagonalHexGrid : public HexGrid {
+  GDCLASS(HexagonalHexGrid, HexGrid)
  public:
   void init_col_row_layout() override;
   int calculate_id(int row, int col) const override;
@@ -96,7 +96,7 @@ class HexagonalHexGridMap : public HexGridMap {
   int get_size() const;
 
  protected:
-  int size{0};
+  int _size{0};
   static void _bind_methods();
 };
 

@@ -22,8 +22,8 @@ PentMesh::PentMesh() { init(); }
 PentMesh::PentMesh(Pentagon pentagon, PentagonMeshParams params) {
   init_from_pentagon(pentagon);
 
-  id = params.id;
-  divisions = params.divisions;
+  _id = params.id;
+  _divisions = params.divisions;
   set_material(params.material);
 }
 
@@ -39,7 +39,7 @@ void PentMesh::calculate_vertices_recursion() {
 
   for (int i = 0; i < 5; ++i) {
     // for simplicity use "convex" center(e.g. in case of polyhedron)
-    tesselate_into_triangles(corner_points[i], corner_points[(i + 1) % 5], center, divisions);
+    tesselate_into_triangles(corner_points[i], corner_points[(i + 1) % 5], center, _divisions);
   }
   return;
 }

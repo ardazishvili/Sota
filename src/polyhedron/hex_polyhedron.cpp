@@ -19,6 +19,7 @@
 #include "godot_cpp/variant/vector2.hpp"
 #include "godot_cpp/variant/vector3.hpp"
 #include "godot_cpp/variant/vector3i.hpp"
+#include "godot_utils.h"
 #include "pent_mesh.h"
 #include "types.h"
 
@@ -27,15 +28,15 @@ namespace sota {
 using namespace godot;
 
 PolyhedronMesh::PolyhedronMesh() {
-  texture[Biome::PLAIN] = Ref<Texture>();
-  texture[Biome::HILL] = Ref<Texture>();
-  texture[Biome::WATER] = Ref<Texture>();
-  texture[Biome::MOUNTAIN] = Ref<Texture>();
+  _texture[Biome::PLAIN] = Ref<Texture>();
+  _texture[Biome::HILL] = Ref<Texture>();
+  _texture[Biome::WATER] = Ref<Texture>();
+  _texture[Biome::MOUNTAIN] = Ref<Texture>();
 
-  prism_heights[Biome::WATER] = -0.02;
-  prism_heights[Biome::PLAIN] = 0.0;
-  prism_heights[Biome::HILL] = 0.04;
-  prism_heights[Biome::MOUNTAIN] = 0.08;
+  _prism_heights[Biome::WATER] = -0.02;
+  _prism_heights[Biome::PLAIN] = 0.0;
+  _prism_heights[Biome::HILL] = 0.04;
+  _prism_heights[Biome::MOUNTAIN] = 0.08;
 }
 
 void PolyhedronMesh::_bind_methods() {
@@ -109,17 +110,17 @@ void PolyhedronMesh::_bind_methods() {
 }
 
 void PolyhedronMesh::set_divisions(const int p_divisions) {
-  divisions = p_divisions > 1 ? p_divisions : 1;
+  _divisions = p_divisions > 1 ? p_divisions : 1;
   init();
 }
 
 void PolyhedronMesh::set_patch_resolution(const int p_patch_resolution) {
-  patch_resolution = p_patch_resolution;
+  _patch_resolution = p_patch_resolution;
   init();
 }
 
 void PolyhedronMesh::set_compression_factor(const float p_compression_factor) {
-  compression_factor = p_compression_factor;
+  _compression_factor = p_compression_factor;
   init();
 }
 
@@ -130,77 +131,77 @@ void PolyhedronMesh::set_shader(const Ref<Shader> p_shader) {
 
 // TODO: noise code copypasted from RidgeHexGridMap
 void PolyhedronMesh::set_biomes_noise(const Ref<FastNoiseLite> p_biomes_noise) {
-  biomes_noise = p_biomes_noise;
-  if (biomes_noise.ptr()) {
-    biomes_noise->connect("changed", Callable(this, "init"));
+  _biomes_noise = p_biomes_noise;
+  if (_biomes_noise.ptr()) {
+    _biomes_noise->connect("changed", Callable(this, "init"));
     init();
   }
 }
 
 void PolyhedronMesh::set_noise(const Ref<godot::FastNoiseLite> p_noise) {
-  noise = p_noise;
-  if (noise.ptr()) {
-    noise->connect("changed", Callable(this, "init"));
+  _noise = p_noise;
+  if (_noise.ptr()) {
+    _noise->connect("changed", Callable(this, "init"));
     init();
   }
 }
 
 // TODO: textures code copypasted from RidgeHexGridMap
 void PolyhedronMesh::set_plain_texture(const Ref<Texture> p_texture) {
-  texture[Biome::PLAIN] = p_texture;
+  _texture[Biome::PLAIN] = p_texture;
   init();
 }
 
 void PolyhedronMesh::set_hill_texture(const Ref<Texture> p_texture) {
-  texture[Biome::HILL] = p_texture;
+  _texture[Biome::HILL] = p_texture;
   init();
 }
 
 void PolyhedronMesh::set_water_texture(const Ref<Texture> p_texture) {
-  texture[Biome::WATER] = p_texture;
+  _texture[Biome::WATER] = p_texture;
   init();
 }
 
 void PolyhedronMesh::set_mountain_texture(const Ref<Texture> p_texture) {
-  texture[Biome::MOUNTAIN] = p_texture;
+  _texture[Biome::MOUNTAIN] = p_texture;
   init();
 }
 
 // Heights
 void PolyhedronMesh::set_plain_height(const float p_height) {
-  prism_heights[Biome::PLAIN] = p_height;
+  _prism_heights[Biome::PLAIN] = p_height;
   init();
 }
 
 void PolyhedronMesh::set_hill_height(const float p_height) {
-  prism_heights[Biome::HILL] = p_height;
+  _prism_heights[Biome::HILL] = p_height;
   init();
 }
 
 void PolyhedronMesh::set_water_height(const float p_height) {
-  prism_heights[Biome::WATER] = p_height;
+  _prism_heights[Biome::WATER] = p_height;
   init();
 }
 
 void PolyhedronMesh::set_mountain_height(const float p_height) {
-  prism_heights[Biome::MOUNTAIN] = p_height;
+  _prism_heights[Biome::MOUNTAIN] = p_height;
   init();
 }
 
-int PolyhedronMesh::get_divisions() const { return divisions; }
-int PolyhedronMesh::get_patch_resolution() const { return patch_resolution; }
-float PolyhedronMesh::get_compression_factor() const { return compression_factor; }
+int PolyhedronMesh::get_divisions() const { return _divisions; }
+int PolyhedronMesh::get_patch_resolution() const { return _patch_resolution; }
+float PolyhedronMesh::get_compression_factor() const { return _compression_factor; }
 Ref<Shader> PolyhedronMesh::get_shader() const { return shader; }
-Ref<FastNoiseLite> PolyhedronMesh::get_biomes_noise() const { return biomes_noise; }
-Ref<FastNoiseLite> PolyhedronMesh::get_noise() const { return noise; }
-Ref<Texture> PolyhedronMesh::get_plain_texture() const { return texture.find(Biome::PLAIN)->second; }
-Ref<Texture> PolyhedronMesh::get_hill_texture() const { return texture.find(Biome::HILL)->second; }
-Ref<Texture> PolyhedronMesh::get_water_texture() const { return texture.find(Biome::WATER)->second; }
-Ref<Texture> PolyhedronMesh::get_mountain_texture() const { return texture.find(Biome::MOUNTAIN)->second; }
-float PolyhedronMesh::get_plain_height() const { return prism_heights.find(Biome::PLAIN)->second; }
-float PolyhedronMesh::get_hill_height() const { return prism_heights.find(Biome::HILL)->second; }
-float PolyhedronMesh::get_water_height() const { return prism_heights.find(Biome::WATER)->second; }
-float PolyhedronMesh::get_mountain_height() const { return prism_heights.find(Biome::MOUNTAIN)->second; }
+Ref<FastNoiseLite> PolyhedronMesh::get_biomes_noise() const { return _biomes_noise; }
+Ref<FastNoiseLite> PolyhedronMesh::get_noise() const { return _noise; }
+Ref<Texture> PolyhedronMesh::get_plain_texture() const { return _texture.find(Biome::PLAIN)->second; }
+Ref<Texture> PolyhedronMesh::get_hill_texture() const { return _texture.find(Biome::HILL)->second; }
+Ref<Texture> PolyhedronMesh::get_water_texture() const { return _texture.find(Biome::WATER)->second; }
+Ref<Texture> PolyhedronMesh::get_mountain_texture() const { return _texture.find(Biome::MOUNTAIN)->second; }
+float PolyhedronMesh::get_plain_height() const { return _prism_heights.find(Biome::PLAIN)->second; }
+float PolyhedronMesh::get_hill_height() const { return _prism_heights.find(Biome::HILL)->second; }
+float PolyhedronMesh::get_water_height() const { return _prism_heights.find(Biome::WATER)->second; }
+float PolyhedronMesh::get_mountain_height() const { return _prism_heights.find(Biome::MOUNTAIN)->second; }
 
 template <typename TGON>
 void PolyhedronMesh::insert_to_polygons(Vector3 start_point, float diameter, float R, float r, int i, int j,
@@ -237,7 +238,7 @@ void PolyhedronMesh::insert_to_polygons(Vector3 start_point, float diameter, flo
 }
 
 std::pair<std::vector<Hexagon>, std::vector<Pentagon>> PolyhedronMesh::calculate_shapes() const {
-  float r = (1.0 / 2) / (patch_resolution + 1);
+  float r = (1.0 / 2) / (_patch_resolution + 1);
   float R = r * 2 / sqrt(3);
   float diameter = 2 * R;
   Vector3 start_point(-0.5, 0, 0);
@@ -245,17 +246,17 @@ std::pair<std::vector<Hexagon>, std::vector<Pentagon>> PolyhedronMesh::calculate
   PackedVector3Array icosahedron_points = ico_points();
   Array indices = ico_indices();
   auto is_pentagon_ij = [this](int i, int j) -> bool {
-    return (i == (patch_resolution + 1)) ||  // last row contains center of pentagon
+    return (i == (_patch_resolution + 1)) ||  // last row contains center of pentagon
            (i == 0 &&
-            (j == 0 || j == (patch_resolution + 1)));  // first and last points of first row are centers of pentagon
+            (j == 0 || j == (_patch_resolution + 1)));  // first and last points of first row are centers of pentagon
   };
 
   std::map<Vector3i, Hexagon> hexagon_map;
   std::map<Vector3i, Pentagon> pentagon_map;
   for (int t = 0; t < 20; ++t) {
     Vector3i triangle = indices[t];
-    for (int i = 0; i < patch_resolution + 2; ++i) {
-      for (int j = 0; j < patch_resolution + 2; ++j) {
+    for (int i = 0; i < _patch_resolution + 2; ++i) {
+      for (int j = 0; j < _patch_resolution + 2; ++j) {
         if (is_pentagon_ij(i, j)) {
           insert_to_polygons(start_point, diameter, R, r, i, j, icosahedron_points, triangle, pentagon_map);
         } else {
@@ -285,24 +286,18 @@ std::pair<std::vector<Hexagon>, std::vector<Pentagon>> PolyhedronMesh::calculate
 }
 
 void PolyhedronMesh::clear() {
-  hexagon_meshes.clear();
-  pentagon_meshes.clear();
+  _hexagon_meshes.clear();
+  _pentagon_meshes.clear();
 
-  // TODO copy-pasted from honeycomb
-  TypedArray<Node> children = get_children();
-  for (int i = 0; i < children.size(); ++i) {
-    Node* child = Object::cast_to<Node>(children[i].operator Object*());
-    remove_child(child);
-    child->queue_free();
-  }
+  clean_children(*this);
 }
 
 void PolyhedronMesh::process_hexagons(std::vector<Hexagon> hexagons) {
   int id = 0;
   std::unordered_map<int, float> altitudes;
   for (const auto& hex : hexagons) {
-    if (biomes_noise.ptr()) {
-      altitudes[id] = biomes_noise->get_noise_3dv(hex.center());
+    if (_biomes_noise.ptr()) {
+      altitudes[id] = _biomes_noise->get_noise_3dv(hex.center());
     } else {
       altitudes[id] = 0;
     }
@@ -326,24 +321,24 @@ void PolyhedronMesh::process_hexagons(std::vector<Hexagon> hexagons) {
     if (shader.ptr()) {
       mat->set_shader(shader);
     }
-    if (texture[biome].ptr()) {
-      mat->set_shader_parameter("water_texture", texture[Biome::WATER].ptr());
-      mat->set_shader_parameter("plain_texture", texture[Biome::PLAIN].ptr());
-      mat->set_shader_parameter("hill_texture", texture[Biome::HILL].ptr());
-      mat->set_shader_parameter("mountain_texture", texture[Biome::MOUNTAIN].ptr());
+    if (_texture[biome].ptr()) {
+      mat->set_shader_parameter("water_texture", _texture[Biome::WATER].ptr());
+      mat->set_shader_parameter("plain_texture", _texture[Biome::PLAIN].ptr());
+      mat->set_shader_parameter("hill_texture", _texture[Biome::HILL].ptr());
+      mat->set_shader_parameter("mountain_texture", _texture[Biome::MOUNTAIN].ptr());
 
-      mat->set_shader_parameter("water_height", prism_heights[Biome::WATER]);
-      mat->set_shader_parameter("plain_height", prism_heights[Biome::PLAIN]);
-      mat->set_shader_parameter("hill_height", prism_heights[Biome::HILL]);
-      mat->set_shader_parameter("mountain_height", prism_heights[Biome::MOUNTAIN]);
+      mat->set_shader_parameter("water_height", _prism_heights[Biome::WATER]);
+      mat->set_shader_parameter("plain_height", _prism_heights[Biome::PLAIN]);
+      mat->set_shader_parameter("hill_height", _prism_heights[Biome::HILL]);
+      mat->set_shader_parameter("mountain_height", _prism_heights[Biome::MOUNTAIN]);
     }
 
     // ridge_processor.configure_cell(hex, biome, id, mat, *this);
-    prism_processor.configure_cell(hex, biome, id, mat, *this);
+    _prism_processor.configure_cell(hex, biome, id, mat, *this);
   }
 
   // ridge_processor.process(*this);
-  prism_processor.process(*this);
+  _prism_processor.process(*this);
 }
 
 void PolyhedronMesh::process_pentagons(std::vector<Pentagon> pentatons) {
@@ -354,26 +349,26 @@ void PolyhedronMesh::process_pentagons(std::vector<Pentagon> pentatons) {
     if (shader.ptr()) {
       mat->set_shader(shader);
     }
-    if (texture.size() == 4) {
-      mat->set_shader_parameter("water_texture", texture[Biome::WATER].ptr());
-      mat->set_shader_parameter("plain_texture", texture[Biome::PLAIN].ptr());
-      mat->set_shader_parameter("hill_texture", texture[Biome::HILL].ptr());
-      mat->set_shader_parameter("mountain_texture", texture[Biome::MOUNTAIN].ptr());
+    if (_texture.size() == 4) {
+      mat->set_shader_parameter("water_texture", _texture[Biome::WATER].ptr());
+      mat->set_shader_parameter("plain_texture", _texture[Biome::PLAIN].ptr());
+      mat->set_shader_parameter("hill_texture", _texture[Biome::HILL].ptr());
+      mat->set_shader_parameter("mountain_texture", _texture[Biome::MOUNTAIN].ptr());
 
-      mat->set_shader_parameter("water_height", prism_heights[Biome::WATER]);
-      mat->set_shader_parameter("plain_height", prism_heights[Biome::PLAIN]);
-      mat->set_shader_parameter("hill_height", prism_heights[Biome::HILL]);
-      mat->set_shader_parameter("mountain_height", prism_heights[Biome::MOUNTAIN]);
+      mat->set_shader_parameter("water_height", _prism_heights[Biome::WATER]);
+      mat->set_shader_parameter("plain_height", _prism_heights[Biome::PLAIN]);
+      mat->set_shader_parameter("hill_height", _prism_heights[Biome::HILL]);
+      mat->set_shader_parameter("mountain_height", _prism_heights[Biome::MOUNTAIN]);
     }
 
-    PentagonMeshParams params{.id = id, .divisions = divisions, .material = mat};
+    PentagonMeshParams params{.id = id, .divisions = _divisions, .material = mat};
     Ref<PentMesh> m = make_pent_mesh(pentagon, params);
 
     auto* mi = memnew(MeshInstance3D());
     mi->set_mesh(m);
 
     add_child(mi);
-    pentagon_meshes.push_back(mi);
+    _pentagon_meshes.push_back(mi);
     ++id;
   }
 
@@ -390,7 +385,7 @@ void PolyhedronMesh::init() {
 }
 
 void PolyhedronMesh::set_pentagons() {
-  for (auto& mesh : pentagon_meshes) {
+  for (auto& mesh : _pentagon_meshes) {
     PentMesh* pent_mesh = dynamic_cast<PentMesh*>(mesh->get_mesh().ptr());
     pent_mesh->recalculate_all_except_vertices();
     pent_mesh->update();

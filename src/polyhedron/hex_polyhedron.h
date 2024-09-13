@@ -73,18 +73,18 @@ class PolyhedronMesh : public godot::Node3D {
   friend class PolyhedronRidgeProcessor;
   friend class PolyhedronPrismProcessor;
 
-  int divisions{1};
-  int patch_resolution{1};
-  float compression_factor{0.1};
+  int _divisions{1};
+  int _patch_resolution{1};
+  float _compression_factor{0.1};
 
-  godot::Ref<godot::FastNoiseLite> noise;
-  godot::Ref<godot::FastNoiseLite> biomes_noise;
+  godot::Ref<godot::FastNoiseLite> _noise;
+  godot::Ref<godot::FastNoiseLite> _biomes_noise;
 
-  std::vector<godot::MeshInstance3D *> hexagon_meshes;
-  std::vector<godot::MeshInstance3D *> pentagon_meshes;
+  std::vector<godot::MeshInstance3D *> _hexagon_meshes;
+  std::vector<godot::MeshInstance3D *> _pentagon_meshes;
   godot::Ref<godot::Shader> shader;
-  std::unordered_map<Biome, godot::Ref<godot::Texture>> texture;
-  std::unordered_map<Biome, float> prism_heights;
+  std::unordered_map<Biome, godot::Ref<godot::Texture>> _texture;
+  std::unordered_map<Biome, float> _prism_heights;
 
   std::pair<std::vector<Hexagon>, std::vector<Pentagon>> calculate_shapes() const;
 
@@ -103,8 +103,8 @@ class PolyhedronMesh : public godot::Node3D {
   void set_cylinder_based_heights();
   void set_pentagons();
 
-  PolyhedronPrismProcessor prism_processor;
-  PolyhedronRidgeProcessor ridge_processor;
+  PolyhedronPrismProcessor _prism_processor;
+  PolyhedronRidgeProcessor _ridge_processor;
 };
 
 }  // namespace sota

@@ -61,10 +61,10 @@ mesh = SubResource("PentMesh_57ooj")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0, 5)
 mesh = SubResource("HexMesh_i6ufk")
 
-[node name="RectRidgeHexGridMap" type="RectRidgeHexGridMap" parent="."]
-height = 7
-width = 7
-smooth_normals = true
+[node name="RectRidgeHexGrid" type="RectRidgeHexGrid" parent="."]
+_height = 7
+_width = 7
+_smooth_normals = true
 noise_biomes = ExtResource("7_pdqbd")
 noise_plain_hill = ExtResource("8_tlppm")
 noise_mountain_water = ExtResource("9_6vlvq")
@@ -72,12 +72,12 @@ texture_plain = ExtResource("2_diq8e")
 texture_hill = ExtResource("3_dt225")
 texture_water = ExtResource("4_0msuc")
 texture_mountain = ExtResource("5_l3sdd")
-divisions = 7
-shader = ExtResource("6_8c8ug")
+_divisions = 7
+_shader = ExtResource("6_8c8ug")
 
-[node name="HexagonalRidgeHexGridMap" type="HexagonalRidgeHexGridMap" parent="."]
-size = 3
-smooth_normals = true
+[node name="HexagonalRidgeHexGrid" type="HexagonalRidgeHexGrid" parent="."]
+_size = 3
+_smooth_normals = true
 noise_biomes = ExtResource("2_w71nt")
 noise_plain_hill = ExtResource("3_rgrq2")
 noise_mountain_water = ExtResource("4_8apfb")
@@ -85,27 +85,26 @@ texture_plain = ExtResource("2_diq8e")
 texture_hill = ExtResource("3_dt225")
 texture_water = ExtResource("4_0msuc")
 texture_mountain = ExtResource("5_l3sdd")
-divisions = 7
-shader = ExtResource("6_8c8ug")
+_divisions = 7
+_shader = ExtResource("6_8c8ug")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 7)
 
-[node name="RectHexGridMap_minimal" type="RectHexGridMap" parent="."]
-height = 1
+[node name="RectHexGrid_minimal" type="RectHexGrid" parent="."]
+_height = 1
 width = 1
-shader = ExtResource("1_pum5v")
+_shader = ExtResource("1_pum5v")
 enable_frame = true
-frame_offset = 0.295
+_frame_offset = 0.205
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.76043, -9.53674e-07, 3.01861)
 
-[node name="HexagonalHexGridMap" type="HexagonalHexGridMap" parent="."]
-size = 3
-shader = ExtResource("1_pum5v")
+[node name="HexagonalHexGrid" type="HexagonalHexGrid" parent="."]
+_size = 3
+_shader = ExtResource("1_pum5v")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0, 7)
 
-[node name="RectHexGridMap" type="RectHexGridMap" parent="."]
-height = 7
+[node name="RectHexGrid" type="RectHexGrid" parent="."]
+_height = 7
 width = 7
-shader = ExtResource("1_pum5v")
+_shader = ExtResource("1_pum5v")
 enable_frame = true
-frame_offset = 0.24
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.30717, 0, 0)

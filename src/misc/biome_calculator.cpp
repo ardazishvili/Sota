@@ -5,18 +5,18 @@
 namespace sota {
 
 BiomeCalculator::BiomeCalculator() {
-  BIOMES_HEIGHT_BOUND = {{Biome::WATER, water_threshold},
-                         {Biome::PLAIN, plain_threshold},
-                         {Biome::HILL, hill_threshold},
-                         {Biome::MOUNTAIN, 1.0f}};
+  _BIOMES_HEIGHT_BOUND = {{Biome::WATER, _water_threshold},
+                          {Biome::PLAIN, _plain_threshold},
+                          {Biome::HILL, _hill_threshold},
+                          {Biome::MOUNTAIN, 1.0f}};
 }
 
 Biome BiomeCalculator::calculate_biome(float min_z, float max_z, float cur_z) const {
   auto amplitude = max_z - min_z;
 
-  auto water_max_z = min_z + amplitude * BIOMES_HEIGHT_BOUND.find(Biome::WATER)->second;
-  auto plain_max_z = min_z + amplitude * BIOMES_HEIGHT_BOUND.find(Biome::PLAIN)->second;
-  auto hill_max_z = min_z + amplitude * BIOMES_HEIGHT_BOUND.find(Biome::HILL)->second;
+  auto water_max_z = min_z + amplitude * _BIOMES_HEIGHT_BOUND.find(Biome::WATER)->second;
+  auto plain_max_z = min_z + amplitude * _BIOMES_HEIGHT_BOUND.find(Biome::PLAIN)->second;
+  auto hill_max_z = min_z + amplitude * _BIOMES_HEIGHT_BOUND.find(Biome::HILL)->second;
   auto mountain_max_z = max_z;
 
   if (min_z <= cur_z && cur_z <= water_max_z) {

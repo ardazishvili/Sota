@@ -15,7 +15,7 @@ void PolyhedronRidgeProcessor::process(PolyhedronMesh& polyhedron_mesh) {
   // initial heights calculation
   float global_min_y = std::numeric_limits<float>::max();
   float global_max_y = std::numeric_limits<float>::min();
-  for (auto& mesh : polyhedron_mesh.hexagon_meshes) {
+  for (auto& mesh : polyhedron_mesh._hexagon_meshes) {
     PlainHexMesh* plain_mesh = dynamic_cast<PlainHexMesh*>(mesh->get_mesh().ptr());
     plain_mesh->calculate_initial_heights();
     auto [mesh_min_z, mesh_max_z] = plain_mesh->get_min_max_height();
@@ -24,14 +24,14 @@ void PolyhedronRidgeProcessor::process(PolyhedronMesh& polyhedron_mesh) {
   }
 
   float amplitude = global_max_y - global_min_y;
-  float compress = polyhedron_mesh.compression_factor / amplitude;
-  for (auto& mesh : polyhedron_mesh.hexagon_meshes) {
+  float compress = polyhedron_mesh._compression_factor / amplitude;
+  for (auto& mesh : polyhedron_mesh._hexagon_meshes) {
     PlainHexMesh* plain_mesh = dynamic_cast<PlainHexMesh*>(mesh->get_mesh().ptr());
     plain_mesh->set_shift_compress(-global_min_y, compress);
   }
 
   // final heights calculation
-  for (auto& mesh : polyhedron_mesh.hexagon_meshes) {
+  for (auto& mesh : polyhedron_mesh._hexagon_meshes) {
     PlainHexMesh* plain_mesh = dynamic_cast<PlainHexMesh*>(mesh->get_mesh().ptr());
     plain_mesh->calculate_final_heights();
     plain_mesh->calculate_normals();
@@ -49,7 +49,7 @@ void PolyhedronRidgeProcessor::configure_cell(Hexagon hex, Biome biome, int& id,
                                        .material = mat,
                                        .divisions = 1,
                                        .clip_options = ClipOptions{}},
-      .plain_noise = polyhedron_mesh.noise,
+      .plain_noise = polyhedron_mesh._noise,
       .ridge_noise = nullptr,
   };
   Ref<RidgeHexMesh> m = make_impl<PlainHexMesh>(hex, params);
@@ -66,7 +66,7 @@ void PolyhedronRidgeProcessor::configure_cell(Hexagon hex, Biome biome, int& id,
   mi->set_mesh(m);
 
   polyhedron_mesh.add_child(mi);
-  polyhedron_mesh.hexagon_meshes.push_back(mi);
+  polyhedron_mesh._hexagon_meshes.push_back(mi);
   ++id;
 }
 

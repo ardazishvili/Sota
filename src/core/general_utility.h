@@ -18,14 +18,14 @@ class GeneralUtility {
 
 struct HexBorderLineParams {
   HexBorderLineParams(float R, float r) {
-    coeffs = {std::array<float, 3>{-R / (2 * r), 1.0f, R}, std::array<float, 3>{1.0f, 0.0f, -r},
-              std::array<float, 3>{R / (2 * r), 1.0f, -R}, std::array<float, 3>{-R / (2 * r), 1.0f, -R},
-              std::array<float, 3>{1.0f, 0.0f, r},         std::array<float, 3>{R / (2 * r), 1.0f, R}};
+    _coeffs = {std::array<float, 3>{-R / (2 * r), 1.0f, R}, std::array<float, 3>{1.0f, 0.0f, -r},
+               std::array<float, 3>{R / (2 * r), 1.0f, -R}, std::array<float, 3>{-R / (2 * r), 1.0f, -R},
+               std::array<float, 3>{1.0f, 0.0f, r},         std::array<float, 3>{R / (2 * r), 1.0f, R}};
   }
-  std::array<std::array<float, 3>, 6> get_coeffs() { return coeffs; }
+  std::array<std::array<float, 3>, 6> get_coeffs() { return _coeffs; }
 
  private:
-  std::array<std::array<float, 3>, 6> coeffs;
+  std::array<std::array<float, 3>, 6> _coeffs;
 };
 
 }  // namespace sota

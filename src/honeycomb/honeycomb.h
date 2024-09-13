@@ -4,12 +4,12 @@
 #include "godot_cpp/classes/wrapped.hpp"
 #include "godot_cpp/variant/array.hpp"
 #include "godot_cpp/variant/packed_vector3_array.hpp"
-#include "hex_grid_map.h"
+#include "hex_grid.h"
 #include "honeycomb/honeycomb_honey.h"
 namespace sota {
 
-class Honeycomb : public HexGridMap {
-  GDCLASS(Honeycomb, HexGridMap)
+class Honeycomb : public HexGrid {
+  GDCLASS(Honeycomb, HexGrid)
 
  public:
   Honeycomb() = default;
@@ -63,20 +63,19 @@ class Honeycomb : public HexGridMap {
   virtual int calculate_honey_id_offset() = 0;
 
  private:
-  gd::Ref<gd::MeshLibrary> honey_library;
-  gd::Ref<gd::Texture> cell_texture;
-  gd::Ref<gd::Texture> honey_texture;
-  gd::Ref<gd::Texture> selection_texture;
-  gd::Ref<gd::Shader> selection_shader;
-  gd::Ref<gd::FastNoiseLite> noise;
-  gd::Ref<gd::Shader> honey_shader;
-  float bottom_offset{-0.5};
-  bool smooth_normals{false};
-  bool honey_random_level{false};
+  gd::Ref<gd::Texture> _cell_texture;
+  gd::Ref<gd::Texture> _honey_texture;
+  gd::Ref<gd::Texture> _selection_texture;
+  gd::Ref<gd::Shader> _selection_shader;
+  gd::Ref<gd::FastNoiseLite> _noise;
+  gd::Ref<gd::Shader> _honey_shader;
+  float _bottom_offset{-0.5};
+  bool _smooth_normals{false};
+  bool _honey_random_level{false};
 
-  float honey_min_offset{-0.45};
-  float honey_max_gain{0.3};
-  int honey_fill_steps{8};
+  float _honey_min_offset{-0.45};
+  float _honey_max_gain{0.3};
+  int _honey_fill_steps{8};
 
   float generate_min_honey_y_offset();
   float generate_random_honey_y_offset();
@@ -122,8 +121,8 @@ class RectHoneycomb : public Honeycomb {
   int calculate_honey_id_offset() override;
 
  protected:
-  int height{0};
-  int width{0};
+  int _height{0};
+  int _width{0};
   static void _bind_methods();
 };
 
@@ -140,7 +139,7 @@ class HexagonalHoneycomb : public Honeycomb {
   gd::Vector3 get_center() const;
 
  protected:
-  int size{0};
+  int _size{0};
   static void _bind_methods();
 };
 
