@@ -1,0 +1,29 @@
+Import('env')
+
+env = env.Clone()
+
+env.Append(CXXFLAGS=["-std=c++20", "-g"])
+
+env.Append(CPPPATH=[""])
+# env.Append(CPPPATH=["polyhedron"])
+# env.Append(CPPPATH=["primitives"])
+# env.Append(CPPPATH=["core"])
+# env.Append(CPPPATH=["prism_impl"])
+# env.Append(CPPPATH=["ridge_impl"])
+# env.Append(CPPPATH=["honeycomb"])
+# env.Append(CPPPATH=["misc"])
+env.Append(CPPPATH=["misc"])
+env.Append(CPPPATH=["algo"])
+
+sources = Glob("*.cpp")
+# sources += Glob("polyhedron/*.cpp")
+# sources += Glob("primitives/*.cpp")
+# sources += Glob("core/*.cpp")
+# sources += Glob("prism_impl/*.cpp")
+# sources += Glob("ridge_impl/*.cpp")
+# sources += Glob("honeycomb/*.cpp")
+# sources += Glob("misc/*.cpp")
+sources += Glob("misc/types.cpp")
+sources += Glob("algo/*.cpp")
+
+env.add_source_files(env.modules_sources, sources)
