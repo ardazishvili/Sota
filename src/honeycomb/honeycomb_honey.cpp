@@ -22,50 +22,50 @@ void HoneycombHoney::_bind_methods() {
 }
 
 void HoneycombHoney::set_noise(Ref<FastNoiseLite> p_noise) {
-  noise = p_noise;
-  if (noise.ptr()) {
-    noise->connect("changed", Callable(this, "request_update"));
+  _noise = p_noise;
+  if (_noise.ptr()) {
+    _noise->connect("changed", Callable(this, "request_update"));
     request_update();
   }
 }
 
-void HoneycombHoney::set_min_offset(float p_offset) { min_offset = p_offset; }
+void HoneycombHoney::set_min_offset(float p_offset) { _min_offset = p_offset; }
 
-void HoneycombHoney::set_max_level(float p_max_level) { max_level = p_max_level; }
+void HoneycombHoney::set_max_level(float p_max_level) { _max_level = p_max_level; }
 
-void HoneycombHoney::set_fill_delta(float d) { fill_delta = d; }
+void HoneycombHoney::set_fill_delta(float d) { _fill_delta = d; }
 
 void HoneycombHoney::set_level(int p_level) {
-  level = p_level;
-  auto new_center = _hex.center() + Vector3(0, min_offset + p_level * fill_delta, 0);
+  _level = p_level;
+  auto new_center = _hex.center() + Vector3(0, _min_offset + p_level * _fill_delta, 0);
   _hex = make_hexagon_at_position(new_center, _diameter);
 }
 
 void HoneycombHoney::fill() {
-  if (level == max_level) {
+  if (_level == _max_level) {
     return;
   }
-  level += 1;
-  recalculate_vertices_update(fill_delta);
+  _level += 1;
+  recalculate_vertices_update(_fill_delta);
 }
 
-bool HoneycombHoney::is_full() const { return level == max_level; }
-bool HoneycombHoney::is_empty() const { return level == 0; }
+bool HoneycombHoney::is_full() const { return _level == _max_level; }
+bool HoneycombHoney::is_empty() const { return _level == 0; }
 
 void HoneycombHoney::clear() {
-  level = 0;
+  _level = 0;
   for (auto& v : vertices_) {
-    v.y = min_offset;
+    v.y = _min_offset;
   }
   calculate_normals();
   request_update();
 }
 
-int HoneycombHoney::get_level() const { return level; }
+int HoneycombHoney::get_level() const { return _level; }
 
 void HoneycombHoney::calculate_initial_heights() {
   for (auto& v : vertices_) {
-    float n = noise.ptr() ? noise->get_noise_2d(v.x, v.z) : 0.0;
+    float n = _noise.ptr() ? _noise->get_noise_2d(v.x, v.z) : 0.0;
     v.y = _hex.center().y + n;
     _min_y = std::min(_min_y, v.y);
     _max_y = std::max(_max_y, v.y);
@@ -87,7 +87,7 @@ GroupedHexagonMeshVertices HoneycombHoney::get_grouped_vertices() {
   for (int i = 0; i < size; ++i) {
     Vector3& v = vertices_[i];
     Vector3& n = normals_[i];
-    auto p = to_point_divisioned_position(v, _diameter, divisions);
+    auto p = to_point_divisioned_position(v, _diameter, _divisions);
     vertex_groups[p].push_back(&n);
   }
   return vertex_groups;

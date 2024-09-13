@@ -3,7 +3,7 @@
 #include <memory>
 #include <unordered_map>
 
-#include "core/hex_grid_map.h"
+#include "core/hex_grid.h"
 #include "cube_coordinates.h"
 #include "godot_cpp/classes/fast_noise_lite.hpp"
 #include "godot_cpp/classes/texture.hpp"
@@ -16,11 +16,11 @@ using GroupOfHexagonMeshes = std::vector<RidgeHexMesh*>;
 using BiomeGroups = std::vector<GroupOfHexagonMeshes>;
 using BiomeRidgeGroup = std::pair<GroupOfHexagonMeshes, std::unique_ptr<RidgeSet>>;
 
-class RidgeHexGridMap : public HexGridMap {
-  GDCLASS(RidgeHexGridMap, HexGridMap)
+class RidgeHexGrid : public HexGrid {
+  GDCLASS(RidgeHexGrid, HexGrid)
 
  public:
-  RidgeHexGridMap();
+  RidgeHexGrid();
 
   void set_biomes_noise(const gd::Ref<gd::FastNoiseLite> p_biomes_noise);
   gd::Ref<gd::FastNoiseLite> get_biomes_noise() const;
@@ -76,16 +76,16 @@ class RidgeHexGridMap : public HexGridMap {
   void init_hexmesh() override;
 
  private:
-  std::unordered_map<Biome, gd::Ref<gd::Texture>> texture;
+  std::unordered_map<Biome, gd::Ref<gd::Texture>> _texture;
 
-  gd::Ref<gd::FastNoiseLite> biomes_noise;
-  gd::Ref<gd::FastNoiseLite> plain_noise;
-  gd::Ref<gd::FastNoiseLite> ridge_noise;
+  gd::Ref<gd::FastNoiseLite> _biomes_noise;
+  gd::Ref<gd::FastNoiseLite> _plain_noise;
+  gd::Ref<gd::FastNoiseLite> _ridge_noise;
 
-  bool smooth_normals{false};
-  RidgeConfig ridge_config;
-  float biomes_hill_level_ratio{0.7};
-  float biomes_plain_hill_gain{0.1f};
+  bool _smooth_normals{false};
+  RidgeConfig _ridge_config;
+  float _biomes_hill_level_ratio{0.7};
+  float _biomes_plain_hill_gain{0.1f};
 
   void assign_ridges(GroupOfHexagonMeshes& group, RidgeSet* ridge_set);
   void calculate_neighbours(GroupOfHexagonMeshes& group);
@@ -108,8 +108,8 @@ class RidgeHexGridMap : public HexGridMap {
   void print_biomes();
 };
 
-class RectRidgeHexGridMap : public RidgeHexGridMap {
-  GDCLASS(RectRidgeHexGridMap, RidgeHexGridMap)
+class RectRidgeHexGrid : public RidgeHexGrid {
+  GDCLASS(RectRidgeHexGrid, RidgeHexGrid)
  public:
   void set_height(const int p_height);
   int get_height() const;
@@ -126,14 +126,14 @@ class RectRidgeHexGridMap : public RidgeHexGridMap {
   ClipOptions get_clip_options(int row, int col) const override;
 
  protected:
-  int height{0};
-  int width{0};
-  bool clipped{false};
+  int _height{0};
+  int _width{0};
+  bool _clipped{false};
   static void _bind_methods();
 };
 
-class HexagonalRidgeHexGridMap : public RidgeHexGridMap {
-  GDCLASS(HexagonalRidgeHexGridMap, RidgeHexGridMap)
+class HexagonalRidgeHexGrid : public RidgeHexGrid {
+  GDCLASS(HexagonalRidgeHexGrid, RidgeHexGrid)
  public:
   void set_size(const int p_size);
   int get_size() const;
@@ -144,7 +144,7 @@ class HexagonalRidgeHexGridMap : public RidgeHexGridMap {
   ClipOptions get_clip_options(int row, int col) const override;
 
  protected:
-  int size{0};
+  int _size{0};
   static void _bind_methods();
 
  private:

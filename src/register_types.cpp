@@ -5,7 +5,7 @@
 #include <godot_cpp/core/defs.hpp>
 #include <godot_cpp/godot.hpp>
 
-#include "core/hex_grid_map.h"
+#include "core/hex_grid.h"
 #include "core/hex_mesh.h"
 #include "godot_cpp/core/class_db.hpp"
 #include "hex_polyhedron.h"
@@ -15,7 +15,7 @@
 #include "mesh.h"
 #include "pent_mesh.h"
 #include "prism_impl/prism_hex_mesh.h"
-#include "ridge_impl/ridge_hex_grid_map.h"
+#include "ridge_impl/ridge_hex_grid.h"
 #include "ridge_impl/ridge_hex_mesh.h"
 
 void initialize_sota_module(gd::ModuleInitializationLevel p_level) {
@@ -28,22 +28,25 @@ void initialize_sota_module(gd::ModuleInitializationLevel p_level) {
   GDREGISTER_CLASS(sota::HexMesh);
   GDREGISTER_CLASS(sota::PentMesh);
 
-  // TODO categorize below
-  GDREGISTER_ABSTRACT_CLASS(sota::HexGridMap);
-  GDREGISTER_CLASS(sota::RectHexGridMap);
-  GDREGISTER_CLASS(sota::HexagonalHexGridMap);
+  // Grids made of hexes
+  GDREGISTER_ABSTRACT_CLASS(sota::HexGrid);
+  GDREGISTER_CLASS(sota::RectHexGrid);
+  GDREGISTER_CLASS(sota::HexagonalHexGrid);
 
+  // Grids made of ridge hexes - hexes based on global graph of ridges
   GDREGISTER_CLASS(sota::RidgeHexMesh);
-  GDREGISTER_ABSTRACT_CLASS(sota::RidgeHexGridMap);
-  GDREGISTER_CLASS(sota::RectRidgeHexGridMap);
-  GDREGISTER_CLASS(sota::HexagonalRidgeHexGridMap);
+  GDREGISTER_ABSTRACT_CLASS(sota::RidgeHexGrid);
+  GDREGISTER_CLASS(sota::RectRidgeHexGrid);
+  GDREGISTER_CLASS(sota::HexagonalRidgeHexGrid);
 
+  // Grids made of pairs of hexes
   GDREGISTER_CLASS(sota::HoneycombCell);
   GDREGISTER_CLASS(sota::HoneycombHoney);
   GDREGISTER_ABSTRACT_CLASS(sota::Honeycomb);
   GDREGISTER_CLASS(sota::RectHoneycomb);
   GDREGISTER_CLASS(sota::HexagonalHoneycomb);
 
+  // Volumetric grids of hexes
   GDREGISTER_CLASS(sota::PrismHexMesh);
   GDREGISTER_CLASS(sota::PolyhedronMesh);
 }

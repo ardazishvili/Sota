@@ -27,9 +27,9 @@ class Tile : public godot::Node3D {
 
   gd::Ref<HexMesh> mesh() const;
   int id() const { return _mesh->get_id(); }
-  bool is_shifted() const { return shifted; }
-  OffsetCoordinates get_offset_coords() const { return offset_coord; }
-  CubeCoordinates get_cube_coords() const { return offsetToCube(offset_coord); }
+  bool is_shifted() const { return _shifted; }
+  OffsetCoordinates get_offset_coords() const { return _offset_coord; }
+  CubeCoordinates get_cube_coords() const { return offsetToCube(_offset_coord); }
 
  private:
   gd::Ref<gd::SphereShape3D> _sphere_shaped3d{nullptr};
@@ -38,8 +38,8 @@ class Tile : public godot::Node3D {
   gd::MeshInstance3D* _main_mesh_instance{nullptr};
 
   gd::Ref<HexMesh> _mesh;
-  OffsetCoordinates offset_coord;
-  const bool shifted;  // odd rows are shifted by half of small radius
+  OffsetCoordinates _offset_coord;
+  const bool _shifted;  // odd rows are shifted by half of small radius
 };
 
 class BiomeTile : public Tile {

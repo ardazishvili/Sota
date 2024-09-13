@@ -1,6 +1,6 @@
 @tool
 
-extends RectHexGridMap
+extends RectHexGrid
 
 @export var noise : FastNoiseLite
 

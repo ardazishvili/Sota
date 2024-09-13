@@ -28,15 +28,15 @@ class RidgeHexMesh : public HexMesh {
  public:
   RidgeHexMesh() : HexMesh() {}
   RidgeHexMesh(Hexagon hex, RidgeHexMeshParams params) : HexMesh(hex, params.hex_mesh_params) {
-    id = params.hex_mesh_params.id;
-    plain_noise = params.plain_noise;
-    ridge_noise = params.ridge_noise;
+    _id = params.hex_mesh_params.id;
+    _plain_noise = params.plain_noise;
+    _ridge_noise = params.ridge_noise;
     _diameter = params.hex_mesh_params.diameter;
-    frame_state = params.hex_mesh_params.frame_state;
-    frame_offset = params.hex_mesh_params.frame_offset;
-    divisions = params.hex_mesh_params.divisions;
+    _frame_state = params.hex_mesh_params.frame_state;
+    _frame_offset = params.hex_mesh_params.frame_offset;
+    _divisions = params.hex_mesh_params.divisions;
     set_material(params.hex_mesh_params.material);
-    clip_options = params.hex_mesh_params.clip_options;
+    _clip_options = params.hex_mesh_params.clip_options;
   }
 
   // getters
@@ -48,8 +48,8 @@ class RidgeHexMesh : public HexMesh {
   // setters
   void set_plain_noise(gd::Ref<gd::FastNoiseLite> plain_noise);
   void set_ridge_noise(gd::Ref<gd::FastNoiseLite> ridge_noise);
-  void set_neighbours(HexagonNeighbours p_neighbours) { neighbours = p_neighbours; }
-  void set_ridges(std::vector<Ridge*> r) { ridges = r; }
+  void set_neighbours(HexagonNeighbours p_neighbours) { _neighbours = p_neighbours; }
+  void set_ridges(std::vector<Ridge*> r) { _ridges = r; }
   void set_shift_compress(float y_shift, float y_compress);
 
   // calculation
@@ -60,16 +60,16 @@ class RidgeHexMesh : public HexMesh {
  protected:
   static void _bind_methods();
 
-  godot::PackedVector3Array initial_vertices_;
+  godot::PackedVector3Array _initial_vertices;
 
   void shift_compress();
   void calculate_ridge_based_heights(std::function<double(double, double, double)> interpolation_func,
                                      float ridge_offset);
 
-  gd::Ref<gd::FastNoiseLite> plain_noise;
-  gd::Ref<gd::FastNoiseLite> ridge_noise;
-  std::vector<Ridge*> ridges;
-  HexagonNeighbours neighbours = {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr};
+  gd::Ref<gd::FastNoiseLite> _plain_noise;
+  gd::Ref<gd::FastNoiseLite> _ridge_noise;
+  std::vector<Ridge*> _ridges;
+  HexagonNeighbours _neighbours = {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr};
 
   float _min_y = std::numeric_limits<float>::max();
   float _max_y = std::numeric_limits<float>::min();

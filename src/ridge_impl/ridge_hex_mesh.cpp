@@ -15,17 +15,17 @@ using namespace gd;
 void RidgeHexMesh::_bind_methods() {}
 
 void RidgeHexMesh::set_plain_noise(Ref<FastNoiseLite> p_noise) {
-  plain_noise = p_noise;
-  if (plain_noise.ptr()) {
-    plain_noise->connect("changed", Callable(this, "request_update"));
+  _plain_noise = p_noise;
+  if (_plain_noise.ptr()) {
+    _plain_noise->connect("changed", Callable(this, "request_update"));
     request_update();
   }
 }
 
 void RidgeHexMesh::set_ridge_noise(Ref<FastNoiseLite> p_ridge_noise) {
-  ridge_noise = p_ridge_noise;
-  if (ridge_noise.ptr()) {
-    ridge_noise->connect("changed", Callable(this, "request_update"));
+  _ridge_noise = p_ridge_noise;
+  if (_ridge_noise.ptr()) {
+    _ridge_noise->connect("changed", Callable(this, "request_update"));
     request_update();
   }
 }
@@ -33,14 +33,14 @@ void RidgeHexMesh::set_ridge_noise(Ref<FastNoiseLite> p_ridge_noise) {
 void RidgeHexMesh::calculate_corner_points_distances_to_border() {
   std::unordered_set<int> exclude_list;
   for (int i = 0; i < 6; ++i) {
-    if (neighbours[i]) {
+    if (_neighbours[i]) {
       exclude_list.insert(i);
     }
   }
   auto [coeffs, coeffs_precalc] = GeneralUtility::get_border_line_coeffs(_R, _r, exclude_list);
 
   std::map<Vector3, float> neighbours_corner_points_distances_to_border;
-  for (const auto& n : neighbours) {
+  for (const auto& n : _neighbours) {
     if (n) {
       auto tmp = dynamic_cast<RidgeHexMesh*>(n)->get_corner_points_distances_to_border();
       neighbours_corner_points_distances_to_border.insert(tmp.begin(), tmp.end());
@@ -71,7 +71,7 @@ void RidgeHexMesh::shift_compress() {
   if (tesselation_type == HexMesh::TesselationType::Plane) {
     GeneralUtility::shift_compress(vertices_, _y_shift, _y_compress, center.y);
   } else if (tesselation_type == TesselationType::Polyhedron) {
-    GeneralUtility::shift_compress_polyhedron(vertices_, initial_vertices_, _y_shift, _y_compress, center.y);
+    GeneralUtility::shift_compress_polyhedron(vertices_, _initial_vertices, _y_shift, _y_compress, center.y);
   } else {
     UtilityFunctions::printerr("unknown type of RidgeHexMesh");
   }
@@ -83,7 +83,7 @@ void RidgeHexMesh::calculate_ridge_based_heights(std::function<double(double, do
   shift_compress();
 
   std::vector<Vector3> ridge_points;
-  for (const Ridge* ridge : ridges) {
+  for (const Ridge* ridge : _ridges) {
     Vector3 s = ridge->start();
     Vector3 e = ridge->end();
 
@@ -95,14 +95,14 @@ void RidgeHexMesh::calculate_ridge_based_heights(std::function<double(double, do
   }
   std::unordered_set<int> exclude_list;
   for (int i = 0; i < 6; ++i) {
-    if (neighbours[i]) {
+    if (_neighbours[i]) {
       exclude_list.insert(i);
     }
   }
   auto [coeffs, coeffs_precalc] = GeneralUtility::get_border_line_coeffs(_R, _r, exclude_list);
 
   std::map<Vector3, float> neighbours_corner_points_distances_to_border;
-  for (const HexMesh* n : neighbours) {
+  for (const HexMesh* n : _neighbours) {
     if (n) {
       std::map<Vector3, float> tmp = dynamic_cast<const RidgeHexMesh*>(n)->get_corner_points_distances_to_border();
       neighbours_corner_points_distances_to_border.insert(tmp.begin(), tmp.end());
@@ -136,7 +136,7 @@ void RidgeHexMesh::calculate_ridge_based_heights(std::function<double(double, do
     float approx_end = crp.y;
     auto t = [](float to_border, float to_projection) { return to_border / (to_border + to_projection); };
 
-    float n = ridge_noise.ptr() ? std::abs(ridge_noise->get_noise_2d(v.x, v.z)) * 0.289 : 0;
+    float n = _ridge_noise.ptr() ? std::abs(_ridge_noise->get_noise_2d(v.x, v.z)) * 0.289 : 0;
     auto t_perlin = [distance_to_border, ridge_offset](float y) -> float {
       if (epsilonEqual(distance_to_border, 0.0f)) {
         return 0.0f;
@@ -161,15 +161,15 @@ void RidgeHexMesh::calculate_initial_heights() {
 
   if (tesselation_type == HexMesh::TesselationType::Plane) {
     for (auto& v : vertices_) {
-      float n = plain_noise.ptr() ? plain_noise->get_noise_2d(v.x, v.z) : 0.0;
+      float n = _plain_noise.ptr() ? _plain_noise->get_noise_2d(v.x, v.z) : 0.0;
       v += n * normal;
       _min_y = std::min(_min_y, v.y);
       _max_y = std::max(_max_y, v.y);
     }
   } else if (tesselation_type == HexMesh::TesselationType::Polyhedron) {
-    initial_vertices_ = vertices_;
+    _initial_vertices = vertices_;
     for (auto& v : vertices_) {
-      float n = plain_noise.ptr() ? plain_noise->get_noise_3d(v.x, v.y, v.z) : 0.0;
+      float n = _plain_noise.ptr() ? _plain_noise->get_noise_3d(v.x, v.y, v.z) : 0.0;
       Vector3 old = v;
       v += n * v.normalized();
       _min_y = std::min(_min_y, v.length() - old.length());
@@ -188,7 +188,7 @@ GroupedHexagonMeshVertices RidgeHexMesh::get_grouped_vertices() {
   for (int i = 0; i < size; ++i) {
     Vector3& v = vertices_[i];
     Vector3& n = normals_[i];
-    auto p = to_point_divisioned_position(v, _diameter, divisions);
+    auto p = to_point_divisioned_position(v, _diameter, _divisions);
     vertex_groups[p].push_back(&n);
   }
   return vertex_groups;
@@ -196,7 +196,8 @@ GroupedHexagonMeshVertices RidgeHexMesh::get_grouped_vertices() {
 
 std::vector<HexMesh*> RidgeHexMesh::get_neighbours() const {
   std::vector<HexMesh*> res;
-  std::copy_if(neighbours.begin(), neighbours.end(), std::back_inserter(res), [](HexMesh* n) { return n != nullptr; });
+  std::copy_if(_neighbours.begin(), _neighbours.end(), std::back_inserter(res),
+               [](HexMesh* n) { return n != nullptr; });
   return res;
 }
 

@@ -21,11 +21,11 @@ void SotaMesh::_bind_methods() {
 }
 
 void SotaMesh::set_divisions(const int p_divisions) {
-  divisions = p_divisions > 1 ? p_divisions : 1;
+  _divisions = p_divisions > 1 ? p_divisions : 1;
   init();
 }
 
-int SotaMesh::get_divisions() const { return divisions; }
+int SotaMesh::get_divisions() const { return _divisions; }
 
 void SotaMesh::tesselate_into_triangles(Vector3 a, Vector3 b, Vector3 c, int level) const {
   --level;
