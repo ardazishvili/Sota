@@ -1,15 +1,13 @@
 #pragma once
 
-#include <godot_cpp/classes/primitive_mesh.hpp>
-
-#include "godot_cpp/classes/material.hpp"
-#include "godot_cpp/classes/ref.hpp"
-#include "godot_cpp/classes/wrapped.hpp"
-#include "godot_cpp/variant/packed_vector3_array.hpp"
-#include "godot_cpp/variant/vector3.hpp"
 #include "mesh.h"
 #include "misc/types.h"
 #include "primitives/Hexagon.h"
+#include "tal/arrays.h"
+#include "tal/material.h"
+#include "tal/reference.h"
+#include "tal/vector3.h"
+#include "tal/wrapped.h"
 
 namespace sota {
 
@@ -23,7 +21,7 @@ struct HexMeshParams {
   bool frame_state{false};
   float frame_offset{0.0};
 
-  godot::Ref<godot::Material> material;
+  Ref<Material> material;
   int divisions{3};
   ClipOptions clip_options;
 };
@@ -38,7 +36,7 @@ class HexMesh : public SotaMesh {
 
   void set_diameter(const float p_diameter);
   float get_diameter() const;
-  gd::Vector3 get_center() const { return _hex.center(); }
+  Vector3 get_center() const { return _hex.center(); }
 
   void update();
 
@@ -77,9 +75,9 @@ class HexMesh : public SotaMesh {
 
   void z_clip(float boundary) const;
 
-  friend godot::Ref<HexMesh> make_hex_mesh(Hexagon hex, HexMeshParams params);
+  friend Ref<HexMesh> make_hex_mesh(Hexagon hex, HexMeshParams params);
 };
 
-godot::Ref<HexMesh> make_hex_mesh(Hexagon hex, HexMeshParams params);
+Ref<HexMesh> make_hex_mesh(Hexagon hex, HexMeshParams params);
 
 }  // namespace sota

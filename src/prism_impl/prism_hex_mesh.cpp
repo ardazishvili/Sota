@@ -1,11 +1,9 @@
 #include "prism_impl/prism_hex_mesh.h"
 
-#include "godot_cpp/classes/primitive_mesh.hpp"
+#include "tal/godot_core.h"
 #include "misc/types.h"
 
 namespace sota {
-
-using namespace gd;
 
 void PrismHexMesh::_bind_methods() {
   ClassDB::bind_method(D_METHOD("get_height"), &PrismHexMesh::get_height);

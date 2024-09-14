@@ -6,8 +6,6 @@
 
 namespace sota {
 
-using namespace gd;
-
 std::vector<std::vector<Vector3i>> HexagonalUtility::get_offset_coords_layout(int size) {
   std::vector<std::vector<Vector3i>> col_row_layout(size * 2 + 1, std::vector<Vector3i>());
   auto r_start = [size](int q) { return q <= 0 ? (-size - q) : -size; };

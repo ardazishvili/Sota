@@ -1,10 +1,8 @@
 #include "ridge.h"
 
-#include "godot_cpp/variant/vector3.hpp"
+#include "tal/vector3.h"
 
 namespace sota {
-
-using namespace gd;
 
 Ridge::Ridge(Vector3 start, Vector3 end) : _start(start), _end(end) {}
 

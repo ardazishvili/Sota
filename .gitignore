@@ -2,6 +2,7 @@
 .cache/
 .scons-cache/
 *.os
+*.o
 
 # SConstruct
 .sconf_temp
@@ -18,7 +19,7 @@ compile_commands.json
 .vscode/
 
 # Vim
-.swp
+*.swp
 
 # Docs
 docs/_build/**

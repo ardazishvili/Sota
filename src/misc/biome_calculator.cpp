@@ -1,6 +1,6 @@
 #include "biome_calculator.h"
 
-#include "godot_cpp/variant/utility_functions.hpp"
+#include "tal/godot_core.h"
 
 namespace sota {
 
@@ -28,7 +28,7 @@ Biome BiomeCalculator::calculate_biome(float min_z, float max_z, float cur_z) co
   } else if (hill_max_z < cur_z && cur_z <= mountain_max_z) {
     return Biome::MOUNTAIN;
   } else {
-    godot::UtilityFunctions::printerr("Non reachable: unknown biome");
+    UtilityFunctions::printerr("Non reachable: unknown biome");
   }
   return Biome::WATER;  // unreachable
 }

@@ -4,13 +4,11 @@
 
 #include "Pentagon.h"
 #include "algo/constants.h"
-#include "godot_cpp/core/memory.hpp"
-#include "godot_cpp/variant/vector2.hpp"
-#include "godot_cpp/variant/vector3.hpp"
+#include "tal/reference.h"
+#include "tal/vector2.h"
+#include "tal/vector3.h"
 
 namespace sota {
-
-using namespace godot;
 
 void PentMesh::init_from_pentagon(Pentagon pentagon) {
   pentagon.check();
@@ -79,7 +77,7 @@ void PentMesh::calculate_tex_uv1() const {
 void PentMesh::update() { request_update(); }
 
 Ref<PentMesh> make_pent_mesh(Pentagon pentagon, PentagonMeshParams params) {
-  Ref<PentMesh> mesh = Ref(memnew(PentMesh(pentagon, params)));
+  Ref<PentMesh> mesh = Ref<PentMesh>(memnew(PentMesh(pentagon, params)));
   mesh->init();
   return mesh;
 }

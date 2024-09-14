@@ -2,23 +2,23 @@
 
 #include <vector>
 
-#include "godot_cpp/variant/vector3.hpp"
+#include "tal/vector3.h"
 #include "misc/types.h"
 
 namespace sota {
 
 class Ridge {
  public:
-  Ridge(gd::Vector3 start, gd::Vector3 end);
-  void set_points(std::vector<gd::Vector3> points);
-  const std::vector<gd::Vector3> get_points() const;
-  gd::Vector3 start() const { return _start; }
-  gd::Vector3 end() const { return _end; }
+  Ridge(Vector3 start, Vector3 end);
+  void set_points(std::vector<Vector3> points);
+  const std::vector<Vector3> get_points() const;
+  Vector3 start() const { return _start; }
+  Vector3 end() const { return _end; }
 
  private:
-  std::vector<gd::Vector3> _points;
-  gd::Vector3 _start;
-  gd::Vector3 _end;
+  std::vector<Vector3> _points;
+  Vector3 _start;
+  Vector3 _end;
 };
 
 }  // namespace sota

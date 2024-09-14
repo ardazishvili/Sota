@@ -7,15 +7,11 @@
 
 #include "algo/dsu.h"
 #include "biome_calculator.h"
+#include "core/godot_utils.h"
 #include "core/hex_mesh.h"
 #include "core/utils.h"
 #include "cube_coordinates.h"
 #include "general_utility.h"
-#include "godot_cpp/classes/shader_material.hpp"
-#include "godot_cpp/variant/plane.hpp"
-#include "godot_cpp/variant/vector3.hpp"
-#include "godot_cpp/variant/vector3i.hpp"
-#include "godot_utils.h"
 #include "hexagonal_utility.h"
 #include "misc/tile.h"
 #include "misc/types.h"
@@ -24,11 +20,12 @@
 #include "ridge_impl/ridge.h"
 #include "ridge_impl/ridge_config.h"
 #include "ridge_impl/ridge_hex_mesh.h"
+#include "tal/callable.h"
+#include "tal/godot_core.h"
+#include "tal/vector3.h"
 #include "utilities.h"
 
 namespace sota {
-
-using namespace gd;
 
 RidgeHexGrid::RidgeHexGrid() {
   _texture[Biome::PLAIN] = Ref<Texture>();

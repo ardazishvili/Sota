@@ -1,7 +1,8 @@
 #include "hill_hex_mesh.h"
 
+#include "tal/vector2.h"
+
 namespace sota {
-using namespace gd;
 
 void HillHexMesh::calculate_final_heights() {
   shift_compress();

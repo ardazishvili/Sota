@@ -4,8 +4,6 @@
 
 namespace sota {
 
-using namespace godot;
-
 // TODO globals
 constexpr float bottom_y_offset = 0.5;
 

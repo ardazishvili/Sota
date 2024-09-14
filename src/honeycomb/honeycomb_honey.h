@@ -1,15 +1,14 @@
 #pragma once
 
-#include "godot_cpp/classes/fast_noise_lite.hpp"
-#include "godot_cpp/classes/ref.hpp"
-#include "godot_cpp/classes/wrapped.hpp"
+#include "tal/noise.h"
+#include "tal/reference.h"
 #include "hex_mesh.h"
 #include "types.h"
 namespace sota {
 
 struct HoneycombHoneyMeshParams {
   HexMeshParams hex_mesh_params;
-  godot::Ref<godot::FastNoiseLite> noise{nullptr};
+  Ref<FastNoiseLite> noise{nullptr};
   int max_level{0};
   float fill_delta{0};
   float min_offset{0.0};
@@ -32,7 +31,7 @@ class HoneycombHoney : public HexMesh {
   std::pair<float, float> get_min_max_height() const { return {_min_y, _max_y}; }
 
   // setters
-  void set_noise(gd::Ref<gd::FastNoiseLite> noise);
+  void set_noise(Ref<FastNoiseLite> noise);
   void set_min_offset(float p_offset);
   void set_max_level(float p_max_level);
 
@@ -57,7 +56,7 @@ class HoneycombHoney : public HexMesh {
   static void _bind_methods();
 
  private:
-  gd::Ref<gd::FastNoiseLite> _noise;
+  Ref<FastNoiseLite> _noise;
   int _level{0};
   int _max_level{0};
   float _fill_delta{0};
@@ -72,6 +71,6 @@ class HoneycombHoney : public HexMesh {
   float _y_compress = 1.0f;  // no compress
 };
 
-godot::Ref<HoneycombHoney> make_honeycomb_honey(Hexagon hex, HoneycombHoneyMeshParams params);
+Ref<HoneycombHoney> make_honeycomb_honey(Hexagon hex, HoneycombHoneyMeshParams params);
 
 }  // namespace sota

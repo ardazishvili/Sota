@@ -1,15 +1,14 @@
 #include "honeycomb/honeycomb_honey.h"
 
 #include "Hexagon.h"
+#include "tal/callable.h"
+#include "tal/godot_core.h"
+#include "tal/vector3.h"
 #include "general_utility.h"
-#include "godot_cpp/core/class_db.hpp"
-#include "godot_cpp/variant/vector3.hpp"
 #include "misc/utilities.h"
 #include "types.h"
 
 namespace sota {
-
-using namespace gd;
 
 void HoneycombHoney::_bind_methods() {
   ClassDB::bind_method(D_METHOD("lock"), &HoneycombHoney::lock);

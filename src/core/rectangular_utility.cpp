@@ -4,8 +4,6 @@
 
 namespace sota {
 
-using namespace gd;
-
 std::vector<std::vector<Vector3i>> RectangularUtility::get_offset_coords_layout(int height, int width) {
   std::vector<std::vector<Vector3i>> col_row_layout(height, std::vector<Vector3i>(width));
   for (int row = 0; row < height; ++row) {

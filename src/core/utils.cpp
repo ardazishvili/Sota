@@ -3,9 +3,8 @@
 #include <cmath>
 
 #include "algo/constants.h"
-#include "godot_cpp/variant/variant.hpp"
-#include "godot_cpp/variant/vector3.hpp"
-#include "godot_cpp/variant/vector3i.hpp"
+#include "tal/arrays.h"
+#include "tal/vector3i.h"
 
 namespace sota {
 
@@ -24,11 +23,10 @@ double cosrp(double a, double b, double mu) {
   return a * (1 - mu2) + b * mu2;
 };
 
-using namespace godot;
-auto ico_points() -> PackedVector3Array {
+auto ico_points() -> Vector3Array {
   float s = 2 / sqrt(5);
   float c = 1 / sqrt(5);
-  PackedVector3Array res;
+  Vector3Array res;
   res.append(Vector3(0, 1, 0));
   for (int i = 0; i < 5; ++i) {
     res.append(Vector3(s * cos(i * 2 * PI / 5), c, s * sin(i * 2 * PI / 5)));

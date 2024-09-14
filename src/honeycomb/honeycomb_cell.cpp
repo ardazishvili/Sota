@@ -1,15 +1,15 @@
 #include "honeycomb/honeycomb_cell.h"
 
 #include "core/utils.h"
+#include "tal/callable.h"
+#include "tal/camera.h"
+#include "tal/event.h"
+#include "tal/godot_core.h"
+#include "tal/vector2.h"
 #include "general_utility.h"
-#include "godot_cpp/classes/input_event_mouse.hpp"
-#include "godot_cpp/classes/shader_material.hpp"
-#include "godot_cpp/variant/vector3.hpp"
 #include "misc/utilities.h"
 
 namespace sota {
-
-using namespace gd;
 
 void HoneycombCell::_bind_methods() {
   ClassDB::bind_method(D_METHOD("handle_mouse_entered"), &HoneycombCell::handle_mouse_entered);

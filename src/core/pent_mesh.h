@@ -1,15 +1,15 @@
 #pragma once
 
-#include "godot_cpp/classes/material.hpp"
-#include "godot_cpp/classes/wrapped.hpp"
 #include "mesh.h"
 #include "primitives/Pentagon.h"
+#include "tal/material.h"
+#include "tal/reference.h"
 namespace sota {
 
 struct PentagonMeshParams {
   int id{0};
   int divisions{1};
-  godot::Ref<godot::Material> material;
+  Ref<Material> material;
 };
 
 class PentMesh : public SotaMesh {
@@ -30,9 +30,9 @@ class PentMesh : public SotaMesh {
   void init_from_pentagon(Pentagon pentagon);
   void calculate_tex_uv1() const override;
   void calculate_vertices_recursion();  // not tested e.g. for clips
-  friend godot::Ref<PentMesh> make_pent_mesh(Pentagon pentagon, PentagonMeshParams params);
+  friend Ref<PentMesh> make_pent_mesh(Pentagon pentagon, PentagonMeshParams params);
 };
 
-godot::Ref<PentMesh> make_pent_mesh(Pentagon pentagon, PentagonMeshParams params);
+Ref<PentMesh> make_pent_mesh(Pentagon pentagon, PentagonMeshParams params);
 
 }  // namespace sota

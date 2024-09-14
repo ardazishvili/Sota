@@ -7,8 +7,6 @@
 
 namespace sota {
 
-using namespace godot;
-
 /////////////////////////////////////////////////// TEMPORARY BROKEN
 
 void PolyhedronRidgeProcessor::process(PolyhedronMesh& polyhedron_mesh) {

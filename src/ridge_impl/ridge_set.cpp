@@ -3,15 +3,13 @@
 #include <array>
 #include <random>
 
-#include "godot_cpp/variant/vector2.hpp"
-#include "godot_cpp/variant/vector3.hpp"
 #include "ridge_impl/ridge_config.h"
 #include "ridge_impl/ridge_hex_mesh.h"
 #include "ridge_impl/ridge_set_maker.h"
+#include "tal/vector2.h"
+#include "tal/vector3.h"
 
 namespace sota {
-
-using namespace gd;
 
 RidgeSet::RidgeSet(RidgeConfig config) : _config(config) {}
 

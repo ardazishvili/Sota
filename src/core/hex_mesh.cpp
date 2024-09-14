@@ -2,19 +2,12 @@
 
 #include "Hexagon.h"
 #include "core/utils.h"
-#include "godot_cpp/core/class_db.hpp"
-#include "godot_cpp/core/memory.hpp"
-#include "godot_cpp/variant/array.hpp"
-#include "godot_cpp/variant/callable.hpp"
-#include "godot_cpp/variant/packed_float32_array.hpp"
-#include "godot_cpp/variant/packed_vector3_array.hpp"
-#include "godot_cpp/variant/variant.hpp"
-#include "godot_cpp/variant/vector2.hpp"
-#include "godot_cpp/variant/vector3.hpp"
+#include "tal/arrays.h"
+#include "tal/godot_core.h"
+#include "tal/vector2.h"
+#include "tal/vector3.h"
 
 namespace sota {
-
-using namespace godot;
 
 void HexMesh::init_from_hex(Hexagon hex) {
   hex.check();
@@ -113,7 +106,7 @@ void HexMesh::z_clip(float boundary) const {
   float z_step = _R / _divisions;
   float half_z_step = z_step / 2;
 
-  PackedVector3Array filtered;
+  Vector3Array filtered;
   int n = vertices_.size();
   for (int i = 0; i < n; i += 3) {
     Vector3& p0 = vertices_[i];
@@ -229,7 +222,7 @@ void HexMesh::calculate_vertices_iteration() const {
     return;
   }
 
-  PackedVector3Array copy = vertices_;
+  Vector3Array copy = vertices_;
   int n = vertices_.size();
 
   auto reflected = [center, direction0](Vector3 v) -> Vector3 { return (v - center).reflect(direction0) + center; };

@@ -6,12 +6,9 @@
 #include <vector>
 
 #include "core/hex_mesh.h"
-#include "godot_cpp/classes/fast_noise_lite.hpp"
-#include "godot_cpp/classes/material.hpp"
-#include "godot_cpp/classes/ref.hpp"
-#include "godot_cpp/classes/wrapped.hpp"
-#include "godot_cpp/variant/packed_vector3_array.hpp"
-#include "godot_cpp/variant/vector3.hpp"
+#include "tal/noise.h"
+#include "tal/reference.h"
+#include "tal/vector3.h"
 #include "misc/types.h"
 #include "ridge_impl/ridge.h"
 
@@ -19,8 +16,8 @@ namespace sota {
 
 struct RidgeHexMeshParams {
   HexMeshParams hex_mesh_params;
-  godot::Ref<godot::FastNoiseLite> plain_noise{nullptr};
-  godot::Ref<godot::FastNoiseLite> ridge_noise{nullptr};
+  Ref<FastNoiseLite> plain_noise{nullptr};
+  Ref<FastNoiseLite> ridge_noise{nullptr};
 };
 
 class RidgeHexMesh : public HexMesh {
@@ -41,13 +38,13 @@ class RidgeHexMesh : public HexMesh {
 
   // getters
   std::vector<HexMesh*> get_neighbours() const;
-  std::map<gd::Vector3, float> get_corner_points_distances_to_border() const { return _corner_points_to_border_dist; }
+  std::map<Vector3, float> get_corner_points_distances_to_border() const { return _corner_points_to_border_dist; }
   GroupedHexagonMeshVertices get_grouped_vertices();
   std::pair<float, float> get_min_max_height() const { return {_min_y, _max_y}; }
 
   // setters
-  void set_plain_noise(gd::Ref<gd::FastNoiseLite> plain_noise);
-  void set_ridge_noise(gd::Ref<gd::FastNoiseLite> ridge_noise);
+  void set_plain_noise(Ref<FastNoiseLite> plain_noise);
+  void set_ridge_noise(Ref<FastNoiseLite> ridge_noise);
   void set_neighbours(HexagonNeighbours p_neighbours) { _neighbours = p_neighbours; }
   void set_ridges(std::vector<Ridge*> r) { _ridges = r; }
   void set_shift_compress(float y_shift, float y_compress);
@@ -60,14 +57,14 @@ class RidgeHexMesh : public HexMesh {
  protected:
   static void _bind_methods();
 
-  godot::PackedVector3Array _initial_vertices;
+  Vector3Array _initial_vertices;
 
   void shift_compress();
   void calculate_ridge_based_heights(std::function<double(double, double, double)> interpolation_func,
                                      float ridge_offset);
 
-  gd::Ref<gd::FastNoiseLite> _plain_noise;
-  gd::Ref<gd::FastNoiseLite> _ridge_noise;
+  Ref<FastNoiseLite> _plain_noise;
+  Ref<FastNoiseLite> _ridge_noise;
   std::vector<Ridge*> _ridges;
   HexagonNeighbours _neighbours = {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr};
 
@@ -77,7 +74,7 @@ class RidgeHexMesh : public HexMesh {
   float _y_compress = 1.0f;  // no compress
 
  private:
-  std::map<gd::Vector3, float> _corner_points_to_border_dist;
+  std::map<Vector3, float> _corner_points_to_border_dist;
 };
 
 }  // namespace sota

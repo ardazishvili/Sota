@@ -5,10 +5,9 @@
 
 #include "core/hex_grid.h"
 #include "cube_coordinates.h"
-#include "godot_cpp/classes/fast_noise_lite.hpp"
-#include "godot_cpp/classes/texture.hpp"
-#include "godot_cpp/classes/wrapped.hpp"
 #include "ridge_impl/ridge_set.h"
+#include "tal/noise.h"
+#include "tal/texture.h"
 
 namespace sota {
 
@@ -22,26 +21,26 @@ class RidgeHexGrid : public HexGrid {
  public:
   RidgeHexGrid();
 
-  void set_biomes_noise(const gd::Ref<gd::FastNoiseLite> p_biomes_noise);
-  gd::Ref<gd::FastNoiseLite> get_biomes_noise() const;
+  void set_biomes_noise(const Ref<FastNoiseLite> p_biomes_noise);
+  Ref<FastNoiseLite> get_biomes_noise() const;
 
-  void set_hex_noise(const gd::Ref<gd::FastNoiseLite> p_hex_noise);
-  gd::Ref<gd::FastNoiseLite> get_hex_noise() const;
+  void set_hex_noise(const Ref<FastNoiseLite> p_hex_noise);
+  Ref<FastNoiseLite> get_hex_noise() const;
 
-  void set_ridge_noise(const gd::Ref<gd::FastNoiseLite> p_ridge_noise);
-  gd::Ref<gd::FastNoiseLite> get_ridge_noise() const;
+  void set_ridge_noise(const Ref<FastNoiseLite> p_ridge_noise);
+  Ref<FastNoiseLite> get_ridge_noise() const;
 
-  void set_plain_texture(const gd::Ref<gd::Texture> p_texture);
-  gd::Ref<gd::Texture> get_plain_texture() const;
+  void set_plain_texture(const Ref<Texture> p_texture);
+  Ref<Texture> get_plain_texture() const;
 
-  void set_hill_texture(const gd::Ref<gd::Texture> p_texture);
-  gd::Ref<gd::Texture> get_hill_texture() const;
+  void set_hill_texture(const Ref<Texture> p_texture);
+  Ref<Texture> get_hill_texture() const;
 
-  void set_water_texture(const gd::Ref<gd::Texture> p_texture);
-  gd::Ref<gd::Texture> get_water_texture() const;
+  void set_water_texture(const Ref<Texture> p_texture);
+  Ref<Texture> get_water_texture() const;
 
-  void set_mountain_texture(const gd::Ref<gd::Texture> p_texture);
-  gd::Ref<gd::Texture> get_mountain_texture() const;
+  void set_mountain_texture(const Ref<Texture> p_texture);
+  Ref<Texture> get_mountain_texture() const;
 
   void set_ridge_variation_min_bound(float p_ridge_variation_min_bound);
   float get_ridge_variation_min_bound() const;
@@ -76,11 +75,11 @@ class RidgeHexGrid : public HexGrid {
   void init_hexmesh() override;
 
  private:
-  std::unordered_map<Biome, gd::Ref<gd::Texture>> _texture;
+  std::unordered_map<Biome, Ref<Texture>> _texture;
 
-  gd::Ref<gd::FastNoiseLite> _biomes_noise;
-  gd::Ref<gd::FastNoiseLite> _plain_noise;
-  gd::Ref<gd::FastNoiseLite> _ridge_noise;
+  Ref<FastNoiseLite> _biomes_noise;
+  Ref<FastNoiseLite> _plain_noise;
+  Ref<FastNoiseLite> _ridge_noise;
 
   bool _smooth_normals{false};
   RidgeConfig _ridge_config;
