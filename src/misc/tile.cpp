@@ -1,28 +1,24 @@
 #include "tile.h"
 
 #include "cube_coordinates.h"
-#include "godot_cpp/classes/editor_interface.hpp"
-#include "godot_cpp/classes/engine.hpp"
-#include "godot_cpp/classes/mesh_instance3d.hpp"
-#include "godot_cpp/classes/sphere_shape3d.hpp"
-#include "godot_cpp/classes/static_body3d.hpp"
-#include "godot_cpp/core/memory.hpp"
-#include "godot_cpp/variant/vector3.hpp"
+#include "godot_cpp/classes/sphere_mesh.hpp"
 #include "honeycomb/honeycomb_honey.h"
+#include "tal/callable.h"
+#include "tal/engine.h"
+#include "tal/mesh.h"
+#include "tal/vector3.h"
 #include "types.h"
 #include "utils.h"
 
 namespace sota {
 
-using namespace gd;
-
 // Tile definitions
 Tile::~Tile() {}
 
-Tile::Tile(gd::Ref<HexMesh> mesh, Vector3 offset, gd::Node3D* parent, OffsetCoordinates offset_coord)
+Tile::Tile(Ref<HexMesh> mesh, Vector3 offset, Node3D* parent, OffsetCoordinates offset_coord)
     : _mesh(mesh), _offset_coord(offset_coord), _shifted(is_odd(offset_coord.row)) {
   _main_mesh_instance = memnew(MeshInstance3D());
-  _sphere_shaped3d = Ref(memnew(SphereShape3D()));
+  _sphere_shaped3d = Ref<SphereShape3D>(memnew(SphereShape3D()));
 
   _sphere_shaped3d->set_radius(small_radius(mesh->get_diameter()));
 
@@ -61,7 +57,7 @@ void BiomeTile::set_neighbours(HexagonNeighbours neighbours) { _neighbours = nei
 
 // HoneycombTile definitions
 Ref<HoneycombHoney> HoneycombTile::honey_mesh() const { return _honey; }
-HoneycombTile::HoneycombTile(gd::Ref<HoneycombCell> walls, gd::Ref<HoneycombHoney> honey, gd::Node3D* parent,
+HoneycombTile::HoneycombTile(Ref<HoneycombCell> walls, Ref<HoneycombHoney> honey, Node3D* parent,
                              OffsetCoordinates offset_coord)
     : Tile(walls, walls->get_center(), parent, offset_coord), _honey(honey) {
   _second_mesh_instance = memnew(MeshInstance3D());

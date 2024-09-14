@@ -8,7 +8,7 @@ namespace sota {
 
 class PolyhedronRidgeProcessor : public PolyhedronProcessor {
  public:
-  void configure_cell(Hexagon hex, Biome biome, int &id, godot::Ref<godot::ShaderMaterial> mat,
+  void configure_cell(Hexagon hex, Biome biome, int &id, Ref<ShaderMaterial> mat,
                       PolyhedronMesh &polyhedron_mesh) override;
   void process(PolyhedronMesh &polyhedron_mesh) override;
 };

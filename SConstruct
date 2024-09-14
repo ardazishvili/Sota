@@ -6,9 +6,11 @@ from pathlib import Path
 env = SConscript("godot-cpp/SConstruct")
 
 env.Append(CXXFLAGS=["-std=c++20", "-g"])
+env.Append(CPPDEFINES=["SOTA_GDEXTENSION"])
 
 # Add source files.
 env.Append(CPPPATH=["src"])
+env.Append(CPPPATH=["src/eal"])
 env.Append(CPPPATH=["src/polyhedron"])
 env.Append(CPPPATH=["src/primitives"])
 env.Append(CPPPATH=["src/core"])

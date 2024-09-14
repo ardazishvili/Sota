@@ -1,15 +1,8 @@
 #pragma once
 
-#include <godot_cpp/classes/primitive_mesh.hpp>
-
-#include "godot_cpp/classes/wrapped.hpp"
-#include "godot_cpp/variant/packed_byte_array.hpp"
-#include "godot_cpp/variant/packed_color_array.hpp"
-#include "godot_cpp/variant/packed_float32_array.hpp"
-#include "godot_cpp/variant/packed_int32_array.hpp"
-#include "godot_cpp/variant/packed_vector2_array.hpp"
-#include "godot_cpp/variant/packed_vector3_array.hpp"
-#include "godot_cpp/variant/vector3.hpp"
+#include "tal/arrays.h"
+#include "tal/mesh.h"
+#include "tal/vector3.h"
 
 namespace sota {
 
@@ -18,8 +11,8 @@ namespace sota {
  *
  * Since PrimitiveMesh is used as super-class there are mandatory parts like vertices, normals, indices, etc.
  */
-class SotaMesh : public godot::PrimitiveMesh {
-  GDCLASS(SotaMesh, godot::PrimitiveMesh)
+class SotaMesh : public PrimitiveMesh {
+  GDCLASS(SotaMesh, PrimitiveMesh)
  public:
   /**
    * @brief Property shared with Godot inspector
@@ -39,7 +32,7 @@ class SotaMesh : public godot::PrimitiveMesh {
    *
    * @return Array of vertices, normals, indices, etc. See Godot docs
    */
-  godot::Array _create_mesh_array() const override;
+  Array _create_mesh_array() const override;
   /**
    * @brief Method is useful e.g. if vertices are (re)calculated from scratch or their order is changed
    */
@@ -49,9 +42,9 @@ class SotaMesh : public godot::PrimitiveMesh {
    */
   void calculate_normals() const;
 
-  godot::PackedVector3Array get_vertices() const;
+  Vector3Array get_vertices() const;
 
-  void set_vertices(godot::PackedVector3Array vertices);
+  void set_vertices(Vector3Array vertices);
 
  protected:
   int _id{0};
@@ -61,19 +54,19 @@ class SotaMesh : public godot::PrimitiveMesh {
    */
   int _divisions{1};
 
-  mutable godot::PackedVector3Array vertices_;
-  mutable godot::PackedVector3Array normals_;
-  mutable godot::PackedFloat32Array tangents_;
-  mutable godot::PackedColorArray colors_;
-  mutable godot::PackedVector2Array tex_uv1_;
-  mutable godot::PackedVector2Array tex_uv2_;
-  mutable godot::PackedInt32Array indices_;
-  mutable godot::PackedByteArray color_custom0_;
-  mutable godot::PackedByteArray color_custom1_;
-  mutable godot::PackedByteArray color_custom2_;
-  mutable godot::PackedByteArray color_custom3_;
-  mutable godot::PackedInt32Array bones_;
-  mutable godot::PackedFloat32Array weights_;
+  mutable Vector3Array vertices_;
+  mutable Vector3Array normals_;
+  mutable TangentsArray tangents_;
+  mutable ColorsArray colors_;
+  mutable Vector2Array tex_uv1_;
+  mutable Vector2Array tex_uv2_;
+  mutable IntArray indices_;
+  mutable ByteArray color_custom0_;
+  mutable ByteArray color_custom1_;
+  mutable ByteArray color_custom2_;
+  mutable ByteArray color_custom3_;
+  mutable IntArray bones_;
+  mutable WeightsArray weights_;
 
   static void _bind_methods();
   virtual void init_impl() = 0;
@@ -98,7 +91,7 @@ class SotaMesh : public godot::PrimitiveMesh {
    * @param level - required levels of recursion. Level 1 means no recursion, i.e. 1 triangle will be added. On level 2
    * - 4 triangles. Level 3 - 16 triangles and so on
    */
-  void tesselate_into_triangles(godot::Vector3 a, godot::Vector3 b, godot::Vector3 c, int level) const;
+  void tesselate_into_triangles(Vector3 a, Vector3 b, Vector3 c, int level) const;
 };
 
 }  // namespace sota

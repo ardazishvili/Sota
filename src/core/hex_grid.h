@@ -4,13 +4,12 @@
 #include <memory>
 
 #include "core/hex_mesh.h"
-#include "godot_cpp/classes/grid_map.hpp"
-#include "godot_cpp/classes/mesh_library.hpp"
-#include "godot_cpp/classes/node3d.hpp"
-#include "godot_cpp/classes/shader.hpp"
-#include "godot_cpp/classes/wrapped.hpp"
-#include "godot_cpp/variant/array.hpp"
-#include "godot_cpp/variant/vector3i.hpp"
+#include "tal/arrays.h"
+#include "tal/node.h"
+#include "tal/reference.h"
+#include "tal/shader.h"
+#include "tal/vector3i.h"
+#include "tal/wrapped.h"
 #include "misc/cube_coordinates.h"
 #include "misc/tile.h"
 #include "misc/types.h"
@@ -19,14 +18,14 @@ namespace sota {
 
 using TilesLayout = std::vector<std::vector<Tile*>>;
 
-class HexGrid : public gd::Node3D {
-  GDCLASS(HexGrid, gd::Node3D)
+class HexGrid : public Node3D {
+  GDCLASS(HexGrid, Node3D)
 
  public:
   HexGrid() = default;
 
-  void set_shader(const gd::Ref<gd::Shader> p_shader);
-  gd::Ref<gd::Shader> get_shader() const;
+  void set_shader(const Ref<Shader> p_shader);
+  Ref<Shader> get_shader() const;
 
   void set_divisions(const int p_divisions);
   int get_divisions() const;
@@ -44,13 +43,13 @@ class HexGrid : public gd::Node3D {
 
   virtual void calculate_normals() {}
 
-  godot::Array get_hex_meshes();
+  Array get_hex_meshes();
 
  protected:
   float _diameter{1};
   int _divisions{3};
-  gd::Ref<gd::Shader> _shader;
-  std::vector<std::vector<gd::Vector3i>> _col_row_layout;
+  Ref<Shader> _shader;
+  std::vector<std::vector<Vector3i>> _col_row_layout;
   TilesLayout _tiles_layout;
 
   static void _bind_methods();
@@ -59,8 +58,6 @@ class HexGrid : public gd::Node3D {
   virtual void init_col_row_layout() = 0;
   virtual void init_hexmesh();
   std::map<CubeCoordinates, HexMesh*> _cube_to_hexagon;
-
-  gd::Ref<gd::MeshLibrary> _library;
 
   bool _frame_state{false};
   float _frame_offset{0.0};

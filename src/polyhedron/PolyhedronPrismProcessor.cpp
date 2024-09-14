@@ -2,14 +2,14 @@
 
 #include "polyhedron/hex_polyhedron.h"
 #include "prism_hex_mesh.h"
+#include "tal/mesh.h"
+#include "tal/reference.h"
 
 namespace sota {
 
-using namespace godot;
-
 void PolyhedronPrismProcessor::configure_cell(Hexagon hex, Biome biome, int& id, Ref<ShaderMaterial> mat,
                                               PolyhedronMesh& polyhedron_mesh) {
-  Ref<PrismHexMesh> m = Ref(memnew(PrismHexMesh(hex)));
+  Ref<PrismHexMesh> m(memnew(PrismHexMesh(hex)));
   m->set_height(polyhedron_mesh._prism_heights[biome]);
   m->set_tesselation_type(HexMesh::TesselationType::Polyhedron);
   m->set_id(id);

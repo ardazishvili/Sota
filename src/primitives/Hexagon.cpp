@@ -1,27 +1,24 @@
 #include "primitives/Hexagon.h"
 
 #include "algo/constants.h"
-#include "godot_cpp/variant/utility_functions.hpp"
-#include "godot_cpp/variant/vector3.hpp"
+#include "tal/godot_core.h"
 #include "utils.h"
 
 namespace sota {
 
-using namespace godot;
-
 void Hexagon::check() const {
   if (_points.size() != 6) {
-    godot::UtilityFunctions::printerr("Hexagon has != 6 points");
-    godot::UtilityFunctions::printerr(_points.size());
+    UtilityFunctions::printerr("Hexagon has != 6 points");
+    UtilityFunctions::printerr(_points.size());
   }
 }
 
-std::vector<godot::Vector3> Hexagon::calculate_points(godot::Vector3 center, float diameter) {
-  std::vector<godot::Vector3> result;
+std::vector<Vector3> Hexagon::calculate_points(Vector3 center, float diameter) {
+  std::vector<Vector3> result;
   float R = radius(diameter);
   float a = -PI / 6;
   for (int i = 0; i < 6; ++i) {
-    result.push_back(center + godot::Vector3(std::cos(a + i * PI / 3) * R, 0, std::sin(a + i * PI / 3) * R));
+    result.push_back(center + Vector3(std::cos(a + i * PI / 3) * R, 0, std::sin(a + i * PI / 3) * R));
   }
   return result;
 }

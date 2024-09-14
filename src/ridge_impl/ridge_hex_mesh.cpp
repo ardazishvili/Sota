@@ -3,14 +3,14 @@
 #include <unordered_set>
 
 #include "core/utils.h"
+#include "tal/callable.h"
+#include "tal/godot_core.h"
+#include "tal/vector2.h"
+#include "tal/vector3.h"
 #include "general_utility.h"
-#include "godot_cpp/variant/utility_functions.hpp"
-#include "godot_cpp/variant/vector3.hpp"
 #include "misc/utilities.h"
 
 namespace sota {
-
-using namespace gd;
 
 void RidgeHexMesh::_bind_methods() {}
 

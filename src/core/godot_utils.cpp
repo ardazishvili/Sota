@@ -1,8 +1,9 @@
 #include "core/godot_utils.h"
 
-namespace sota {
+#include "tal/arrays.h"
+#include "tal/object.h"
 
-using namespace godot;
+namespace sota {
 
 void clean_children(Node3D& parent) {
   TypedArray<Node> children = parent.get_children();

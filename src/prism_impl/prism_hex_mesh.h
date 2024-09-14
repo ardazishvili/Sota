@@ -1,6 +1,6 @@
 #pragma once
 
-#include "godot_cpp/classes/wrapped.hpp"
+#include "tal/wrapped.h"
 #include "hex_mesh.h"
 #include "types.h"
 

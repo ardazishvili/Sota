@@ -1,7 +1,7 @@
 #pragma once
 
-#include "godot_cpp/classes/ref.hpp"
-#include "godot_cpp/classes/shader_material.hpp"
+#include "tal/material.h"
+#include "tal/reference.h"
 #include "misc/types.h"
 #include "primitives/Hexagon.h"
 
@@ -13,7 +13,7 @@ class PolyhedronProcessor {
  public:
   virtual ~PolyhedronProcessor() = default;
 
-  virtual void configure_cell(Hexagon hex, Biome biome, int &id, godot::Ref<godot::ShaderMaterial> mat,
+  virtual void configure_cell(Hexagon hex, Biome biome, int &id, Ref<ShaderMaterial> mat,
                               PolyhedronMesh &polyhedron_mesh) = 0;
   virtual void process(PolyhedronMesh &polyhedron_mesh) = 0;
 };

@@ -1,11 +1,13 @@
 #pragma once
 
-#include "godot_cpp/classes/texture.hpp"
-#include "godot_cpp/classes/wrapped.hpp"
-#include "godot_cpp/variant/array.hpp"
-#include "godot_cpp/variant/packed_vector3_array.hpp"
 #include "hex_grid.h"
 #include "honeycomb/honeycomb_honey.h"
+#include "tal/arrays.h"
+#include "tal/noise.h"
+#include "tal/reference.h"
+#include "tal/shader.h"
+#include "tal/texture.h"
+#include "tal/vector3.h"
 namespace sota {
 
 class Honeycomb : public HexGrid {
@@ -13,17 +15,17 @@ class Honeycomb : public HexGrid {
 
  public:
   Honeycomb() = default;
-  void set_cell_texture(const gd::Ref<gd::Texture> p_cell_texture);
-  gd::Ref<gd::Texture> get_cell_texture() const;
+  void set_cell_texture(const Ref<Texture> p_cell_texture);
+  Ref<Texture> get_cell_texture() const;
 
-  void set_honey_texture(const gd::Ref<gd::Texture> p_honey_texture);
-  gd::Ref<gd::Texture> get_honey_texture() const;
+  void set_honey_texture(const Ref<Texture> p_honey_texture);
+  Ref<Texture> get_honey_texture() const;
 
-  void set_selection_texture(const gd::Ref<gd::Texture> p_selection_texture);
-  gd::Ref<gd::Texture> get_selection_texture() const;
+  void set_selection_texture(const Ref<Texture> p_selection_texture);
+  Ref<Texture> get_selection_texture() const;
 
-  void set_noise(const gd::Ref<gd::FastNoiseLite> p_noise);
-  gd::Ref<gd::FastNoiseLite> get_noise() const;
+  void set_noise(const Ref<FastNoiseLite> p_noise);
+  Ref<FastNoiseLite> get_noise() const;
 
   void set_bottom_offset(float p_ridge_bottom_offset);
   float get_bottom_offset() const;
@@ -43,15 +45,15 @@ class Honeycomb : public HexGrid {
   void set_honey_fill_steps(int p_honey_fill_steps);
   int get_honey_fill_steps() const;
 
-  void set_honey_shader(const gd::Ref<gd::Shader> p_honey_shader);
-  gd::Ref<gd::Shader> get_honey_shader() const;
+  void set_honey_shader(const Ref<Shader> p_honey_shader);
+  Ref<Shader> get_honey_shader() const;
 
-  void set_selection_shader(const gd::Ref<gd::Shader> p_selection_shader);
-  gd::Ref<gd::Shader> get_selection_shader() const;
+  void set_selection_shader(const Ref<Shader> p_selection_shader);
+  Ref<Shader> get_selection_shader() const;
 
-  gd::Array get_cells() const;      // return all honey cells
-  gd::Array get_min_cells() const;  // find minimum honey level and return all cells which has that level
-  gd::Array get_max_cells() const;  // find maximum honey level and return all cells which has that level
+  Array get_cells() const;      // return all honey cells
+  Array get_min_cells() const;  // find minimum honey level and return all cells which has that level
+  Array get_max_cells() const;  // find maximum honey level and return all cells which has that level
   bool all_cells_empty() const;
 
  protected:
@@ -63,12 +65,12 @@ class Honeycomb : public HexGrid {
   virtual int calculate_honey_id_offset() = 0;
 
  private:
-  gd::Ref<gd::Texture> _cell_texture;
-  gd::Ref<gd::Texture> _honey_texture;
-  gd::Ref<gd::Texture> _selection_texture;
-  gd::Ref<gd::Shader> _selection_shader;
-  gd::Ref<gd::FastNoiseLite> _noise;
-  gd::Ref<gd::Shader> _honey_shader;
+  Ref<Texture> _cell_texture;
+  Ref<Texture> _honey_texture;
+  Ref<Texture> _selection_texture;
+  Ref<Shader> _selection_shader;
+  Ref<FastNoiseLite> _noise;
+  Ref<Shader> _honey_shader;
   float _bottom_offset{-0.5};
   bool _smooth_normals{false};
   bool _honey_random_level{false};
@@ -104,7 +106,7 @@ class Honeycomb : public HexGrid {
     }
   }
 
-  gd::Array get_cells_by_order(SortingOrder order, std::function<bool(HoneycombHoney*)> pred) const;
+  Array get_cells_by_order(SortingOrder order, std::function<bool(HoneycombHoney*)> pred) const;
 };
 
 class RectHoneycomb : public Honeycomb {
@@ -136,7 +138,7 @@ class HexagonalHoneycomb : public Honeycomb {
   int calculate_id(int row, int col) const override;
   int calculate_honey_id_offset() override;
 
-  gd::Vector3 get_center() const;
+  Vector3 get_center() const;
 
  protected:
   int _size{0};

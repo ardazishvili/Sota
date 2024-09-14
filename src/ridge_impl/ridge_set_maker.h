@@ -3,7 +3,7 @@
 #include <unordered_set>
 #include <vector>
 
-#include "godot_cpp/variant/vector3.hpp"
+#include "tal/vector3.h"
 #include "ridge.h"
 #include "ridge_hex_mesh.h"
 
@@ -16,7 +16,7 @@ using RidgeVector = std::vector<Ridge>;
 class RidgeSetMaker {
  public:
   RidgeSetMaker(HexagonMeshPointerVector hexes) : _hexes(hexes) {}
-  std::vector<std::pair<gd::Vector3, gd::Vector3>> construct(float y_coord);
+  std::vector<std::pair<Vector3, Vector3>> construct(float y_coord);
 
  private:
   HexagonMeshPointerVector _hexes;

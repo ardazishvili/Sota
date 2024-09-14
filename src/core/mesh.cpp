@@ -1,11 +1,11 @@
 #include "core/mesh.h"
 
 #include "dummy_mesher.h"
-#include "godot_cpp/variant/vector3.hpp"
+#include "tal/godot_core.h"
+#include "tal/vector3.h"
 
 namespace sota {
 
-using namespace godot;
 void SotaMesh::init() {
   init_impl();
   request_update();
@@ -30,7 +30,7 @@ int SotaMesh::get_divisions() const { return _divisions; }
 void SotaMesh::tesselate_into_triangles(Vector3 a, Vector3 b, Vector3 c, int level) const {
   --level;
   if (!level) {
-    vertices_.append_array(PackedVector3Array{a, b, c});
+    vertices_.append_array(Vector3Array{a, b, c});
     return;
   }
   Vector3 ab = (a + b) / 2;
@@ -111,9 +111,9 @@ void SotaMesh::recalculate_all_except_vertices() const {
   calculate_bones_weights();
 }
 
-godot::PackedVector3Array SotaMesh::get_vertices() const { return vertices_; }
+Vector3Array SotaMesh::get_vertices() const { return vertices_; }
 
-void SotaMesh::set_vertices(PackedVector3Array vertices) {
+void SotaMesh::set_vertices(Vector3Array vertices) {
   vertices_ = vertices;
   recalculate_all_except_vertices();
   request_update();

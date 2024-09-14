@@ -8,8 +8,6 @@
 
 namespace sota {
 
-using namespace gd;
-
 // TODO add globals
 const int seed = 0;
 const int variable_int = 35;

@@ -1,12 +1,14 @@
 #pragma once
 
-#include "godot_cpp/classes/fast_noise_lite.hpp"
-#include "godot_cpp/classes/mesh_instance3d.hpp"
-#include "godot_cpp/classes/node3d.hpp"
-#include "godot_cpp/classes/shader.hpp"
-#include "godot_cpp/classes/shader_material.hpp"
-#include "godot_cpp/classes/texture.hpp"
-#include "godot_cpp/variant/vector3.hpp"
+#include "tal/arrays.h"
+#include "tal/material.h"
+#include "tal/mesh.h"
+#include "tal/node.h"
+#include "tal/noise.h"
+#include "tal/shader.h"
+#include "tal/texture.h"
+#include "tal/vector3.h"
+#include "tal/vector3i.h"
 #include "misc/types.h"
 #include "polyhedron/PolyhedronPrismProcessor.h"
 #include "polyhedron/PolyhedronRidgeProcessor.h"
@@ -15,8 +17,8 @@
 
 namespace sota {
 
-class PolyhedronMesh : public godot::Node3D {
-  GDCLASS(PolyhedronMesh, godot::Node3D)
+class PolyhedronMesh : public Node3D {
+  GDCLASS(PolyhedronMesh, Node3D)
 
  public:
   PolyhedronMesh();
@@ -30,28 +32,28 @@ class PolyhedronMesh : public godot::Node3D {
   void set_compression_factor(const float p_compression_factor);
   float get_compression_factor() const;
 
-  void set_shader(const godot::Ref<godot::Shader> p_shader);
-  godot::Ref<godot::Shader> get_shader() const;
+  void set_shader(const Ref<Shader> p_shader);
+  Ref<Shader> get_shader() const;
 
   // noise
-  void set_biomes_noise(const godot::Ref<godot::FastNoiseLite> p_biomes_noise);
-  godot::Ref<godot::FastNoiseLite> get_biomes_noise() const;
+  void set_biomes_noise(const Ref<FastNoiseLite> p_biomes_noise);
+  Ref<FastNoiseLite> get_biomes_noise() const;
 
-  void set_noise(const godot::Ref<godot::FastNoiseLite> p_noise);
-  godot::Ref<godot::FastNoiseLite> get_noise() const;
+  void set_noise(const Ref<FastNoiseLite> p_noise);
+  Ref<FastNoiseLite> get_noise() const;
 
   // textures
-  void set_plain_texture(const godot::Ref<godot::Texture> p_texture);
-  godot::Ref<godot::Texture> get_plain_texture() const;
+  void set_plain_texture(const Ref<Texture> p_texture);
+  Ref<Texture> get_plain_texture() const;
 
-  void set_hill_texture(const godot::Ref<godot::Texture> p_texture);
-  godot::Ref<godot::Texture> get_hill_texture() const;
+  void set_hill_texture(const Ref<Texture> p_texture);
+  Ref<Texture> get_hill_texture() const;
 
-  void set_water_texture(const godot::Ref<godot::Texture> p_texture);
-  godot::Ref<godot::Texture> get_water_texture() const;
+  void set_water_texture(const Ref<Texture> p_texture);
+  Ref<Texture> get_water_texture() const;
 
-  void set_mountain_texture(const godot::Ref<godot::Texture> p_texture);
-  godot::Ref<godot::Texture> get_mountain_texture() const;
+  void set_mountain_texture(const Ref<Texture> p_texture);
+  Ref<Texture> get_mountain_texture() const;
 
   // heights
   void set_plain_height(const float p_height);
@@ -77,21 +79,20 @@ class PolyhedronMesh : public godot::Node3D {
   int _patch_resolution{1};
   float _compression_factor{0.1};
 
-  godot::Ref<godot::FastNoiseLite> _noise;
-  godot::Ref<godot::FastNoiseLite> _biomes_noise;
+  Ref<FastNoiseLite> _noise;
+  Ref<FastNoiseLite> _biomes_noise;
 
-  std::vector<godot::MeshInstance3D *> _hexagon_meshes;
-  std::vector<godot::MeshInstance3D *> _pentagon_meshes;
-  godot::Ref<godot::Shader> shader;
-  std::unordered_map<Biome, godot::Ref<godot::Texture>> _texture;
+  std::vector<MeshInstance3D *> _hexagon_meshes;
+  std::vector<MeshInstance3D *> _pentagon_meshes;
+  Ref<Shader> shader;
+  std::unordered_map<Biome, Ref<Texture>> _texture;
   std::unordered_map<Biome, float> _prism_heights;
 
   std::pair<std::vector<Hexagon>, std::vector<Pentagon>> calculate_shapes() const;
 
   template <typename TGON>
-  void insert_to_polygons(godot::Vector3 start_point, float diameter, float R, float r, int i, int j,
-                          godot::PackedVector3Array icosahedron_points, godot::Vector3i triangle,
-                          std::map<godot::Vector3i, TGON> &polygons) const;
+  void insert_to_polygons(Vector3 start_point, float diameter, float R, float r, int i, int j,
+                          Vector3Array icosahedron_points, Vector3i triangle, std::map<Vector3i, TGON> &polygons) const;
 
   void init();
   void clear();

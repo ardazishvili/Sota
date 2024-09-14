@@ -6,26 +6,22 @@
 #include "Hexagon.h"
 #include "algo/constants.h"
 #include "biome_calculator.h"
+#include "core/godot_utils.h"
 #include "core/utils.h"
-#include "godot_cpp/classes/fast_noise_lite.hpp"
-#include "godot_cpp/classes/global_constants.hpp"
-#include "godot_cpp/classes/mesh_instance3d.hpp"
-#include "godot_cpp/classes/shader_material.hpp"
-#include "godot_cpp/core/memory.hpp"
-#include "godot_cpp/core/object.hpp"
-#include "godot_cpp/variant/array.hpp"
-#include "godot_cpp/variant/callable.hpp"
-#include "godot_cpp/variant/packed_vector3_array.hpp"
-#include "godot_cpp/variant/vector2.hpp"
-#include "godot_cpp/variant/vector3.hpp"
-#include "godot_cpp/variant/vector3i.hpp"
-#include "godot_utils.h"
+#include "tal/arrays.h"
+#include "tal/callable.h"
+#include "tal/godot_core.h"
+#include "tal/material.h"
+#include "tal/mesh.h"
+#include "tal/noise.h"
+#include "tal/shader.h"
+#include "tal/vector2.h"
+#include "tal/vector3.h"
+#include "tal/vector3i.h"
 #include "pent_mesh.h"
 #include "types.h"
 
 namespace sota {
-
-using namespace godot;
 
 PolyhedronMesh::PolyhedronMesh() {
   _texture[Biome::PLAIN] = Ref<Texture>();
@@ -67,8 +63,7 @@ void PolyhedronMesh::_bind_methods() {
                "get_biomes_noise");
   ClassDB::bind_method(D_METHOD("get_noise"), &PolyhedronMesh::get_noise);
   ClassDB::bind_method(D_METHOD("set_noise", "p_noise"), &PolyhedronMesh::set_noise);
-  ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "noise", godot::PROPERTY_HINT_RESOURCE_TYPE, "Noise"), "set_noise",
-               "get_noise");
+  ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "noise", PROPERTY_HINT_RESOURCE_TYPE, "Noise"), "set_noise", "get_noise");
 
   ADD_GROUP("Textures", "texture_");
   ClassDB::bind_method(D_METHOD("get_water_texture"), &PolyhedronMesh::get_water_texture);
@@ -138,7 +133,7 @@ void PolyhedronMesh::set_biomes_noise(const Ref<FastNoiseLite> p_biomes_noise) {
   }
 }
 
-void PolyhedronMesh::set_noise(const Ref<godot::FastNoiseLite> p_noise) {
+void PolyhedronMesh::set_noise(const Ref<FastNoiseLite> p_noise) {
   _noise = p_noise;
   if (_noise.ptr()) {
     _noise->connect("changed", Callable(this, "init"));
@@ -205,7 +200,7 @@ float PolyhedronMesh::get_mountain_height() const { return _prism_heights.find(B
 
 template <typename TGON>
 void PolyhedronMesh::insert_to_polygons(Vector3 start_point, float diameter, float R, float r, int i, int j,
-                                        PackedVector3Array icosahedron_points, Vector3i triangle,
+                                        Vector3Array icosahedron_points, Vector3i triangle,
                                         std::map<Vector3i, TGON>& polygons) const {
   float key_step = r / 3.0;
   auto f1 = [](float x) -> float { return sqrt(3) * x + sqrt(3) / 2; };
@@ -243,7 +238,7 @@ std::pair<std::vector<Hexagon>, std::vector<Pentagon>> PolyhedronMesh::calculate
   float diameter = 2 * R;
   Vector3 start_point(-0.5, 0, 0);
 
-  PackedVector3Array icosahedron_points = ico_points();
+  Vector3Array icosahedron_points = ico_points();
   Array indices = ico_indices();
   auto is_pentagon_ij = [this](int i, int j) -> bool {
     return (i == (_patch_resolution + 1)) ||  // last row contains center of pentagon

@@ -4,8 +4,6 @@
 
 namespace sota {
 
-using namespace gd;
-
 // TODO globals
 constexpr float top_y_offset = 0.5;
 

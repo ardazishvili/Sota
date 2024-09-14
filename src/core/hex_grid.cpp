@@ -3,16 +3,15 @@
 #include "core/hex_mesh.h"
 #include "core/utils.h"
 #include "cube_coordinates.h"
-#include "godot_cpp/classes/ref.hpp"
-#include "godot_cpp/classes/shader.hpp"
-#include "godot_cpp/classes/shader_material.hpp"
-#include "godot_cpp/core/class_db.hpp"
-#include "godot_cpp/core/object.hpp"
-#include "godot_cpp/variant/array.hpp"
-#include "godot_cpp/variant/callable.hpp"
-#include "godot_cpp/variant/vector2.hpp"
-#include "godot_cpp/variant/vector3.hpp"
-#include "godot_cpp/variant/vector3i.hpp"
+#include "tal/arrays.h"
+#include "tal/godot_core.h"
+#include "tal/object.h"
+#include "tal/reference.h"
+#include "tal/shader.h"
+#include "tal/vector2.h"
+#include "tal/vector3.h"
+#include "tal/vector3i.h"
+#include "tal/wrapped.h"
 #include "godot_utils.h"
 #include "hexagonal_utility.h"
 #include "primitives/Hexagon.h"
@@ -20,8 +19,6 @@
 #include "types.h"
 
 namespace sota {
-
-using namespace gd;
 
 void HexGrid::_bind_methods() {
   ClassDB::bind_method(D_METHOD("init"), &HexGrid::init);

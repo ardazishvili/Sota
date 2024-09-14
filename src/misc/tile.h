@@ -4,13 +4,9 @@
 
 #include "core/hex_mesh.h"
 #include "cube_coordinates.h"
-#include "godot_cpp/classes/collision_shape3d.hpp"
-#include "godot_cpp/classes/mesh_instance3d.hpp"
-#include "godot_cpp/classes/node3d.hpp"
-#include "godot_cpp/classes/ref.hpp"
-#include "godot_cpp/classes/sphere_shape3d.hpp"
-#include "godot_cpp/classes/static_body3d.hpp"
-#include "godot_cpp/variant/vector3.hpp"
+#include "tal/mesh.h"
+#include "tal/node.h"
+#include "tal/reference.h"
 #include "honeycomb/honeycomb_cell.h"
 #include "honeycomb/honeycomb_honey.h"
 #include "misc/types.h"
@@ -18,26 +14,26 @@
 
 namespace sota {
 
-class Tile : public godot::Node3D {
+class Tile : public Node3D {
  public:
   Tile() = delete;
   virtual ~Tile();
 
-  Tile(gd::Ref<HexMesh> mesh, gd::Vector3 offset, gd::Node3D* parent, OffsetCoordinates offset_coord);
+  Tile(Ref<HexMesh> mesh, Vector3 offset, Node3D* parent, OffsetCoordinates offset_coord);
 
-  gd::Ref<HexMesh> mesh() const;
+  Ref<HexMesh> mesh() const;
   int id() const { return _mesh->get_id(); }
   bool is_shifted() const { return _shifted; }
   OffsetCoordinates get_offset_coords() const { return _offset_coord; }
   CubeCoordinates get_cube_coords() const { return offsetToCube(_offset_coord); }
 
  private:
-  gd::Ref<gd::SphereShape3D> _sphere_shaped3d{nullptr};
-  gd::CollisionShape3D* _collision_shape3d{nullptr};
-  gd::StaticBody3D* _static_body{nullptr};
-  gd::MeshInstance3D* _main_mesh_instance{nullptr};
+  Ref<SphereShape3D> _sphere_shaped3d{nullptr};
+  CollisionShape3D* _collision_shape3d{nullptr};
+  StaticBody3D* _static_body{nullptr};
+  MeshInstance3D* _main_mesh_instance{nullptr};
 
-  gd::Ref<HexMesh> _mesh;
+  Ref<HexMesh> _mesh;
   OffsetCoordinates _offset_coord;
   const bool _shifted;  // odd rows are shifted by half of small radius
 };
@@ -45,7 +41,7 @@ class Tile : public godot::Node3D {
 class BiomeTile : public Tile {
  public:
   BiomeTile() = delete;
-  BiomeTile(gd::Ref<RidgeHexMesh> mesh, gd::Node3D* parent, Biome biome, OffsetCoordinates offset_coord)
+  BiomeTile(Ref<RidgeHexMesh> mesh, Node3D* parent, Biome biome, OffsetCoordinates offset_coord)
       : Tile(mesh, mesh->get_center(), parent, offset_coord), _biome(biome) {}
 
   // getters
@@ -63,15 +59,14 @@ class BiomeTile : public Tile {
 class HoneycombTile : public Tile {
  public:
   HoneycombTile() = delete;
-  HoneycombTile(gd::Ref<HoneycombCell> walls, gd::Ref<HoneycombHoney> honey, gd::Node3D* parent,
-                OffsetCoordinates offset_coord);
+  HoneycombTile(Ref<HoneycombCell> walls, Ref<HoneycombHoney> honey, Node3D* parent, OffsetCoordinates offset_coord);
 
   // getters
-  gd::Ref<HoneycombHoney> honey_mesh() const;
+  Ref<HoneycombHoney> honey_mesh() const;
 
  private:
-  gd::Ref<HoneycombHoney> _honey;
-  gd::MeshInstance3D* _second_mesh_instance{nullptr};
+  Ref<HoneycombHoney> _honey;
+  MeshInstance3D* _second_mesh_instance{nullptr};
 };
 
 }  // namespace sota

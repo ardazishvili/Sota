@@ -10,37 +10,22 @@
 #include "core/utils.h"
 #include "cube_coordinates.h"
 #include "general_utility.h"
-#include "godot_cpp/classes/editor_interface.hpp"
-#include "godot_cpp/classes/engine.hpp"
-#include "godot_cpp/classes/global_constants.hpp"
-#include "godot_cpp/classes/input_event.hpp"
-#include "godot_cpp/classes/mesh_instance3d.hpp"
-#include "godot_cpp/classes/node.hpp"
-#include "godot_cpp/classes/object.hpp"
-#include "godot_cpp/classes/ref.hpp"
-#include "godot_cpp/classes/shader_material.hpp"
-#include "godot_cpp/core/class_db.hpp"
-#include "godot_cpp/core/memory.hpp"
-#include "godot_cpp/core/object.hpp"
-#include "godot_cpp/variant/array.hpp"
-#include "godot_cpp/variant/callable.hpp"
-#include "godot_cpp/variant/packed_vector3_array.hpp"
-#include "godot_cpp/variant/string.hpp"
-#include "godot_cpp/variant/typed_array.hpp"
-#include "godot_cpp/variant/utility_functions.hpp"
-#include "godot_cpp/variant/vector3.hpp"
 #include "godot_utils.h"
 #include "hexagonal_utility.h"
 #include "honeycomb/honeycomb_cell.h"
 #include "honeycomb/honeycomb_honey.h"
 #include "primitives/Hexagon.h"
 #include "rectangular_utility.h"
+#include "tal/arrays.h"
+#include "tal/callable.h"
+#include "tal/godot_core.h"
+#include "tal/object.h"
+#include "tal/vector2.h"
+#include "tal/vector3.h"
 #include "tile.h"
 #include "types.h"
 
 namespace sota {
-
-using namespace gd;
 
 void Honeycomb::_bind_methods() {
   ClassDB::bind_method(D_METHOD("get_smooth_normals"), &Honeycomb::get_smooth_normals);
@@ -247,7 +232,7 @@ Array Honeycomb::get_cells() const {
     for (auto& tile_ptr : row) {
       HoneycombTile* tile = dynamic_cast<HoneycombTile*>(tile_ptr);
       HoneycombHoney* cell = tile->honey_mesh().ptr();
-      res.append(Ref(cell));
+      res.append(Ref<HoneycombHoney>(cell));
     }
   }
   return res;

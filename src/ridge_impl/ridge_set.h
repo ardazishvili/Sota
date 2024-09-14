@@ -2,6 +2,7 @@
 
 #include <vector>
 
+#include "tal/vector3.h"
 #include "ridge.h"
 #include "ridge_config.h"
 
@@ -20,7 +21,7 @@ class RidgeSet {
   std::vector<Ridge> _ridges;
   RidgeConfig _config;
 
-  using Connection = std::pair<gd::Vector3, gd::Vector3>;
+  using Connection = std::pair<Vector3, Vector3>;
 };
 
 }  // namespace sota
