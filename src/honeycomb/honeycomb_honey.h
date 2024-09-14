@@ -1,9 +1,9 @@
 #pragma once
 
+#include "core/hex_mesh.h"
+#include "misc/types.h"
 #include "tal/noise.h"
 #include "tal/reference.h"
-#include "hex_mesh.h"
-#include "types.h"
 namespace sota {
 
 struct HoneycombHoneyMeshParams {

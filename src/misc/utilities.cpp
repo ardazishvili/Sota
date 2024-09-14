@@ -1,16 +1,16 @@
 #include "utilities.h"
 
-#include "Hexagon.h"
 #include "core/hex_mesh.h"
 #include "core/utils.h"
-#include "tal/godot_core.h"
-#include "tal/reference.h"
-#include "ridge_hex_mesh.h"
+#include "misc/types.h"
+#include "primitives/Hexagon.h"
 #include "ridge_impl/hill_hex_mesh.h"
 #include "ridge_impl/mountain_hex_mesh.h"
 #include "ridge_impl/plain_hex_mesh.h"
+#include "ridge_impl/ridge_hex_mesh.h"
 #include "ridge_impl/water_hex_mesh.h"
-#include "types.h"
+#include "tal/godot_core.h"
+#include "tal/reference.h"
 
 namespace sota {
 
@@ -25,7 +25,7 @@ Ref<HexMesh> create_hex_mesh(Biome biome, Hexagon hex, RidgeHexMeshParams params
     case Biome::WATER:
       return make_impl<WaterHexMesh>(hex, params);
     default:
-      UtilityFunctions::printerr("Unreachable biome");
+      printerr("Unreachable biome");
   }
   // Unreachable, prevent "control reached end of non-void funcion" warning
   return Ref<MountainHexMesh>();

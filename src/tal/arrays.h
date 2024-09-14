@@ -23,5 +23,21 @@ using ColorsArray = godot::PackedColorArray;
 using ByteArray = godot::PackedByteArray;
 using IntArray = godot::PackedInt32Array;
 #else
+
+#include "core/variant/array.h"
+#include "core/variant/typed_array.h"
+#include "core/variant/variant.h"
+
+using Array = Array;
+
+using Vector2Array = PackedVector2Array;
+using Vector3Array = PackedVector3Array;
+
+using TangentsArray = PackedFloat32Array;
+using WeightsArray = PackedFloat32Array;
+using ColorsArray = PackedColorArray;
+using ByteArray = PackedByteArray;
+using IntArray = PackedInt32Array;
+
 #endif
 

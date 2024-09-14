@@ -1,15 +1,14 @@
 #include "primitives/Hexagon.h"
 
 #include "algo/constants.h"
+#include "core/utils.h"
 #include "tal/godot_core.h"
-#include "utils.h"
 
 namespace sota {
 
 void Hexagon::check() const {
   if (_points.size() != 6) {
-    UtilityFunctions::printerr("Hexagon has != 6 points");
-    UtilityFunctions::printerr(_points.size());
+    printerr("Hexagon has != 6 points");
   }
 }
 

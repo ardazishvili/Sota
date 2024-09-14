@@ -2,10 +2,10 @@
 
 #include <cstdlib>
 
+#include "misc/types.h"
 #include "tal/arrays.h"
 #include "tal/vector2.h"
 #include "tal/vector3.h"
-#include "misc/types.h"
 
 namespace sota {
 
@@ -17,13 +17,16 @@ void GeneralUtility::shift_compress(Vector3Array& vertices, float shift, float c
   }
 }
 
-void GeneralUtility::shift_compress_polyhedron(Vector3Array& vertices, Vector3Array initial_vertices, float shift,
-                                               float compress, float offset) {
+Vector3Array GeneralUtility::shift_compress_polyhedron(Vector3Array vertices, Vector3Array initial_vertices,
+                                                       float shift, float compress, float offset) {
+  Vector3Array result;
   int n = vertices.size();
   for (int i = 0; i < n; ++i) {
     Vector3 dir = initial_vertices[i].normalized();
-    vertices[i] = initial_vertices[i] + dir * std::abs(vertices[i].length() - initial_vertices[i].length()) * compress;
+    result.push_back(initial_vertices[i] +
+                     dir * std::abs(vertices[i].length() - initial_vertices[i].length()) * compress);
   }
+  return result;
 }
 
 void GeneralUtility::make_smooth_normals(std::vector<GroupedHexagonMeshVertices>& vertex_groups) {

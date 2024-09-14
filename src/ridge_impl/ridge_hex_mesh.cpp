@@ -2,13 +2,13 @@
 
 #include <unordered_set>
 
+#include "core/general_utility.h"
 #include "core/utils.h"
+#include "misc/utilities.h"
 #include "tal/callable.h"
 #include "tal/godot_core.h"
 #include "tal/vector2.h"
 #include "tal/vector3.h"
-#include "general_utility.h"
-#include "misc/utilities.h"
 
 namespace sota {
 
@@ -71,9 +71,10 @@ void RidgeHexMesh::shift_compress() {
   if (tesselation_type == HexMesh::TesselationType::Plane) {
     GeneralUtility::shift_compress(vertices_, _y_shift, _y_compress, center.y);
   } else if (tesselation_type == TesselationType::Polyhedron) {
-    GeneralUtility::shift_compress_polyhedron(vertices_, _initial_vertices, _y_shift, _y_compress, center.y);
+    vertices_ =
+        GeneralUtility::shift_compress_polyhedron(vertices_, _initial_vertices, _y_shift, _y_compress, center.y);
   } else {
-    UtilityFunctions::printerr("unknown type of RidgeHexMesh");
+    printerr("unknown type of RidgeHexMesh");
   }
 }
 
@@ -176,7 +177,7 @@ void RidgeHexMesh::calculate_initial_heights() {
       _max_y = std::max(_max_y, v.length() - old.length());
     }
   } else {
-    UtilityFunctions::printerr("unknown type of RidgeHexMesh");
+    printerr("unknown type of RidgeHexMesh");
   }
 
   request_update();
@@ -186,7 +187,7 @@ GroupedHexagonMeshVertices RidgeHexMesh::get_grouped_vertices() {
   GroupedHexagonMeshVertices vertex_groups;
   int size = vertices_.size();
   for (int i = 0; i < size; ++i) {
-    Vector3& v = vertices_[i];
+    Vector3 v = vertices_[i];
     Vector3& n = normals_[i];
     auto p = to_point_divisioned_position(v, _diameter, _divisions);
     vertex_groups[p].push_back(&n);

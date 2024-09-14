@@ -24,18 +24,15 @@ void RidgeSet::create_single(RidgeHexMesh* mesh, float y_coord) {
 
   std::vector<std::pair<Vector3, Vector3>> bounds = {{start, end}};
   unsigned int pieces_num = 2;
-  for (auto& [start, end] : bounds) {
-    _ridges.emplace_back(start, end);
-    float dist_x = end.x - start.x;
-    float dist_y = end.y - start.y;
-    float dist_z = end.z - start.z;
-    std::vector<Vector3> p;
+  for (auto& [s, e] : bounds) {
+    _ridges.emplace_back(s, e);
+    Vector3 dist = e - s;
+    std::vector<Vector3> points;
 
     for (unsigned int i = 0; i <= pieces_num; ++i) {
-      p.push_back(
-          {start.x + i * dist_x / pieces_num, start.y + i * dist_y / pieces_num, start.z + i * dist_z / pieces_num});
+      points.push_back(s + static_cast<float>(i) * dist / pieces_num);
     }
-    _ridges.back().set_points(p);
+    _ridges.back().set_points(points);
   }
 }
 
@@ -64,14 +61,10 @@ void RidgeSet::create_dfs_random(std::vector<RidgeHexMesh*>& list, float y_coord
   for (unsigned int k = 0; k < connection_num; ++k) {
     auto& [lhs, rhs] = connections[k];
     auto ns = normals(lhs, rhs);
-    float dist_x = rhs.x - lhs.x;
-    float dist_y = rhs.y - lhs.y;
-    float dist_z = rhs.z - lhs.z;
+    Vector3 dist = rhs - lhs;
     for (unsigned int i = 0; i < connection_pieces_num; ++i) {
-      Vector3 a{lhs.x + i * dist_x / connection_pieces_num, lhs.y + i * dist_y / connection_pieces_num,
-                lhs.z + i * dist_z / connection_pieces_num};
-      Vector3 b{lhs.x + (i + 1) * dist_x / connection_pieces_num, lhs.y + (i + 1) * dist_y / connection_pieces_num,
-                lhs.z + (i + 1) * dist_z / connection_pieces_num};
+      Vector3 a = lhs + static_cast<float>(i) * dist / connection_pieces_num;
+      Vector3 b = lhs + static_cast<float>(i + 1) * dist / connection_pieces_num;
       bounds.emplace_back(a, b);
       float randomness = height_dist(random_generator);
       Vector2 random_normals = randomness * ((i & 1) ? ns[1] : ns[0]);
@@ -85,14 +78,11 @@ void RidgeSet::create_dfs_random(std::vector<RidgeHexMesh*>& list, float y_coord
 
   for (auto& [start, end] : bounds) {
     _ridges.emplace_back(start, end);
-    float dist_x = end.x - start.x;
-    float dist_y = end.y - start.y;
-    float dist_z = end.z - start.z;
+    Vector3 dist = end - start;
     std::vector<Vector3> p;
 
     for (unsigned int i = 0; i <= pieces_num; ++i) {
-      p.push_back(
-          {start.x + i * dist_x / pieces_num, start.y + i * dist_y / pieces_num, start.z + i * dist_z / pieces_num});
+      p.push_back(start + static_cast<float>(i) * dist / pieces_num);
     }
     _ridges.back().set_points(p);
   }

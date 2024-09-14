@@ -7,4 +7,6 @@
 using Material = godot::Material;
 using ShaderMaterial = godot::ShaderMaterial;
 #else
+#include "scene/resources/material.h"
+
 #endif

@@ -5,4 +5,7 @@
 
 using FastNoiseLite = godot::FastNoiseLite;
 #else
+#include "modules/noise/fastnoise_lite.h"
+
+using FastNoiseLite = FastNoiseLite;
 #endif

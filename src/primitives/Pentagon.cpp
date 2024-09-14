@@ -1,15 +1,14 @@
 #include "primitives/Pentagon.h"
 
 #include "algo/constants.h"
+#include "core/utils.h"
 #include "tal/godot_core.h"
-#include "utils.h"
 
 namespace sota {
 
 void Pentagon::check() const {
   if (_points.size() != 5) {
-    UtilityFunctions::printerr("Pentagon has != 5 points");
-    UtilityFunctions::printerr(_points.size());
+    printerr("Pentagon has != 5 points");
   }
 }
 

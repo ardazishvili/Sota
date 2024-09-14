@@ -5,4 +5,7 @@
 
 using Shader = godot::Shader;
 #else
+#include "scene/resources/shader.h"
+
+using Shader = Shader;
 #endif

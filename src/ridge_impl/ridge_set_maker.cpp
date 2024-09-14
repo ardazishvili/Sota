@@ -20,9 +20,9 @@ HexagonMeshPointerVector RidgeSetMaker::unvisited_neighbours(const RidgeHexMesh*
   auto all_neighbours = mesh->get_neighbours();
   HexagonMeshPointerVector unvisited;
   for (HexMesh* m : all_neighbours) {
-    RidgeHexMesh* mesh = dynamic_cast<RidgeHexMesh*>(m);
-    if (!_visited.contains(mesh) && std::find(_hexes.begin(), _hexes.end(), mesh) != _hexes.end()) {
-      unvisited.push_back(mesh);
+    RidgeHexMesh* ridge_mesh = dynamic_cast<RidgeHexMesh*>(m);
+    if (!_visited.contains(ridge_mesh) && std::find(_hexes.begin(), _hexes.end(), ridge_mesh) != _hexes.end()) {
+      unvisited.push_back(ridge_mesh);
     }
   }
   return unvisited;

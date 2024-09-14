@@ -1,29 +1,30 @@
 #include "ridge_hex_grid.h"
 
 #include <algorithm>
+#include <iostream>
 #include <limits>
 #include <memory>
 #include <unordered_map>
 
 #include "algo/dsu.h"
 #include "biome_calculator.h"
+#include "core/general_utility.h"
 #include "core/godot_utils.h"
 #include "core/hex_mesh.h"
+#include "core/hexagonal_utility.h"
+#include "core/rectangular_utility.h"
 #include "core/utils.h"
-#include "cube_coordinates.h"
-#include "general_utility.h"
-#include "hexagonal_utility.h"
+#include "misc/cube_coordinates.h"
 #include "misc/tile.h"
 #include "misc/types.h"
+#include "misc/utilities.h"
 #include "primitives/Hexagon.h"
-#include "rectangular_utility.h"
 #include "ridge_impl/ridge.h"
 #include "ridge_impl/ridge_config.h"
 #include "ridge_impl/ridge_hex_mesh.h"
 #include "tal/callable.h"
 #include "tal/godot_core.h"
 #include "tal/vector3.h"
-#include "utilities.h"
 
 namespace sota {
 
@@ -416,7 +417,7 @@ void RidgeHexGrid::calculate_corner_points_distances_to_border(GroupOfHexagonMes
     }
   }
 
-  auto compare_increasing = [this](const RidgeHexMesh* lhs, const RidgeHexMesh* rhs) {
+  auto compare_increasing = [](const RidgeHexMesh* lhs, const RidgeHexMesh* rhs) {
     return lhs->get_neighbours().size() < rhs->get_neighbours().size();
   };
   for (auto* m : meshes) {
@@ -426,18 +427,18 @@ void RidgeHexGrid::calculate_corner_points_distances_to_border(GroupOfHexagonMes
 }
 
 void RidgeHexGrid::create_biome_ridges(std::vector<BiomeRidgeGroup>& group, float ridge_offset) {
-  for (auto& [group, ridge_set] : group) {
-    calculate_neighbours(group);
-    assign_neighbours(group);
-    if (group.size() > 1) {
-      ridge_set->create_dfs_random(group, ridge_offset, _divisions);
+  for (auto& [g, ridge_set] : group) {
+    calculate_neighbours(g);
+    assign_neighbours(g);
+    if (g.size() > 1) {
+      ridge_set->create_dfs_random(g, ridge_offset, _divisions);
     } else {
-      ridge_set->create_single(group[0], ridge_offset);
+      ridge_set->create_single(g[0], ridge_offset);
     }
     auto ridges = *ridge_set->ridges();
 
-    assign_ridges(group, ridge_set.get());
-    calculate_corner_points_distances_to_border(group);
+    assign_ridges(g, ridge_set.get());
+    calculate_corner_points_distances_to_border(g);
   }
 }
 
@@ -529,16 +530,16 @@ void RidgeHexGrid::calculate_final_heights() {
 
 void RidgeHexGrid::print_biomes() {
   for (auto& [group, ridge_set] : _mountain_groups) {
-    std::cout << "mountain group of size " << group.size() << std::endl;
+    print("Mountain group of size ", group.size());
   }
   for (auto& [group, ridge_set] : _water_groups) {
-    std::cout << "water group of size " << group.size() << std::endl;
+    print("Water group of size ", group.size());
   }
   for (auto& group : _hill_groups) {
-    std::cout << "hill group of size " << group.size() << std::endl;
+    print("Hill group of size ", group.size());
   }
   for (auto& group : _plain_groups) {
-    std::cout << "plain group of size " << group.size() << std::endl;
+    print("Plain group of size ", group.size());
   }
 }
 

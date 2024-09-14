@@ -5,4 +5,7 @@
 
 using Texture = godot::Texture;
 #else
+#include "scene/resources/texture.h"
+
+using Texture = Texture;
 #endif

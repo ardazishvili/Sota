@@ -1,7 +1,7 @@
 #include "hex_mesh.h"
 
-#include "Hexagon.h"
 #include "core/utils.h"
+#include "primitives/Hexagon.h"
 #include "tal/arrays.h"
 #include "tal/godot_core.h"
 #include "tal/vector2.h"
@@ -72,7 +72,7 @@ void HexMesh::_bind_methods() {
   ClassDB::bind_method(D_METHOD("get_id"), &HexMesh::get_id);
 }
 
-void HexMesh::add_frame() const {
+void HexMesh::add_frame() {
   for (int i = 0; i < 6; ++i) {
     // rectangle consists from 4 points: a, b, c, d => 2 triangles
     auto corner_points = _hex.points();
@@ -102,16 +102,16 @@ void HexMesh::set_diameter(const float p_diameter) {
 
 float HexMesh::get_diameter() const { return _diameter; }
 
-void HexMesh::z_clip(float boundary) const {
+void HexMesh::z_clip(float boundary) {
   float z_step = _R / _divisions;
   float half_z_step = z_step / 2;
 
   Vector3Array filtered;
   int n = vertices_.size();
   for (int i = 0; i < n; i += 3) {
-    Vector3& p0 = vertices_[i];
-    Vector3& p1 = vertices_[i + 1];
-    Vector3& p2 = vertices_[i + 2];
+    Vector3 p0 = vertices_[i];
+    Vector3 p1 = vertices_[i + 1];
+    Vector3 p2 = vertices_[i + 2];
     int vertices_to_fix = 0;
     Vector3* to_fix;
     if (boundary > 0) {
@@ -168,7 +168,7 @@ void HexMesh::calculate_vertices_recursion() {
   return;
 }
 
-void HexMesh::calculate_vertices_iteration() const {
+void HexMesh::calculate_vertices_iteration() {
   vertices_.clear();
 
   auto corner_points = _hex.points();
@@ -178,7 +178,6 @@ void HexMesh::calculate_vertices_iteration() const {
   Vector3 pivot = corner_points[2];
   unsigned int triangles_count = _divisions * 2 + (_divisions * 2 - 1);
   float d0_step = (pivot - center).length() / _divisions;
-  float half_d0_step = d0_step / 2;
   float d1_step = d0_step * std::sqrt(3) / 2;
 
   Vector3 direction0 = (center - pivot).normalized();
@@ -238,7 +237,7 @@ void HexMesh::calculate_vertices_iteration() const {
   }
 }
 
-void HexMesh::calculate_tex_uv1() const {
+void HexMesh::calculate_tex_uv1() {
   tex_uv1_.clear();
 
   auto corner_points = _hex.points();

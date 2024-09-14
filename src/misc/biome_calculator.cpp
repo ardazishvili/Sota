@@ -28,7 +28,7 @@ Biome BiomeCalculator::calculate_biome(float min_z, float max_z, float cur_z) co
   } else if (hill_max_z < cur_z && cur_z <= mountain_max_z) {
     return Biome::MOUNTAIN;
   } else {
-    UtilityFunctions::printerr("Non reachable: unknown biome");
+    printerr("Non reachable: unknown biome");
   }
   return Biome::WATER;  // unreachable
 }

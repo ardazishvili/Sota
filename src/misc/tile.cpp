@@ -1,14 +1,14 @@
 #include "tile.h"
 
-#include "cube_coordinates.h"
-#include "godot_cpp/classes/sphere_mesh.hpp"
+#include "core/utils.h"
 #include "honeycomb/honeycomb_honey.h"
+#include "misc/cube_coordinates.h"
+#include "misc/types.h"
 #include "tal/callable.h"
 #include "tal/engine.h"
+#include "tal/godot_core.h"
 #include "tal/mesh.h"
 #include "tal/vector3.h"
-#include "types.h"
-#include "utils.h"
 
 namespace sota {
 

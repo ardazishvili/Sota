@@ -28,7 +28,7 @@ class PentMesh : public SotaMesh {
 
  private:
   void init_from_pentagon(Pentagon pentagon);
-  void calculate_tex_uv1() const override;
+  void calculate_tex_uv1() override;
   void calculate_vertices_recursion();  // not tested e.g. for clips
   friend Ref<PentMesh> make_pent_mesh(Pentagon pentagon, PentagonMeshParams params);
 };

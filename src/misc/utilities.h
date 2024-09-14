@@ -1,8 +1,8 @@
 #pragma once
 
+#include "misc/types.h"
 #include "ridge_impl/ridge_hex_mesh.h"
 #include "tal/reference.h"
-#include "types.h"
 
 namespace sota {
 

@@ -1,13 +1,13 @@
 #include "honeycomb/honeycomb_cell.h"
 
+#include "core/general_utility.h"
 #include "core/utils.h"
+#include "misc/utilities.h"
 #include "tal/callable.h"
 #include "tal/camera.h"
 #include "tal/event.h"
 #include "tal/godot_core.h"
 #include "tal/vector2.h"
-#include "general_utility.h"
-#include "misc/utilities.h"
 
 namespace sota {
 
@@ -75,7 +75,7 @@ GroupedHexagonMeshVertices HoneycombCell::get_grouped_vertices() {
   GroupedHexagonMeshVertices vertex_groups;
   int size = vertices_.size();
   for (int i = 0; i < size; ++i) {
-    Vector3& v = vertices_[i];
+    Vector3 v = vertices_[i];
     Vector3& n = normals_[i];
     auto p = to_point_divisioned_position(v, _diameter, _divisions);
     vertex_groups[p].push_back(&n);

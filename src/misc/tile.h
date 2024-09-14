@@ -3,14 +3,14 @@
 #include <cstdint>
 
 #include "core/hex_mesh.h"
-#include "cube_coordinates.h"
+#include "honeycomb/honeycomb_cell.h"
+#include "honeycomb/honeycomb_honey.h"
+#include "misc/cube_coordinates.h"
+#include "misc/types.h"
+#include "ridge_impl/ridge_hex_mesh.h"
 #include "tal/mesh.h"
 #include "tal/node.h"
 #include "tal/reference.h"
-#include "honeycomb/honeycomb_cell.h"
-#include "honeycomb/honeycomb_honey.h"
-#include "misc/types.h"
-#include "ridge_impl/ridge_hex_mesh.h"
 
 namespace sota {
 
