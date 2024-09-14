@@ -8,6 +8,7 @@
 #include "biome_calculator.h"
 #include "core/godot_utils.h"
 #include "core/utils.h"
+#include "pent_mesh.h"
 #include "tal/arrays.h"
 #include "tal/callable.h"
 #include "tal/godot_core.h"
@@ -18,7 +19,6 @@
 #include "tal/vector2.h"
 #include "tal/vector3.h"
 #include "tal/vector3i.h"
-#include "pent_mesh.h"
 #include "types.h"
 
 namespace sota {
@@ -223,7 +223,7 @@ void PolyhedronMesh::insert_to_polygons(Vector3 start_point, float diameter, flo
     polygons.emplace(key, TGON(mapped_center, mapped_center.normalized()));
   }
   TGON& polygon = polygons.find(key)->second;
-  for (float angle = -PI / 6, i = 0; i < 6; i++, angle += PI / 3) {
+  for (float angle = -PI / 6, k = 0; k < 6; k++, angle += PI / 3) {
     Vector3 point(center.x + cos(angle) * R, 0, center.z + sin(angle) * R);
     if (!out_of_triangle(point.x, point.z)) {
       polygon.add_point(map2d_to_3d(Vector2(point.x, point.z), icosahedron_points[triangle.x],
@@ -301,7 +301,7 @@ void PolyhedronMesh::process_hexagons(std::vector<Hexagon> hexagons) {
 
   float min_z = std::numeric_limits<float>::max();
   float max_z = std::numeric_limits<float>::min();
-  for (auto [id, a] : altitudes) {
+  for (auto [_, a] : altitudes) {
     min_z = std::min(min_z, a);
     max_z = std::max(max_z, a);
   }

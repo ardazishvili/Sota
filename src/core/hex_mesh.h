@@ -1,6 +1,6 @@
 #pragma once
 
-#include "mesh.h"
+#include "core/mesh.h"
 #include "misc/types.h"
 #include "primitives/Hexagon.h"
 #include "tal/arrays.h"
@@ -54,7 +54,7 @@ class HexMesh : public SotaMesh {
   void init_impl() override;
 
   void calculate_vertices_recursion();  // not tested e.g. for clips
-  void calculate_vertices_iteration() const;
+  void calculate_vertices_iteration();
 
   float _R;
   float _r;
@@ -70,10 +70,10 @@ class HexMesh : public SotaMesh {
 
  private:
   void init_from_hex(Hexagon hex);
-  void add_frame() const;
-  void calculate_tex_uv1() const override;
+  void add_frame();
+  void calculate_tex_uv1() override;
 
-  void z_clip(float boundary) const;
+  void z_clip(float boundary);
 
   friend Ref<HexMesh> make_hex_mesh(Hexagon hex, HexMeshParams params);
 };

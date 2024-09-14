@@ -1,11 +1,11 @@
 #pragma once
 
+#include "core/hex_mesh.h"
+#include "misc/types.h"
 #include "tal/camera.h"
 #include "tal/event.h"
 #include "tal/material.h"
 #include "tal/noise.h"
-#include "hex_mesh.h"
-#include "types.h"
 namespace sota {
 
 struct HoneycombCellMeshParams {

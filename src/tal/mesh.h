@@ -14,4 +14,17 @@ using CollisionShape3D = godot::CollisionShape3D;
 using SphereShape3D = godot::SphereShape3D;
 
 #else
+
+#include "scene/3d/mesh_instance_3d.h"
+#include "scene/3d/physics/collision_shape_3d.h"
+#include "scene/3d/physics/static_body_3d.h"
+#include "scene/resources/3d/primitive_meshes.h"
+#include "scene/resources/3d/sphere_shape_3d.h"
+
+using PrimitiveMesh = PrimitiveMesh;
+using MeshInstance3D = MeshInstance3D;
+using StaticBody3D = StaticBody3D;
+using CollisionShape3D = CollisionShape3D;
+using SphereShape3D = SphereShape3D;
+
 #endif

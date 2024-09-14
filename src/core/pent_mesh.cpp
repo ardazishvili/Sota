@@ -42,7 +42,7 @@ void PentMesh::calculate_vertices_recursion() {
   return;
 }
 
-void PentMesh::calculate_tex_uv1() const {
+void PentMesh::calculate_tex_uv1() {
   tex_uv1_.clear();
   auto corner_points = _pentagon.points();
 

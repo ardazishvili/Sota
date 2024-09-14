@@ -1,5 +1,7 @@
 #pragma once
 
+#include <vector>
+
 #include "tal/arrays.h"
 #include "tal/mesh.h"
 #include "tal/vector3.h"
@@ -32,15 +34,20 @@ class SotaMesh : public PrimitiveMesh {
    *
    * @return Array of vertices, normals, indices, etc. See Godot docs
    */
+#ifdef SOTA_GDEXTENSION
   Array _create_mesh_array() const override;
+#else
+  void _create_mesh_array(Array& result) const override;
+#endif
+
   /**
    * @brief Method is useful e.g. if vertices are (re)calculated from scratch or their order is changed
    */
-  void recalculate_all_except_vertices() const;
+  void recalculate_all_except_vertices();
   /**
    * @brief Calculate normals. Usually used when positions of vertices are changed but order remains the same
    */
-  void calculate_normals() const;
+  void calculate_normals();
 
   Vector3Array get_vertices() const;
 
@@ -54,33 +61,33 @@ class SotaMesh : public PrimitiveMesh {
    */
   int _divisions{1};
 
-  mutable Vector3Array vertices_;
-  mutable Vector3Array normals_;
-  mutable TangentsArray tangents_;
-  mutable ColorsArray colors_;
-  mutable Vector2Array tex_uv1_;
-  mutable Vector2Array tex_uv2_;
-  mutable IntArray indices_;
-  mutable ByteArray color_custom0_;
-  mutable ByteArray color_custom1_;
-  mutable ByteArray color_custom2_;
-  mutable ByteArray color_custom3_;
-  mutable IntArray bones_;
-  mutable WeightsArray weights_;
+  Vector3Array vertices_;
+  std::vector<Vector3> normals_;
+  TangentsArray tangents_;
+  ColorsArray colors_;
+  Vector2Array tex_uv1_;
+  Vector2Array tex_uv2_;
+  IntArray indices_;
+  ByteArray color_custom0_;
+  ByteArray color_custom1_;
+  ByteArray color_custom2_;
+  ByteArray color_custom3_;
+  IntArray bones_;
+  WeightsArray weights_;
 
   static void _bind_methods();
   virtual void init_impl() = 0;
 
-  void calculate_tangents() const;
-  void calculate_colors() const;
+  void calculate_tangents();
+  void calculate_colors();
   /**
    * @brief Mapping of texture is a mandatory method to define by subclass.
    */
-  virtual void calculate_tex_uv1() const = 0;
-  virtual void calculate_tex_uv2() const;
-  void calculate_indices() const;
-  void calculate_color_custom() const;
-  void calculate_bones_weights() const;
+  virtual void calculate_tex_uv1() = 0;
+  virtual void calculate_tex_uv2();
+  void calculate_indices();
+  void calculate_color_custom();
+  void calculate_bones_weights();
 
   /**
    * @brief Recursively splits triangle into 4 smaller triangles and appends to vertices.
@@ -91,7 +98,10 @@ class SotaMesh : public PrimitiveMesh {
    * @param level - required levels of recursion. Level 1 means no recursion, i.e. 1 triangle will be added. On level 2
    * - 4 triangles. Level 3 - 16 triangles and so on
    */
-  void tesselate_into_triangles(Vector3 a, Vector3 b, Vector3 c, int level) const;
+  void tesselate_into_triangles(Vector3 a, Vector3 b, Vector3 c, int level);
+
+ private:
+  Vector3Array normals_to_godot_fmt() const;
 };
 
 }  // namespace sota

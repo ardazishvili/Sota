@@ -1,21 +1,19 @@
 #include "register_types.h"
 
-#include <gdextension_interface.h>
-
 #include "core/hex_grid.h"
 #include "core/hex_mesh.h"
-#include "tal/godot_core.h"
-#include "hex_polyhedron.h"
+#include "core/mesh.h"
+#include "core/pent_mesh.h"
 #include "honeycomb/honeycomb.h"
 #include "honeycomb/honeycomb_cell.h"
 #include "honeycomb/honeycomb_honey.h"
-#include "mesh.h"
-#include "pent_mesh.h"
+#include "polyhedron/hex_polyhedron.h"
 #include "prism_impl/prism_hex_mesh.h"
 #include "ridge_impl/ridge_hex_grid.h"
 #include "ridge_impl/ridge_hex_mesh.h"
+#include "src/tal/godot_core.h"
 
-void initialize_sota_module(ModuleInitializationLevel p_level) {
+void initialize_Sota_module(ModuleInitializationLevel p_level) {
   if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE) {
     return;
   }
@@ -48,12 +46,13 @@ void initialize_sota_module(ModuleInitializationLevel p_level) {
   GDREGISTER_CLASS(sota::PolyhedronMesh);
 }
 
-void uninitialize_sota_module(ModuleInitializationLevel p_level) {
+void uninitialize_Sota_module(ModuleInitializationLevel p_level) {
   if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE) {
     return;
   }
 }
 
+#ifdef SOTA_GDEXTENSION
 extern "C" {
 // Initialization.
 GDExtensionBool GDE_EXPORT sota_init(GDExtensionInterfaceGetProcAddress p_get_proc_address,
@@ -61,10 +60,11 @@ GDExtensionBool GDE_EXPORT sota_init(GDExtensionInterfaceGetProcAddress p_get_pr
                                      GDExtensionInitialization *r_initialization) {
   GDExtensionBinding::InitObject init_obj(p_get_proc_address, p_library, r_initialization);
 
-  init_obj.register_initializer(initialize_sota_module);
-  init_obj.register_terminator(uninitialize_sota_module);
+  init_obj.register_initializer(initialize_Sota_module);
+  init_obj.register_terminator(uninitialize_Sota_module);
   init_obj.set_minimum_library_initialization_level(MODULE_INITIALIZATION_LEVEL_SCENE);
 
   return init_obj.init();
 }
 }
+#endif

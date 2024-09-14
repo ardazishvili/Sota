@@ -5,4 +5,7 @@
 
 using Vector3i = godot::Vector3i;
 #else
+#include "core/math/vector3i.h"
+
+using Vector3i = Vector3i;
 #endif

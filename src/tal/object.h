@@ -5,4 +5,7 @@
 
 using Object = godot::Object;
 #else
+#include "core/object/object.h"
+
+using Object = Object;
 #endif

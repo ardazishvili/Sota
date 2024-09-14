@@ -497,9 +497,7 @@ void HexagonalHoneycomb::_bind_methods() {
 Vector3 HexagonalHoneycomb::get_center() const {
   int total = 0;
   for (auto& row : _tiles_layout) {
-    for (auto* tile_ptr : row) {
-      ++total;
-    }
+    total += row.size();
   }
   int middle = total / 2;
   int i = 0;
@@ -513,7 +511,7 @@ Vector3 HexagonalHoneycomb::get_center() const {
       ++i;
     }
   }
-  UtilityFunctions::printerr("Unreachable: error in HexagonalHoneycomb::get_center calculation");
+  printerr("Unreachable: error in HexagonalHoneycomb::get_center calculation");
   return Vector3(0, 0, 0);
 }
 

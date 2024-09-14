@@ -7,4 +7,9 @@
 using Node3D = godot::Node3D;
 using Node = godot::Node;
 #else
+#include "scene/3d/node_3d.h"
+#include "scene/main/node.h"
+
+using Node3D = Node3D;
+using Node = Node;
 #endif

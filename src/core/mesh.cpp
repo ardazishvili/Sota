@@ -1,6 +1,7 @@
 #include "core/mesh.h"
 
-#include "dummy_mesher.h"
+#include "core/dummy_mesher.h"
+#include "tal/arrays.h"
 #include "tal/godot_core.h"
 #include "tal/vector3.h"
 
@@ -27,7 +28,7 @@ void SotaMesh::set_divisions(const int p_divisions) {
 
 int SotaMesh::get_divisions() const { return _divisions; }
 
-void SotaMesh::tesselate_into_triangles(Vector3 a, Vector3 b, Vector3 c, int level) const {
+void SotaMesh::tesselate_into_triangles(Vector3 a, Vector3 b, Vector3 c, int level) {
   --level;
   if (!level) {
     vertices_.append_array(Vector3Array{a, b, c});
@@ -42,50 +43,51 @@ void SotaMesh::tesselate_into_triangles(Vector3 a, Vector3 b, Vector3 c, int lev
   tesselate_into_triangles(ca, ab, bc, level);
 }
 
-void SotaMesh::calculate_normals() const {
+void SotaMesh::calculate_normals() {
   normals_.clear();
   int n = vertices_.size();
   for (int i = 0; i < n; i += 3) {
-    Vector3& p0 = vertices_[i];
-    Vector3& p1 = vertices_[i + 1];
-    Vector3& p2 = vertices_[i + 2];
+    const Vector3& p0 = vertices_[i];
+    const Vector3& p1 = vertices_[i + 1];
+    const Vector3& p2 = vertices_[i + 2];
 
     Vector3 normal = (p0 - p1).cross(p2 - p1);
     normal = normal.normalized();
 
-    normals_.append_array({normal, normal, normal});
+    normals_.insert(normals_.end(), {normal, normal, normal});
   }
 }
 
-void SotaMesh::calculate_tangents() const { tangents_ = DummyMesher::calculate_tangents(vertices_.size()); }
+void SotaMesh::calculate_tangents() { tangents_ = DummyMesher::calculate_tangents(vertices_.size()); }
 
-void SotaMesh::calculate_colors() const { colors_ = DummyMesher::calculate_colors(vertices_.size()); }
+void SotaMesh::calculate_colors() { colors_ = DummyMesher::calculate_colors(vertices_.size()); }
 
-void SotaMesh::calculate_indices() const {
+void SotaMesh::calculate_indices() {
   indices_.clear();
   int n = vertices_.size();
   for (int i = 0; i < n; i += 3) {
     indices_.append_array({i, i + 1, i + 2});
   }
 }
-void SotaMesh::calculate_tex_uv2() const { tex_uv2_ = DummyMesher::calculate_tex_uv2(vertices_.size()); }
+void SotaMesh::calculate_tex_uv2() { tex_uv2_ = DummyMesher::calculate_tex_uv2(vertices_.size()); }
 
-void SotaMesh::calculate_color_custom() const {
+void SotaMesh::calculate_color_custom() {
   color_custom0_ = DummyMesher::calculate_color_custom0(vertices_.size());
   color_custom1_ = DummyMesher::calculate_color_custom0(vertices_.size());
   color_custom2_ = DummyMesher::calculate_color_custom0(vertices_.size());
   color_custom3_ = DummyMesher::calculate_color_custom0(vertices_.size());
 }
 
-void SotaMesh::calculate_bones_weights() const {
+void SotaMesh::calculate_bones_weights() {
   bones_ = DummyMesher::calculate_bones(vertices_.size());
   weights_ = DummyMesher::calculate_weights(vertices_.size());
 }
 
+#ifdef SOTA_GDEXTENSION
 Array SotaMesh::_create_mesh_array() const {
   Array res;
   res.append(vertices_);
-  res.append(normals_);
+  res.append(normals_to_godot_fmt());
   res.append(tangents_);
   res.append(colors_);
   res.append(tex_uv1_);
@@ -99,8 +101,17 @@ Array SotaMesh::_create_mesh_array() const {
   res.append(indices_);
   return res;
 }
+#else
+void SotaMesh::_create_mesh_array(Array& res) const {
+  res[RS::ARRAY_VERTEX] = vertices_;
+  res[RS::ARRAY_NORMAL] = normals_to_godot_fmt();
+  res[RS::ARRAY_TANGENT] = tangents_;
+  res[RS::ARRAY_TEX_UV] = tex_uv1_;
+  res[RS::ARRAY_INDEX] = indices_;
+}
+#endif
 
-void SotaMesh::recalculate_all_except_vertices() const {
+void SotaMesh::recalculate_all_except_vertices() {
   calculate_indices();
   calculate_normals();
   calculate_tex_uv1();
@@ -117,6 +128,14 @@ void SotaMesh::set_vertices(Vector3Array vertices) {
   vertices_ = vertices;
   recalculate_all_except_vertices();
   request_update();
+}
+
+Vector3Array SotaMesh::normals_to_godot_fmt() const {
+  Vector3Array normals;
+  for (const auto& n : normals_) {
+    normals.append(n);
+  }
+  return normals;
 }
 
 }  // namespace sota
