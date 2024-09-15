@@ -18,6 +18,7 @@ See Getting Started section in left sidebar
    :caption: Getting Started
 
    content/getting_started/introduction
+   content/getting_started/build.md
    content/getting_started/structures
    content/getting_started/api_usage_example
 
@@ -26,6 +27,12 @@ See Getting Started section in left sidebar
    :caption: Design notes
 
    content/design_notes/terrain
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Architecture
+
+   content/arch/tal
 
 .. toctree::
    :maxdepth: 2

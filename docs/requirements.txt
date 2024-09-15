@@ -4,3 +4,4 @@ myst-parser>=2.0.0
 exhale>=0.3.7
 breathe>=4.35.0
 sphinx-rtd-dark-mode
+sphinxcontrib-plantuml
