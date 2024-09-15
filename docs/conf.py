@@ -10,8 +10,8 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-# import os
-# import sys
+import os
+import sys
 # sys.path.insert(0, os.path.abspath('.'))
 
 
@@ -32,6 +32,7 @@ extensions = [
     'myst_parser',
     'breathe',
     'exhale',
+    'sphinxcontrib.plantuml',
 ]
 
 templates_path = ['_templates']
@@ -65,4 +66,11 @@ exhale_args = {
     "exhaleUseDoxyfile": True
 }
 primary_domain = 'cpp'
-highlight_language = 'cpp'
+
+on_rtd = os.environ.get('READTHEDOCS') == 'True'
+if not on_rtd:
+    directory = os.environ.get('PLANTUML_JAR_DIR')
+    if not directory:
+        print("Please set PLANTUML_JAR_DIR system variable and try again")
+        sys.exit()
+    plantuml = ["java", "-jar", os.path.join(directory, "plantuml.jar")]

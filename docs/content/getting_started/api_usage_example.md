@@ -12,7 +12,7 @@ Let's assume that we have grid e.g. 5x5 of hexagon meshes and want to modify hei
 ![terrain_api_0_before](/pics/howtos/api_terrain_0_before.png)
 
 Following code aims to modify vertices based on noise values:
-```gdscript
+```
 @tool
 
 extends RectHexGridMap

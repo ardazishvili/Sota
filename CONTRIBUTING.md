@@ -1,32 +1,12 @@
 # Contributing to Sota
 Below is just a zero approximation of proper contribution guidelines. Will be updated if needed.
 
-## System setup
-Under Linux
-### Linux build
-Prerequisites are: python, scons, gcc/clang compiler
-```bash
-git clone https://github.com/ardazishvili/Sota.git
-git submodule update --init # init godot-cpp
-scons platform=linux target=template_debug -j 15
-```
-
-### Windows build
-Prerequisites are: python, scons, mingw toolchain
-```bash
-git clone https://github.com/ardazishvili/Sota.git
-git submodule update --init # init godot-cpp
-scons platform=windows target=template_debug -j 15
-```
-
-### Android build
-Prerequisites are: python, scons, [Android setup](https://docs.godotengine.org/en/stable/contributing/development/compiling/compiling_for_android.html)
-git clone https://github.com/ardazishvili/Sota.git
-git submodule update --init # init godot-cpp
-scons platform=android target=template_debug -j 15
+To build Sota from sources either as GDExtension or module see [doc](docs/content/getting_started/build.md)
 
 ## Workflow
-Please use existing [Godot pull request workflow](https://docs.godotengine.org/en/stable/contributing/workflow/pr_workflow.html)
+* Please use existing [Godot pull request workflow](https://docs.godotengine.org/en/stable/contributing/workflow/pr_workflow.html)
+* Check guidelines related to [Types Abstraction Layer](docs/content/arch/tal.md)
+
 
 ## Code style
 There are no well-defined rules yet, but please:
@@ -35,4 +15,4 @@ There are no well-defined rules yet, but please:
 3. If you are hesitant, check [Best practices (godot)](https://docs.godotengine.org/en/stable/contributing/development/best_practices_for_engine_contributors.html) and [Godot C++ usage guidelines](https://docs.godotengine.org/en/stable/contributing/development/cpp_usage_guidelines.html)
 
 ## Documentation
-See /doc directory in root dir.
+See `docs` directory and [read the docs](https://sota.readthedocs.io/en/latest/) for online documentation.
