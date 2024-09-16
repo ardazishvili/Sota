@@ -1,23 +1,24 @@
 #include "polyhedron/PolyhedronPrismProcessor.h"
 
+#include "hex_mesh.h"
 #include "polyhedron/hex_polyhedron.h"
 #include "prism_hex_mesh.h"
 #include "tal/mesh.h"
 #include "tal/reference.h"
+#include "types.h"
 
 namespace sota {
 
 void PolyhedronPrismProcessor::configure_cell(Hexagon hex, Biome biome, int& id, Ref<ShaderMaterial> mat,
                                               PolyhedronMesh& polyhedron_mesh) {
-  Ref<PrismHexMesh> m(memnew(PrismHexMesh(hex)));
-  m->set_height(polyhedron_mesh._prism_heights[biome]);
-  m->set_tesselation_type(HexMesh::TesselationType::Polyhedron);
-  m->set_id(id);
-
-  m->set_divisions(polyhedron_mesh._divisions);
-  m->set_material(mat);
-  m->set_tesselation_mode(TesselationMode::Recursive);
-  m->init();
+  PrismHexMeshParams params{.hex_mesh_params = HexMeshParams{.id = id,
+                                                             .material = mat,
+                                                             .divisions = polyhedron_mesh._divisions,
+                                                             .clip_options = ClipOptions(),
+                                                             .tesselation_mode = TesselationMode::Recursive,
+                                                             .tesselation_type = TesselationType::Polyhedron},
+                            .height = polyhedron_mesh._prism_heights[biome]};
+  Ref<PrismHexMesh> m = make_prism_mesh(hex, params);
 
   auto* mi = memnew(MeshInstance3D());
   mi->set_mesh(m);

@@ -12,6 +12,7 @@
 namespace sota {
 
 enum class TesselationMode { Iterative = 0, Recursive };
+enum class TesselationType { Plane = 0, Polyhedron };
 
 struct HexMeshParams {
   int id{0};
@@ -24,14 +25,15 @@ struct HexMeshParams {
   Ref<Material> material;
   int divisions{3};
   ClipOptions clip_options;
+
+  TesselationMode tesselation_mode{TesselationMode::Iterative};
+  TesselationType tesselation_type{TesselationType::Plane};
 };
 
 class HexMesh : public SotaMesh {
   GDCLASS(HexMesh, SotaMesh)
 
  public:
-  enum class TesselationType { Plane = 0, Polyhedron };
-
   HexMesh();
   HexMesh(const HexMesh& other) = delete;
   HexMesh(HexMesh&& other) = delete;
@@ -47,9 +49,9 @@ class HexMesh : public SotaMesh {
   void set_frame_state(bool state) { _frame_state = state; }
   void set_frame_value(float value) { _frame_offset = value; }
 
-  void set_tesselation_type(TesselationType p_tesselation_type) { tesselation_type = p_tesselation_type; }
+  void set_tesselation_type(TesselationType p_tesselation_type) { _tesselation_type = p_tesselation_type; }
   void set_clip_options(ClipOptions p_options) { _clip_options = p_options; }
-  void set_tesselation_mode(TesselationMode p_tesselation_mode) { tesselation_mode = p_tesselation_mode; }
+  void set_tesselation_mode(TesselationMode p_tesselation_mode) { _tesselation_mode = p_tesselation_mode; }
 
  protected:
   HexMesh(Hexagon hex, HexMeshParams params);
@@ -64,8 +66,8 @@ class HexMesh : public SotaMesh {
   float _r;
   float _diameter{1};
   Hexagon _hex = make_unit_hexagon();
-  TesselationType tesselation_type{TesselationType::Plane};
-  TesselationMode tesselation_mode{TesselationMode::Iterative};
+  TesselationType _tesselation_type{TesselationType::Plane};
+  TesselationMode _tesselation_mode{TesselationMode::Iterative};
 
   bool _frame_state{false};
   float _frame_offset{0.0};
