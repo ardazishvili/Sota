@@ -1,6 +1,7 @@
 #include "prism_impl/prism_hex_mesh.h"
 
 #include "godot_cpp/core/memory.hpp"
+#include "hex_mesh.h"
 #include "misc/types.h"
 #include "tal/godot_core.h"
 
@@ -18,13 +19,20 @@ void PrismHexMesh::_bind_methods() {
 void PrismHexMesh::set_height(const float p_height) {
   _height = p_height;
   init();
+  calculate_heights();
+  recalculate_all_except_vertices();
+  update();
 }
 
 float PrismHexMesh::get_height() const { return _height; }
 
 void PrismHexMesh::calculate_heights() {
   for (auto& v : vertices_) {
-    v += v.normalized() * _height;
+    if (_tesselation_type == TesselationType::Polyhedron) {
+      v += v.normalized() * _height;
+    } else if (_tesselation_type == TesselationType::Plane) {
+      v += _hex.normal() * _height;
+    }
   }
 
   for (int i = 0; i < 6; ++i) {
@@ -33,8 +41,11 @@ void PrismHexMesh::calculate_heights() {
     auto a = corner_points[i];
     auto b = corner_points[(i + 1) % 6];
 
-    auto c = a + a.normalized() * _height;
-    auto d = b + b.normalized() * _height;
+    auto a_normal = _tesselation_type == TesselationType::Plane ? _hex.normal() : a.normalized();
+    auto c = a + a_normal * _height;
+
+    auto b_normal = _tesselation_type == TesselationType::Plane ? _hex.normal() : b.normalized();
+    auto d = b + b_normal * _height;
 
     vertices_.push_back(a);
     vertices_.push_back(b);
