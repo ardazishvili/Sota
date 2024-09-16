@@ -3,6 +3,10 @@
 #include "core/hex_mesh.h"
 #include "core/utils.h"
 #include "cube_coordinates.h"
+#include "godot_utils.h"
+#include "hexagonal_utility.h"
+#include "primitives/Hexagon.h"
+#include "rectangular_utility.h"
 #include "tal/arrays.h"
 #include "tal/godot_core.h"
 #include "tal/object.h"
@@ -12,10 +16,6 @@
 #include "tal/vector3.h"
 #include "tal/vector3i.h"
 #include "tal/wrapped.h"
-#include "godot_utils.h"
-#include "hexagonal_utility.h"
-#include "primitives/Hexagon.h"
-#include "rectangular_utility.h"
 #include "types.h"
 
 namespace sota {
@@ -76,7 +76,7 @@ void HexGrid::set_frame_state(const bool p_state) {
 }
 
 void HexGrid::set_frame_offset(const float p_offset) {
-  _frame_offset = p_offset;
+  _frame_offset = p_offset > 0 ? p_offset : 0;
   init();
 }
 

@@ -16,7 +16,7 @@ void PolyhedronPrismProcessor::configure_cell(Hexagon hex, Biome biome, int& id,
                                                              .divisions = polyhedron_mesh._divisions,
                                                              .clip_options = ClipOptions(),
                                                              .tesselation_mode = TesselationMode::Recursive,
-                                                             .tesselation_type = TesselationType::Polyhedron},
+                                                             .tesselation_type = Orientation::Polyhedron},
                             .height = polyhedron_mesh._prism_heights[biome]};
   Ref<PrismHexMesh> m = make_prism_mesh(hex, params);
 
