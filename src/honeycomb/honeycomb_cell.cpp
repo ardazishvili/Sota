@@ -11,6 +11,11 @@
 
 namespace sota {
 
+HoneycombCell::HoneycombCell(Hexagon hex, HoneycombCellMeshParams params) : HexMesh(hex, params.hex_mesh_params) {
+  _noise = params.noise;
+  _selection_material = params.selection_material;
+}
+
 void HoneycombCell::_bind_methods() {
   ClassDB::bind_method(D_METHOD("handle_mouse_entered"), &HoneycombCell::handle_mouse_entered);
   ClassDB::bind_method(D_METHOD("handle_mouse_exited"), &HoneycombCell::handle_mouse_exited);

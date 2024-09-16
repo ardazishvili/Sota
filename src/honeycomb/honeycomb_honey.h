@@ -18,13 +18,11 @@ class HoneycombHoney : public HexMesh {
   GDCLASS(HoneycombHoney, HexMesh)
 
  public:
-  HoneycombHoney() : HexMesh(make_unit_hexagon()) {}
-  HoneycombHoney(Hexagon hex, HoneycombHoneyMeshParams params) : HexMesh(hex, params.hex_mesh_params) {
-    _noise = params.noise;
-    _max_level = params.max_level;
-    _fill_delta = params.fill_delta;
-    _min_offset = params.min_offset;
-  }
+  HoneycombHoney() = default;  // existence is 'must' for Godot
+  HoneycombHoney(const HoneycombHoney& other) = delete;
+  HoneycombHoney(HoneycombHoney&& other) = delete;
+  // copying operator= defined inside GDCLASS
+  HoneycombHoney& operator=(HoneycombHoney&& rhs) = delete;
 
   // getters
   GroupedHexagonMeshVertices get_grouped_vertices();
@@ -53,6 +51,7 @@ class HoneycombHoney : public HexMesh {
   bool is_empty() const;
 
  protected:
+  HoneycombHoney(Hexagon hex, HoneycombHoneyMeshParams params);
   static void _bind_methods();
 
  private:
@@ -69,6 +68,8 @@ class HoneycombHoney : public HexMesh {
   float _max_y = std::numeric_limits<float>::min();
   float _y_shift = 0.0f;     // no shift
   float _y_compress = 1.0f;  // no compress
+
+  friend Ref<HoneycombHoney> make_honeycomb_honey(Hexagon hex, HoneycombHoneyMeshParams params);
 };
 
 Ref<HoneycombHoney> make_honeycomb_honey(Hexagon hex, HoneycombHoneyMeshParams params);

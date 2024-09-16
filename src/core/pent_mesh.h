@@ -17,6 +17,10 @@ class PentMesh : public SotaMesh {
 
  public:
   PentMesh();
+  PentMesh(const PentMesh& other) = delete;
+  PentMesh(PentMesh&& other) = delete;
+  // copying operator= defined inside GDCLASS
+  PentMesh& operator=(PentMesh&& rhs) = delete;
 
   void init_impl() override;
   void update();

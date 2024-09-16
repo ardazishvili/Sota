@@ -12,10 +12,4 @@ using PointDivisionedPosition = std::pair<int, int>;
 
 PointDivisionedPosition to_point_divisioned_position(Vector3 v, float diameter, int divisions);
 
-template <typename T>
-Ref<RidgeHexMesh> make_impl(Hexagon hex, RidgeHexMeshParams params) {
-  auto res = Ref<T>(memnew(T(hex, params)));
-  res->init();
-  return res;
-}
 }  // namespace sota

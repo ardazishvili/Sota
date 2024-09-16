@@ -17,13 +17,13 @@ namespace sota {
 Ref<HexMesh> create_hex_mesh(Biome biome, Hexagon hex, RidgeHexMeshParams params) {
   switch (biome) {
     case Biome::MOUNTAIN:
-      return make_impl<MountainHexMesh>(hex, params);
+      return make_ridge_hex_mesh<MountainHexMesh>(hex, params);
     case Biome::PLAIN:
-      return make_impl<PlainHexMesh>(hex, params);
+      return make_ridge_hex_mesh<PlainHexMesh>(hex, params);
     case Biome::HILL:
-      return make_impl<HillHexMesh>(hex, params);
+      return make_ridge_hex_mesh<HillHexMesh>(hex, params);
     case Biome::WATER:
-      return make_impl<WaterHexMesh>(hex, params);
+      return make_ridge_hex_mesh<WaterHexMesh>(hex, params);
     default:
       printerr("Unreachable biome");
   }
