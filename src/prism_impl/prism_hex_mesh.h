@@ -1,7 +1,7 @@
 #pragma once
 
-#include "tal/wrapped.h"
 #include "hex_mesh.h"
+#include "tal/wrapped.h"
 #include "types.h"
 
 namespace sota {
@@ -9,7 +9,12 @@ namespace sota {
 class PrismHexMesh : public HexMesh {
   GDCLASS(PrismHexMesh, HexMesh)
  public:
-  PrismHexMesh() : HexMesh() {}
+  PrismHexMesh() = default;  // existence is 'must' for Godot
+  PrismHexMesh(const PrismHexMesh& other) = delete;
+  PrismHexMesh(PrismHexMesh&& other) = delete;
+  // copying operator= defined inside GDCLASS
+  PrismHexMesh& operator=(PrismHexMesh&& rhs) = delete;
+
   PrismHexMesh(Hexagon hex) : HexMesh(hex) {}
 
   void set_height(const float p_height);

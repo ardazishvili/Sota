@@ -10,6 +10,13 @@
 
 namespace sota {
 
+HoneycombHoney::HoneycombHoney(Hexagon hex, HoneycombHoneyMeshParams params) : HexMesh(hex, params.hex_mesh_params) {
+  _noise = params.noise;
+  _max_level = params.max_level;
+  _fill_delta = params.fill_delta;
+  _min_offset = params.min_offset;
+}
+
 void HoneycombHoney::_bind_methods() {
   ClassDB::bind_method(D_METHOD("lock"), &HoneycombHoney::lock);
   ClassDB::bind_method(D_METHOD("unlock"), &HoneycombHoney::unlock);

@@ -6,11 +6,11 @@
 #include <vector>
 
 #include "core/hex_mesh.h"
+#include "misc/types.h"
+#include "ridge_impl/ridge.h"
 #include "tal/noise.h"
 #include "tal/reference.h"
 #include "tal/vector3.h"
-#include "misc/types.h"
-#include "ridge_impl/ridge.h"
 
 namespace sota {
 
@@ -23,18 +23,11 @@ struct RidgeHexMeshParams {
 class RidgeHexMesh : public HexMesh {
   GDCLASS(RidgeHexMesh, HexMesh)
  public:
-  RidgeHexMesh() : HexMesh() {}
-  RidgeHexMesh(Hexagon hex, RidgeHexMeshParams params) : HexMesh(hex, params.hex_mesh_params) {
-    _id = params.hex_mesh_params.id;
-    _plain_noise = params.plain_noise;
-    _ridge_noise = params.ridge_noise;
-    _diameter = params.hex_mesh_params.diameter;
-    _frame_state = params.hex_mesh_params.frame_state;
-    _frame_offset = params.hex_mesh_params.frame_offset;
-    _divisions = params.hex_mesh_params.divisions;
-    set_material(params.hex_mesh_params.material);
-    _clip_options = params.hex_mesh_params.clip_options;
-  }
+  RidgeHexMesh() = default;  // existence is 'must' for Godot
+  RidgeHexMesh(const RidgeHexMesh& other) = delete;
+  RidgeHexMesh(RidgeHexMesh&& other) = delete;
+  // copying operator= defined inside GDCLASS
+  RidgeHexMesh& operator=(RidgeHexMesh&& rhs) = delete;
 
   // getters
   std::vector<HexMesh*> get_neighbours() const;
@@ -55,6 +48,17 @@ class RidgeHexMesh : public HexMesh {
   virtual void calculate_final_heights() {}
 
  protected:
+  RidgeHexMesh(Hexagon hex, RidgeHexMeshParams params) : HexMesh(hex, params.hex_mesh_params) {
+    _id = params.hex_mesh_params.id;
+    _plain_noise = params.plain_noise;
+    _ridge_noise = params.ridge_noise;
+    _diameter = params.hex_mesh_params.diameter;
+    _frame_state = params.hex_mesh_params.frame_state;
+    _frame_offset = params.hex_mesh_params.frame_offset;
+    _divisions = params.hex_mesh_params.divisions;
+    set_material(params.hex_mesh_params.material);
+    _clip_options = params.hex_mesh_params.clip_options;
+  }
   static void _bind_methods();
 
   Vector3Array _initial_vertices;
@@ -76,5 +80,12 @@ class RidgeHexMesh : public HexMesh {
  private:
   std::map<Vector3, float> _corner_points_to_border_dist;
 };
+
+template <typename T>
+Ref<RidgeHexMesh> make_ridge_hex_mesh(Hexagon hex, RidgeHexMeshParams params) {
+  auto res = Ref<T>(memnew(T(hex, params)));
+  res->init();
+  return res;
+}
 
 }  // namespace sota

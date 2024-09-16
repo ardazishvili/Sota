@@ -18,11 +18,11 @@ class HoneycombCell : public HexMesh {
   GDCLASS(HoneycombCell, HexMesh)
 
  public:
-  HoneycombCell() : HexMesh() {}
-  HoneycombCell(Hexagon hex, HoneycombCellMeshParams params) : HexMesh(hex, params.hex_mesh_params) {
-    _noise = params.noise;
-    _selection_material = params.selection_material;
-  }
+  HoneycombCell() = default;  // existence is 'must' for Godot
+  HoneycombCell(const HoneycombCell& other) = delete;
+  HoneycombCell(HoneycombCell&& other) = delete;
+  // copying operator= defined inside GDCLASS
+  HoneycombCell& operator=(HoneycombCell&& rhs) = delete;
 
   // getters
   GroupedHexagonMeshVertices get_grouped_vertices();
@@ -34,6 +34,7 @@ class HoneycombCell : public HexMesh {
   void calculate_heights(float bottom_offset);
 
  protected:
+  HoneycombCell(Hexagon hex, HoneycombCellMeshParams params);
   static void _bind_methods();
 
  private:
@@ -44,6 +45,8 @@ class HoneycombCell : public HexMesh {
   void handle_mouse_exited();
   void handle_input_event(Camera3D* p_camera, const Ref<InputEvent>& p_event, const Vector3& p_event_position,
                           const Vector3& p_normal, int32_t p_shape_idx);
+
+  friend Ref<HoneycombCell> make_honeycomb_cell(Hexagon hex, HoneycombCellMeshParams params);
 };
 
 Ref<HoneycombCell> make_honeycomb_cell(Hexagon hex, HoneycombCellMeshParams params);

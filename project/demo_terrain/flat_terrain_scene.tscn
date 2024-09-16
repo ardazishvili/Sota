@@ -108,3 +108,5 @@ width = 7
 _shader = ExtResource("1_pum5v")
 enable_frame = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.30717, 0, 0)
+
+[node name="MeshInstance3D5" type="MeshInstance3D" parent="."]

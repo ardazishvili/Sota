@@ -33,6 +33,10 @@ class HexMesh : public SotaMesh {
   enum class TesselationType { Plane = 0, Polyhedron };
 
   HexMesh();
+  HexMesh(const HexMesh& other) = delete;
+  HexMesh(HexMesh&& other) = delete;
+  // copying operator= defined inside GDCLASS
+  HexMesh& operator=(HexMesh&& rhs) = delete;
 
   void set_diameter(const float p_diameter);
   float get_diameter() const;
