@@ -34,6 +34,8 @@ HexMesh::HexMesh(Hexagon hex, HexMeshParams params) {
   set_material(params.material);
   _divisions = params.divisions;
   _clip_options = params.clip_options;
+  _tesselation_mode = params.tesselation_mode;
+  _tesselation_type = params.tesselation_type;
 }
 
 HexMesh::HexMesh(Hexagon hex) {
@@ -49,15 +51,17 @@ HexMesh::HexMesh(Hexagon hex) {
   set_material(params.material);
   _divisions = params.divisions;
   _clip_options = params.clip_options;
+  _tesselation_mode = params.tesselation_mode;
+  _tesselation_type = params.tesselation_type;
 }
 
 void HexMesh::init_impl() {
-  if (tesselation_mode == TesselationMode::Iterative) {
+  if (_tesselation_mode == TesselationMode::Iterative) {
     calculate_vertices_iteration();
     if (_frame_state) {
       add_frame();
     }
-  } else if (tesselation_mode == TesselationMode::Recursive) {
+  } else if (_tesselation_mode == TesselationMode::Recursive) {
     calculate_vertices_recursion();
   }
   recalculate_all_except_vertices();
@@ -249,7 +253,7 @@ void HexMesh::calculate_tex_uv1() {
   float r = small_radius(diameter);
   Vector3 direction0 = (corner_points[3] - corner_points[0]).normalized();
   Vector3 direction1 =
-      tesselation_type == TesselationType::Plane ? direction0.cross(normal) : direction0.cross(c.normalized());
+      _tesselation_type == TesselationType::Plane ? direction0.cross(normal) : direction0.cross(c.normalized());
 
   Vector3 p0 = c - direction1 * r - direction0 * R;
   Vector3 p1 = c - direction1 * r + direction0 * R;

@@ -1,9 +1,13 @@
 #include "prism_impl/prism_hex_mesh.h"
 
-#include "tal/godot_core.h"
+#include "godot_cpp/core/memory.hpp"
 #include "misc/types.h"
+#include "tal/godot_core.h"
 
 namespace sota {
+PrismHexMesh::PrismHexMesh(Hexagon hex, PrismHexMeshParams params) : HexMesh(hex, params.hex_mesh_params) {
+  _height = params.height;
+}
 
 void PrismHexMesh::_bind_methods() {
   ClassDB::bind_method(D_METHOD("get_height"), &PrismHexMesh::get_height);
@@ -40,6 +44,12 @@ void PrismHexMesh::calculate_heights() {
     vertices_.push_back(b);
     vertices_.push_back(d);
   }
+}
+
+Ref<PrismHexMesh> make_prism_mesh(Hexagon hex, PrismHexMeshParams params) {
+  auto res = Ref<PrismHexMesh>(memnew(PrismHexMesh(hex, params)));
+  res->init();
+  return res;
 }
 
 }  // namespace sota

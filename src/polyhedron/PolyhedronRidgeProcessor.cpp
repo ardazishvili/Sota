@@ -51,7 +51,7 @@ void PolyhedronRidgeProcessor::configure_cell(Hexagon hex, Biome biome, int& id,
       .ridge_noise = nullptr,
   };
   Ref<RidgeHexMesh> m = make_ridge_hex_mesh<PlainHexMesh>(hex, params);
-  m->set_tesselation_type(HexMesh::TesselationType::Polyhedron);
+  m->set_tesselation_type(TesselationType::Polyhedron);
   // m->set_id(id);
 
   // m->set_divisions(divisions);
