@@ -68,9 +68,9 @@ void RidgeHexMesh::calculate_corner_points_distances_to_border() {
 void RidgeHexMesh::shift_compress() {
   auto center = _hex.center();
 
-  if (_tesselation_type == TesselationType::Plane) {
+  if (_tesselation_type == Orientation::Plane) {
     GeneralUtility::shift_compress(vertices_, _y_shift, _y_compress, center.y);
-  } else if (_tesselation_type == TesselationType::Polyhedron) {
+  } else if (_tesselation_type == Orientation::Polyhedron) {
     vertices_ =
         GeneralUtility::shift_compress_polyhedron(vertices_, _initial_vertices, _y_shift, _y_compress, center.y);
   } else {
@@ -160,14 +160,14 @@ void RidgeHexMesh::calculate_ridge_based_heights(std::function<double(double, do
 void RidgeHexMesh::calculate_initial_heights() {
   auto normal = _hex.normal();
 
-  if (_tesselation_type == TesselationType::Plane) {
+  if (_tesselation_type == Orientation::Plane) {
     for (auto& v : vertices_) {
       float n = _plain_noise.ptr() ? _plain_noise->get_noise_2d(v.x, v.z) : 0.0;
       v += n * normal;
       _min_y = std::min(_min_y, v.y);
       _max_y = std::max(_max_y, v.y);
     }
-  } else if (_tesselation_type == TesselationType::Polyhedron) {
+  } else if (_tesselation_type == Orientation::Polyhedron) {
     _initial_vertices = vertices_;
     for (auto& v : vertices_) {
       float n = _plain_noise.ptr() ? _plain_noise->get_noise_3d(v.x, v.y, v.z) : 0.0;

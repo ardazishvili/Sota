@@ -3,6 +3,7 @@
 #include "godot_cpp/core/memory.hpp"
 #include "hex_mesh.h"
 #include "misc/types.h"
+#include "primitives/Triangle.h"
 #include "tal/godot_core.h"
 
 namespace sota {
@@ -17,6 +18,9 @@ void PrismHexMesh::_bind_methods() {
 }
 
 void PrismHexMesh::set_height(const float p_height) {
+  if (p_height < 0) {
+    return;
+  }
   _height = p_height;
   init();
   calculate_heights();
@@ -28,9 +32,9 @@ float PrismHexMesh::get_height() const { return _height; }
 
 void PrismHexMesh::calculate_heights() {
   for (auto& v : vertices_) {
-    if (_tesselation_type == TesselationType::Polyhedron) {
+    if (_tesselation_type == Orientation::Polyhedron) {
       v += v.normalized() * _height;
-    } else if (_tesselation_type == TesselationType::Plane) {
+    } else if (_tesselation_type == Orientation::Plane) {
       v += _hex.normal() * _height;
     }
   }
@@ -38,22 +42,7 @@ void PrismHexMesh::calculate_heights() {
   for (int i = 0; i < 6; ++i) {
     auto corner_points = _hex.points();
 
-    auto a = corner_points[i];
-    auto b = corner_points[(i + 1) % 6];
-
-    auto a_normal = _tesselation_type == TesselationType::Plane ? _hex.normal() : a.normalized();
-    auto c = a + a_normal * _height;
-
-    auto b_normal = _tesselation_type == TesselationType::Plane ? _hex.normal() : b.normalized();
-    auto d = b + b_normal * _height;
-
-    vertices_.push_back(a);
-    vertices_.push_back(b);
-    vertices_.push_back(c);
-
-    vertices_.push_back(c);
-    vertices_.push_back(b);
-    vertices_.push_back(d);
+    add_face_to_base_hex(Edge{.a = corner_points[i], .b = corner_points[(i + 1) % 6]}, _height);
   }
 }
 

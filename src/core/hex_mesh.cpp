@@ -1,7 +1,12 @@
 #include "hex_mesh.h"
 
+#include <type_traits>
+
 #include "core/utils.h"
+#include "primitives/Edge.h"
+#include "primitives/Face.h"
 #include "primitives/Hexagon.h"
+#include "primitives/Triangle.h"
 #include "tal/arrays.h"
 #include "tal/godot_core.h"
 #include "tal/vector2.h"
@@ -76,22 +81,26 @@ void HexMesh::_bind_methods() {
   ClassDB::bind_method(D_METHOD("get_id"), &HexMesh::get_id);
 }
 
+void HexMesh::add_face_to_base_hex(Edge e, float offset) {
+  auto c = e.a + get_corner_point_normal(e.a) * offset;
+  auto d = e.b + get_corner_point_normal(e.b) * offset;
+
+  Edge edge1 = Edge{.a = e.a, .b = e.b};
+  Edge edge2 = Edge{.a = c, .b = d};
+  if (offset < 0) {
+    std::swap(edge1, edge2);
+  }
+  auto [first_triangle, second_triangle] = Face(edge1, edge2).get_triangles();
+
+  vertices_.append_array(first_triangle.to_godot_array());
+  vertices_.append_array(second_triangle.to_godot_array());
+}
+
 void HexMesh::add_frame() {
   for (int i = 0; i < 6; ++i) {
     // rectangle consists from 4 points: a, b, c, d => 2 triangles
     auto corner_points = _hex.points();
-    auto a = corner_points[i];
-    auto b = corner_points[(i + 1) % 6];
-
-    auto c = corner_points[i] + Vector3(0, -_frame_offset, 0);
-    auto d = corner_points[(i + 1) % 6] + Vector3(0, -_frame_offset, 0);
-    vertices_.push_back(b);
-    vertices_.push_back(a);
-    vertices_.push_back(c);
-
-    vertices_.push_back(b);
-    vertices_.push_back(c);
-    vertices_.push_back(d);
+    add_face_to_base_hex(Edge{.a = corner_points[i], .b = corner_points[(i + 1) % 6]}, -_frame_offset);
   }
 }
 
@@ -253,7 +262,7 @@ void HexMesh::calculate_tex_uv1() {
   float r = small_radius(diameter);
   Vector3 direction0 = (corner_points[3] - corner_points[0]).normalized();
   Vector3 direction1 =
-      _tesselation_type == TesselationType::Plane ? direction0.cross(normal) : direction0.cross(c.normalized());
+      _tesselation_type == Orientation::Plane ? direction0.cross(normal) : direction0.cross(c.normalized());
 
   Vector3 p0 = c - direction1 * r - direction0 * R;
   Vector3 p1 = c - direction1 * r + direction0 * R;
