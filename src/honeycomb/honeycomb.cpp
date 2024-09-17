@@ -1,7 +1,5 @@
 #include "honeycomb.h"
 
-#include <unistd.h>
-
 #include <algorithm>
 #include <memory>
 #include <random>

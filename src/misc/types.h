@@ -3,6 +3,9 @@
 #include <array>
 #include <map>
 #include <vector>
+#include <unordered_map>
+#include <iterator>
+#include <algorithm>
 
 #include "tal/vector3.h"
 

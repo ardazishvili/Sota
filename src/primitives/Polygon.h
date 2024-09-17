@@ -1,7 +1,8 @@
 #pragma once
 
 #include <vector>
-
+#include <algorithm>
+#include <cmath>
 #include "tal/vector3.h"
 
 namespace sota {
