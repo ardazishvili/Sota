@@ -138,4 +138,6 @@ Vector3Array SotaMesh::normals_to_godot_fmt() const {
   return normals;
 }
 
+void SotaMesh::update() { request_update(); }
+
 }  // namespace sota

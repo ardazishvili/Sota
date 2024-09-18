@@ -1,9 +1,13 @@
 #pragma once
 
+#include <memory>
+
+#include "core/general_utility.h"
 #include "core/hex_mesh.h"
 #include "misc/types.h"
 #include "tal/noise.h"
 #include "tal/reference.h"
+
 namespace sota {
 
 struct HoneycombHoneyMeshParams {
@@ -14,8 +18,8 @@ struct HoneycombHoneyMeshParams {
   float min_offset{0.0};
 };
 
-class HoneycombHoney : public HexMesh {
-  GDCLASS(HoneycombHoney, HexMesh)
+class HoneycombHoney : public TileMesh {
+  GDCLASS(HoneycombHoney, TileMesh)
 
  public:
   HoneycombHoney() = default;  // existence is 'must' for Godot
@@ -25,7 +29,7 @@ class HoneycombHoney : public HexMesh {
   HoneycombHoney& operator=(HoneycombHoney&& rhs) = delete;
 
   // getters
-  GroupedHexagonMeshVertices get_grouped_vertices();
+  GroupedMeshVertices get_grouped_vertices();
   std::pair<float, float> get_min_max_height() const { return {_min_y, _max_y}; }
 
   // setters
@@ -50,8 +54,12 @@ class HoneycombHoney : public HexMesh {
   bool is_full() const;
   bool is_empty() const;
 
- protected:
+  HexMesh* inner_mesh() override { return _hex_mesh.ptr(); }
+  int get_id() override { return _hex_mesh->get_id(); }
+
   HoneycombHoney(Hexagon hex, HoneycombHoneyMeshParams params);
+
+ protected:
   static void _bind_methods();
 
  private:
@@ -61,6 +69,9 @@ class HoneycombHoney : public HexMesh {
   float _fill_delta{0};
   float _min_offset{0.0};
   bool _locked{false};
+  std::unique_ptr<MeshProcessor> _processor;
+
+  Ref<HexMesh> _hex_mesh;
 
   void recalculate_vertices_update(float surplus);
 
@@ -68,10 +79,6 @@ class HoneycombHoney : public HexMesh {
   float _max_y = std::numeric_limits<float>::min();
   float _y_shift = 0.0f;     // no shift
   float _y_compress = 1.0f;  // no compress
-
-  friend Ref<HoneycombHoney> make_honeycomb_honey(Hexagon hex, HoneycombHoneyMeshParams params);
 };
-
-Ref<HoneycombHoney> make_honeycomb_honey(Hexagon hex, HoneycombHoneyMeshParams params);
 
 }  // namespace sota

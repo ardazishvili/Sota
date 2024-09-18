@@ -1,12 +1,14 @@
 #include "hex_mesh.h"
 
+#include <memory>
 #include <type_traits>
 
 #include "core/utils.h"
-#include "primitives/Edge.h"
-#include "primitives/Face.h"
-#include "primitives/Hexagon.h"
-#include "primitives/Triangle.h"
+#include "mesh.h"
+#include "primitives/edge.h"
+#include "primitives/face.h"
+#include "primitives/hexagon.h"
+#include "primitives/triangle.h"
 #include "tal/arrays.h"
 #include "tal/godot_core.h"
 #include "tal/vector2.h"
@@ -14,21 +16,20 @@
 
 namespace sota {
 
-void HexMesh::init_from_hex(Hexagon hex) {
-  hex.check();
-  _hex = hex;
+SimpleMesh::SimpleMesh(Hexagon hex, HexMeshParams params) : _hex_mesh(Ref<HexMesh>(memnew(HexMesh(hex, params)))) {
+  _hex_mesh->init();
 }
 
-HexMesh::HexMesh() {
-  _hex = make_unit_hexagon();
+int SimpleMesh::get_id() { return _hex_mesh->get_id(); }
+
+HexMesh::HexMesh() : SotaMesh(std::make_unique<Hexagon>(make_unit_hexagon())) {
   _R = radius(_diameter);
   _r = small_radius(_diameter);
 
   init();  // for init in godot
 }
 
-HexMesh::HexMesh(Hexagon hex, HexMeshParams params) {
-  init_from_hex(hex);
+HexMesh::HexMesh(Hexagon hex, HexMeshParams params) : SotaMesh(std::make_unique<Hexagon>(hex)) {
   _R = radius(_diameter);
   _r = small_radius(_diameter);
 
@@ -40,12 +41,11 @@ HexMesh::HexMesh(Hexagon hex, HexMeshParams params) {
   _divisions = params.divisions;
   _clip_options = params.clip_options;
   _tesselation_mode = params.tesselation_mode;
-  _tesselation_type = params.tesselation_type;
+  _orientation = params.orientation;
 }
 
-HexMesh::HexMesh(Hexagon hex) {
+HexMesh::HexMesh(Hexagon hex) : SotaMesh(std::make_unique<Hexagon>(hex)) {
   auto params = HexMeshParams{};
-  init_from_hex(hex);
   _R = radius(_diameter);
   _r = small_radius(_diameter);
 
@@ -57,7 +57,7 @@ HexMesh::HexMesh(Hexagon hex) {
   _divisions = params.divisions;
   _clip_options = params.clip_options;
   _tesselation_mode = params.tesselation_mode;
-  _tesselation_type = params.tesselation_type;
+  _orientation = params.orientation;
 }
 
 void HexMesh::init_impl() {
@@ -81,26 +81,10 @@ void HexMesh::_bind_methods() {
   ClassDB::bind_method(D_METHOD("get_id"), &HexMesh::get_id);
 }
 
-void HexMesh::add_face_to_base_hex(Edge e, float offset) {
-  auto c = e.a + get_corner_point_normal(e.a) * offset;
-  auto d = e.b + get_corner_point_normal(e.b) * offset;
-
-  Edge edge1 = Edge{.a = e.a, .b = e.b};
-  Edge edge2 = Edge{.a = c, .b = d};
-  if (offset < 0) {
-    std::swap(edge1, edge2);
-  }
-  auto [first_triangle, second_triangle] = Face(edge1, edge2).get_triangles();
-
-  vertices_.append_array(first_triangle.to_godot_array());
-  vertices_.append_array(second_triangle.to_godot_array());
-}
-
 void HexMesh::add_frame() {
   for (int i = 0; i < 6; ++i) {
-    // rectangle consists from 4 points: a, b, c, d => 2 triangles
-    auto corner_points = _hex.points();
-    add_face_to_base_hex(Edge{.a = corner_points[i], .b = corner_points[(i + 1) % 6]}, -_frame_offset);
+    auto corner_points = _base_ngon->points();
+    add_face_to_base_edge(Edge{.a = corner_points[i], .b = corner_points[(i + 1) % 6]}, -_frame_offset);
   }
 }
 
@@ -109,7 +93,7 @@ void HexMesh::set_diameter(const float p_diameter) {
   _R = radius(_diameter);
   _r = small_radius(_diameter);
 
-  init_from_hex(make_hexagon_at_position(_hex.center(), p_diameter));
+  _base_ngon = std::make_unique<Hexagon>(make_hexagon_at_position(_base_ngon->center(), p_diameter));
   init();
 }
 
@@ -173,7 +157,7 @@ void HexMesh::z_clip(float boundary) {
 
 void HexMesh::calculate_vertices_recursion() {
   vertices_.clear();
-  auto corner_points = _hex.points();
+  auto corner_points = _base_ngon->points();
   Vector3 c = (corner_points[0] + corner_points[3]) / 2;
   for (int i = 0; i < 6; ++i) {
     tesselate_into_triangles(corner_points[i], corner_points[(i + 1) % 6], c, _divisions);
@@ -184,9 +168,9 @@ void HexMesh::calculate_vertices_recursion() {
 void HexMesh::calculate_vertices_iteration() {
   vertices_.clear();
 
-  auto corner_points = _hex.points();
-  auto center = _hex.center();
-  auto normal = _hex.normal();
+  auto corner_points = _base_ngon->points();
+  auto center = _base_ngon->center();
+  auto normal = _base_ngon->normal();
 
   Vector3 pivot = corner_points[2];
   unsigned int triangles_count = _divisions * 2 + (_divisions * 2 - 1);
@@ -253,16 +237,15 @@ void HexMesh::calculate_vertices_iteration() {
 void HexMesh::calculate_tex_uv1() {
   tex_uv1_.clear();
 
-  auto corner_points = _hex.points();
-  auto normal = _hex.normal();
+  auto corner_points = _base_ngon->points();
+  auto normal = _base_ngon->normal();
 
   Vector3 c = (corner_points[0] + corner_points[3]) / 2;
   float diameter = (corner_points[3] - corner_points[0]).length();
   float R = radius(diameter);
   float r = small_radius(diameter);
   Vector3 direction0 = (corner_points[3] - corner_points[0]).normalized();
-  Vector3 direction1 =
-      _tesselation_type == Orientation::Plane ? direction0.cross(normal) : direction0.cross(c.normalized());
+  Vector3 direction1 = direction0.cross(get_base_normal_direction(c));
 
   Vector3 p0 = c - direction1 * r - direction0 * R;
   Vector3 p1 = c - direction1 * r + direction0 * R;
@@ -278,14 +261,6 @@ void HexMesh::calculate_tex_uv1() {
   for (const auto& v : vertices_) {
     tex_uv1_.push_back(tex_coord_mapper(v));
   }
-}
-
-void HexMesh::update() { request_update(); }
-
-Ref<HexMesh> make_hex_mesh(Hexagon hex, HexMeshParams params) {
-  Ref<HexMesh> mesh = memnew(HexMesh(hex, params));
-  mesh->init();
-  return mesh;
 }
 
 }  // namespace sota

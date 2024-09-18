@@ -1,6 +1,7 @@
 #pragma once
-#include "primitives/Edge.h"
-#include "primitives/Triangle.h"
+
+#include "primitives/edge.h"
+#include "primitives/triangle.h"
 
 namespace sota {
 

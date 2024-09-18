@@ -42,7 +42,6 @@ _selection_texture = ExtResource("3_5gwmg")
 _noise_honey = ExtResource("7_ndtfo")
 _honey_shader = ExtResource("4_mfsjv")
 _selection_shader = ExtResource("5_yd1eq")
-_divisions = 7
 _shader = ExtResource("5_yd1eq")
 enable_frame = true
 _frame_offset = 0.5

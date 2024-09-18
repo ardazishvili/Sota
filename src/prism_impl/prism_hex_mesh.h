@@ -1,6 +1,8 @@
 #pragma once
 
-#include "hex_mesh.h"
+#include "core/hex_mesh.h"
+#include "primitives/hexagon.h"
+#include "tal/godot_core.h"
 #include "tal/wrapped.h"
 #include "types.h"
 
@@ -23,16 +25,33 @@ class PrismHexMesh : public HexMesh {
   void set_height(const float p_height);
   float get_height() const;
 
-  void calculate_heights();
+  PrismHexMesh(Hexagon hex, PrismHexMeshParams params);
 
  protected:
-  PrismHexMesh(Hexagon hex, PrismHexMeshParams params);
   static void _bind_methods();
+  void init_impl() override;
 
  private:
   float _height{0.0};
+};
 
-  friend Ref<PrismHexMesh> make_prism_mesh(Hexagon hex, PrismHexMeshParams params);
+class PrismHexTile : public TileMesh {
+  GDCLASS(PrismHexTile, TileMesh)
+ public:
+  PrismHexTile() = default;  // required by godot
+
+  int get_id() override { return _prism_hex_mesh->get_id(); }
+  HexMesh* inner_mesh() override { return _prism_hex_mesh.ptr(); }
+  PrismHexTile(Hexagon hex, PrismHexMeshParams params)
+      : _prism_hex_mesh(Ref<PrismHexMesh>(memnew(PrismHexMesh(hex, params)))) {
+    _prism_hex_mesh->init();
+  }
+
+ protected:
+  static void _bind_methods() {}
+
+ private:
+  Ref<PrismHexMesh> _prism_hex_mesh;
 };
 
 Ref<PrismHexMesh> make_prism_mesh(Hexagon hex, PrismHexMeshParams params);

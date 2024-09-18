@@ -2,7 +2,7 @@
 
 extends MeshInstance3D
 
-class_name Polyhedron
+class_name Polyhedron_POC
 
 @export var rows : int = 1
 

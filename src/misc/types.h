@@ -1,20 +1,20 @@
 #pragma once
 
-#include <array>
-#include <map>
-#include <vector>
-#include <unordered_map>
-#include <iterator>
 #include <algorithm>
+#include <array>
+#include <iterator>
+#include <map>
+#include <unordered_map>
+#include <vector>
 
 #include "tal/vector3.h"
 
 namespace sota {
 
-class HexMesh;
+class TileMesh;
 
-using HexagonNeighbours = std::array<HexMesh*, 6>;
-using GroupedHexagonMeshVertices = std::map<std::pair<int, int>, std::vector<Vector3*>>;
+using Neighbours = std::vector<TileMesh*>;
+using GroupedMeshVertices = std::map<std::pair<int, int>, std::vector<Vector3*>>;
 
 enum class Biome { PLAIN = 0, HILL, MOUNTAIN, WATER };
 

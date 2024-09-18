@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://c7u64tpv6byvb"]
+[gd_scene load_steps=24 format=3 uid="uid://c7u64tpv6byvb"]
 
 [ext_resource type="Shader" path="res://demo_terrain/shaders/wireframe.gdshader" id="1_pum5v"]
 [ext_resource type="Texture2D" uid="uid://cdx7ceoux78g0" path="res://demo_terrain/textures/yellow_grass.png" id="2_diq8e"]
@@ -47,9 +47,18 @@ render_priority = 0
 shader = ExtResource("1_pum5v")
 
 [sub_resource type="PrismHexMesh" id="PrismHexMesh_cf0jy"]
-height = 0.75
+height = 0.835
 divisions = 2
 material = SubResource("ShaderMaterial_g7q1k")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ineyc"]
+render_priority = 0
+shader = ExtResource("1_pum5v")
+
+[sub_resource type="PrismPentMesh" id="PrismPentMesh_86pmr"]
+height = 0.85
+divisions = 2
+material = SubResource("ShaderMaterial_ineyc")
 
 [node name="Node3D" type="Node3D"]
 
@@ -118,6 +127,10 @@ _shader = ExtResource("1_pum5v")
 enable_frame = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.30717, 0, 0)
 
-[node name="MeshInstance3D2" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.96372, 0, 6.61693)
+[node name="PrismHexMesh_instance" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.09963, 0, 6.43768)
 mesh = SubResource("PrismHexMesh_cf0jy")
+
+[node name="PrismPentMesh_instance" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.0478, 0, 6.45857)
+mesh = SubResource("PrismPentMesh_86pmr")

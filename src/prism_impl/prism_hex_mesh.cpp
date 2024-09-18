@@ -2,12 +2,19 @@
 
 #include "hex_mesh.h"
 #include "misc/types.h"
-#include "primitives/Triangle.h"
+#include "primitives/triangle.h"
 #include "tal/godot_core.h"
 
 namespace sota {
 PrismHexMesh::PrismHexMesh(Hexagon hex, PrismHexMeshParams params) : HexMesh(hex, params.hex_mesh_params) {
   _height = params.height;
+}
+
+void PrismHexMesh::init_impl() {
+  HexMesh::init_impl();
+  add_faces(_height);
+  recalculate_all_except_vertices();
+  update();
 }
 
 void PrismHexMesh::_bind_methods() {
@@ -22,33 +29,8 @@ void PrismHexMesh::set_height(const float p_height) {
   }
   _height = p_height;
   init();
-  calculate_heights();
-  recalculate_all_except_vertices();
-  update();
 }
 
 float PrismHexMesh::get_height() const { return _height; }
-
-void PrismHexMesh::calculate_heights() {
-  for (auto& v : vertices_) {
-    if (_tesselation_type == Orientation::Polyhedron) {
-      v += v.normalized() * _height;
-    } else if (_tesselation_type == Orientation::Plane) {
-      v += _hex.normal() * _height;
-    }
-  }
-
-  for (int i = 0; i < 6; ++i) {
-    auto corner_points = _hex.points();
-
-    add_face_to_base_hex(Edge{.a = corner_points[i], .b = corner_points[(i + 1) % 6]}, _height);
-  }
-}
-
-Ref<PrismHexMesh> make_prism_mesh(Hexagon hex, PrismHexMeshParams params) {
-  auto res = Ref<PrismHexMesh>(memnew(PrismHexMesh(hex, params)));
-  res->init();
-  return res;
-}
 
 }  // namespace sota

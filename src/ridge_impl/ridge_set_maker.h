@@ -3,27 +3,27 @@
 #include <unordered_set>
 #include <vector>
 
-#include "tal/vector3.h"
 #include "ridge.h"
-#include "ridge_hex_mesh.h"
+#include "ridge_mesh.h"
+#include "tal/vector3.h"
 
 namespace sota {
 
-class RidgeHexMesh;
-using HexagonMeshPointerVector = std::vector<RidgeHexMesh*>;
+class RidgeMesh;
+using RidgeMeshPointerVector = std::vector<RidgeMesh*>;
 using RidgeVector = std::vector<Ridge>;
 
 class RidgeSetMaker {
  public:
-  RidgeSetMaker(HexagonMeshPointerVector hexes) : _hexes(hexes) {}
-  std::vector<std::pair<Vector3, Vector3>> construct(float y_coord);
+  RidgeSetMaker(RidgeMeshPointerVector meshes) : _meshes(meshes) {}
+  std::vector<std::pair<std::pair<Vector3, Vector3>, std::pair<Vector3, Vector3>>> construct(float offset);
 
  private:
-  HexagonMeshPointerVector _hexes;
-  std::unordered_set<RidgeHexMesh*> _visited;
+  RidgeMeshPointerVector _meshes;
+  std::unordered_set<RidgeMesh*> _visited;
 
-  unsigned int unvisited_neighbours_count(const RidgeHexMesh* mesh) const;
-  HexagonMeshPointerVector unvisited_neighbours(const RidgeHexMesh* mesh) const;
+  unsigned int unvisited_neighbours_count(const RidgeMesh* mesh) const;
+  RidgeMeshPointerVector unvisited_neighbours(const RidgeMesh* mesh) const;
 };
 
 }  // namespace sota

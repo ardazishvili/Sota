@@ -19,8 +19,9 @@ compile_commands.json
 # Editors
 .vscode/
 
-# Vim
+# Vim and related
 *.swp
+*.plist
 
 # Docs
 docs/_build/**

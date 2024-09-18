@@ -3,24 +3,27 @@
 #include <array>
 #include <random>
 
+#include "mesh.h"
 #include "ridge_impl/ridge_config.h"
-#include "ridge_impl/ridge_hex_mesh.h"
+#include "ridge_impl/ridge_mesh.h"
 #include "ridge_impl/ridge_set_maker.h"
+#include "tal/godot_core.h"
 #include "tal/vector2.h"
 #include "tal/vector3.h"
+#include "utilities.h"
 
 namespace sota {
 
 RidgeSet::RidgeSet(RidgeConfig config) : _config(config) {}
 
-void RidgeSet::create_single(RidgeHexMesh* mesh, float y_coord) {
-  Vector3 center = mesh->get_center();
-  Vector3 start = center;
-  start.x -= 0.02;
-  start.y = y_coord;
-  Vector3 end = center;
-  end.x += 0.02;
-  end.y = y_coord;
+void RidgeSet::create_single(RidgeMesh* mesh, float offset) {
+  SotaMesh* m = mesh->inner_mesh();
+
+  Vector3 normal = m->base().center().normalized();
+  Vector3 tangent = (m->base().points()[0] - m->base().center()).normalized();
+  Vector3 c = mesh->get_center() + normal * offset;
+  Vector3 start = c - tangent * 0.02;
+  Vector3 end = c + tangent * 0.02;
 
   std::vector<std::pair<Vector3, Vector3>> bounds = {{start, end}};
   unsigned int pieces_num = 2;
@@ -36,22 +39,20 @@ void RidgeSet::create_single(RidgeHexMesh* mesh, float y_coord) {
   }
 }
 
-void RidgeSet::create_dfs_random(std::vector<RidgeHexMesh*>& list, float y_coord, int divisions) {
+void RidgeSet::create_dfs_random(std::vector<RidgeMesh*>& list, float offset, int divisions) {
   constexpr int seed = 0;
   std::mt19937 random_generator(seed);
   std::uniform_int_distribution<> int_dist(0, 1000);
   RidgeSetMaker maker(list);
-  std::vector<Connection> connections = maker.construct(y_coord);
+  std::vector<Connection> connections = maker.construct(offset);
 
-  unsigned int pieces_num = divisions * 2;
   unsigned int fracture_num = int_dist(random_generator) % 4;
   unsigned int connection_pieces_num = fracture_num + 1;
 
-  auto normals = [](const Vector3& lhs, const Vector3& rhs) -> std::array<Vector2, 2> {
-    float dx = rhs.x - lhs.x;
-    float dz = rhs.z - lhs.z;
-
-    return {Vector2(-dz, dx).normalized(), Vector2(dz, -dx).normalized()};
+  auto tangents = [](const Vector3& lhs, const Vector3& rhs, const Vector3& lhs_normal) -> std::array<Vector3, 2> {
+    Vector3 first = (rhs - lhs).cross(lhs_normal).normalized();
+    Vector3 second = -first;
+    return {first, second};
   };
 
   std::uniform_real_distribution<float> height_dist(_config.variation_min_bound, _config.variation_max_bound);
@@ -59,16 +60,18 @@ void RidgeSet::create_dfs_random(std::vector<RidgeHexMesh*>& list, float y_coord
   std::vector<Vector3> displacement_xyz(connection_pieces_num);
   unsigned int connection_num = connections.size();
   for (unsigned int k = 0; k < connection_num; ++k) {
-    auto& [lhs, rhs] = connections[k];
-    auto ns = normals(lhs, rhs);
-    Vector3 dist = rhs - lhs;
+    auto& [lhs_pair, rhs_pair] = connections[k];
+    auto& [lhs, lhs_normal] = lhs_pair;
+    auto& [rhs, rhs_normal] = rhs_pair;
+    auto ts = tangents(lhs, rhs, lhs_normal);
+    Vector3 distance = rhs - lhs;
     for (unsigned int i = 0; i < connection_pieces_num; ++i) {
-      Vector3 a = lhs + static_cast<float>(i) * dist / connection_pieces_num;
-      Vector3 b = lhs + static_cast<float>(i + 1) * dist / connection_pieces_num;
+      Vector3 a = lhs + static_cast<float>(i) * distance / connection_pieces_num;
+      Vector3 b = lhs + static_cast<float>(i + 1) * distance / connection_pieces_num;
       bounds.emplace_back(a, b);
       float randomness = height_dist(random_generator);
-      Vector2 random_normals = randomness * ((i & 1) ? ns[1] : ns[0]);
-      displacement_xyz[i] = Vector3(random_normals.x, -randomness, random_normals.y);
+      Vector3 random_vector = randomness * ((i & 1) ? ts[1] : ts[0]);
+      displacement_xyz[i] = random_vector;
     }
     for (unsigned int i = 1 + connection_pieces_num * k; i < connection_pieces_num * (k + 1); ++i) {
       bounds[i].first += displacement_xyz[(i - 1) % connection_pieces_num];
@@ -76,13 +79,14 @@ void RidgeSet::create_dfs_random(std::vector<RidgeHexMesh*>& list, float y_coord
     }
   }
 
+  unsigned int pieces_num = divisions * 2;
   for (auto& [start, end] : bounds) {
     _ridges.emplace_back(start, end);
-    Vector3 dist = end - start;
+    Vector3 distance = end - start;
     std::vector<Vector3> p;
 
     for (unsigned int i = 0; i <= pieces_num; ++i) {
-      p.push_back(start + static_cast<float>(i) * dist / pieces_num);
+      p.push_back(start + static_cast<float>(i) * distance / pieces_num);
     }
     _ridges.back().set_points(p);
   }

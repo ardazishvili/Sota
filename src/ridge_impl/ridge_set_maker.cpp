@@ -2,9 +2,13 @@
 
 #include <algorithm>
 #include <random>
+#include <utility>
 
+#include "mesh.h"
 #include "misc/types.h"
-#include "ridge_impl/ridge_hex_mesh.h"
+#include "ridge_impl/ridge_mesh.h"
+#include "tal/godot_core.h"
+#include "vector3.h"
 
 namespace sota {
 
@@ -12,52 +16,55 @@ namespace sota {
 const int seed = 0;
 const int variable_int = 35;
 
-unsigned int RidgeSetMaker::unvisited_neighbours_count(const RidgeHexMesh* mesh) const {
+unsigned int RidgeSetMaker::unvisited_neighbours_count(const RidgeMesh* mesh) const {
   return unvisited_neighbours(mesh).size();
 }
 
-HexagonMeshPointerVector RidgeSetMaker::unvisited_neighbours(const RidgeHexMesh* mesh) const {
+RidgeMeshPointerVector RidgeSetMaker::unvisited_neighbours(const RidgeMesh* mesh) const {
   auto all_neighbours = mesh->get_neighbours();
-  HexagonMeshPointerVector unvisited;
-  for (HexMesh* m : all_neighbours) {
-    RidgeHexMesh* ridge_mesh = dynamic_cast<RidgeHexMesh*>(m);
-    if (!_visited.contains(ridge_mesh) && std::find(_hexes.begin(), _hexes.end(), ridge_mesh) != _hexes.end()) {
+  RidgeMeshPointerVector unvisited;
+  for (TileMesh* tile_mesh : all_neighbours) {
+    RidgeMesh* ridge_mesh = dynamic_cast<RidgeMesh*>(tile_mesh);
+    if (!_visited.contains(ridge_mesh) && std::find(_meshes.begin(), _meshes.end(), ridge_mesh) != _meshes.end()) {
       unvisited.push_back(ridge_mesh);
     }
   }
   return unvisited;
 }
 
-std::vector<std::pair<Vector3, Vector3>> RidgeSetMaker::construct(float y_coord) {
+std::vector<std::pair<std::pair<Vector3, Vector3>, std::pair<Vector3, Vector3>>> RidgeSetMaker::construct(
+    float offset) {
   std::mt19937 random_generator(seed);
   std::uniform_int_distribution<> int_dist(0, 1000);
-  auto compare_increasing = [this](const RidgeHexMesh* lhs, const RidgeHexMesh* rhs) {
+  auto compare_increasing = [this](const RidgeMesh* lhs, const RidgeMesh* rhs) {
     return unvisited_neighbours_count(lhs) < unvisited_neighbours_count(rhs);
   };
-  std::sort(_hexes.begin(), _hexes.end(), compare_increasing);
+  std::sort(_meshes.begin(), _meshes.end(), compare_increasing);
 
   int iter = variable_int;
-  std::vector<std::pair<Vector3, Vector3>> res;
+  std::vector<std::pair<std::pair<Vector3, Vector3>, std::pair<Vector3, Vector3>>> res;
   int l = 0;
-  int r = _hexes.size() - 1;
+  int r = _meshes.size() - 1;
   while (iter && l < r) {
-    RidgeHexMesh* least_n_mesh = _hexes[l];
-    RidgeHexMesh* most_n_mesh = _hexes[r];
+    RidgeMesh* least_n_mesh = _meshes[l];
+    RidgeMesh* most_n_mesh = _meshes[r];
 
-    RidgeHexMesh* cur = least_n_mesh;
+    RidgeMesh* cur = least_n_mesh;
     while (cur != most_n_mesh) {
-      HexagonMeshPointerVector neighbours = unvisited_neighbours(cur);
+      RidgeMeshPointerVector neighbours = unvisited_neighbours(cur);
       if (neighbours.empty()) {
         break;
       }
       unsigned int next_idx = int_dist(random_generator) % neighbours.size();
+      RidgeMesh* next = neighbours[next_idx];
 
-      Vector3 cur_position = cur->get_center();
-      cur_position.y = y_coord;
-      Vector3 next_position = neighbours[next_idx]->get_center();
-      next_position.y = y_coord;
+      Vector3 cur_center = cur->get_center();
+      Vector3 cur_position = cur_center + cur->inner_mesh()->get_base_normal_direction(cur_center) * offset;
+      Vector3 next_center = next->get_center();
+      Vector3 next_position = next_center + next->inner_mesh()->get_base_normal_direction(next_center) * offset;
 
-      res.emplace_back(cur_position, next_position);
+      res.emplace_back(std::make_pair(cur_position, cur->inner_mesh()->get_base_normal_direction(cur_position)),
+                       std::make_pair(next_position, next->inner_mesh()->get_base_normal_direction(next_position)));
       _visited.insert(cur);
       cur = neighbours[next_idx];
     }

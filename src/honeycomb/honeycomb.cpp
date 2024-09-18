@@ -12,7 +12,7 @@
 #include "hexagonal_utility.h"
 #include "honeycomb/honeycomb_cell.h"
 #include "honeycomb/honeycomb_honey.h"
-#include "primitives/Hexagon.h"
+#include "primitives/hexagon.h"
 #include "rectangular_utility.h"
 #include "tal/arrays.h"
 #include "tal/callable.h"
@@ -314,7 +314,6 @@ void Honeycomb::init_hexmesh() {
                                                                            .clip_options = ClipOptions{}},
                                           .noise = _noise,
                                           .selection_material = cell_selection_material};
-      Ref<HoneycombCell> cell = make_honeycomb_cell(cell_hex, cell_params);
 
       Ref<ShaderMaterial> honey_material;
       honey_material.instantiate();
@@ -333,8 +332,8 @@ void Honeycomb::init_hexmesh() {
 
       HoneycombHoneyMeshParams honey_params{.hex_mesh_params = HexMeshParams{.id = id + calculate_honey_id_offset(),
                                                                              .diameter = _diameter,
-                                                                             .frame_state = _frame_state,
-                                                                             .frame_offset = _frame_offset,
+                                                                             .frame_state = false,
+                                                                             .frame_offset = 0.0,
                                                                              .material = honey_material,
                                                                              .divisions = _divisions,
                                                                              .clip_options = ClipOptions{}},
@@ -342,10 +341,12 @@ void Honeycomb::init_hexmesh() {
                                             .max_level = _honey_fill_steps,
                                             .fill_delta = get_honey_step_value(),
                                             .min_offset = _honey_min_offset};
-      Ref<HoneycombHoney> honey = make_honeycomb_honey(honey_hex, honey_params);
 
-      _tiles_layout.back().push_back(
-          make_non_ref<HoneycombTile>(cell, honey, this, OffsetCoordinates{.row = val.x, .col = val.z}));
+      Ref<HoneycombCell> cell_tile = Ref<HoneycombCell>(memnew(HoneycombCell(cell_hex, cell_params)));
+      Ref<HoneycombHoney> honey_tile = Ref<HoneycombHoney>(memnew(HoneycombHoney(honey_hex, honey_params)));
+      HoneycombTile* t =
+          memnew(HoneycombTile(cell_tile, honey_tile, this, OffsetCoordinates{.row = val.x, .col = val.z}));
+      _tiles_layout.back().push_back(t);
     }
   }
 }
@@ -353,11 +354,11 @@ void Honeycomb::init_hexmesh() {
 void Honeycomb::calculate_cells() {
   for (auto& row : _tiles_layout) {
     for (auto& tile_ptr : row) {
-      HoneycombCell* mesh = dynamic_cast<HoneycombCell*>(tile_ptr->mesh().ptr());
+      HoneycombCell* cell_mesh = dynamic_cast<HoneycombCell*>(tile_ptr->mesh().ptr());
 
-      mesh->calculate_heights(_bottom_offset);
-      mesh->calculate_normals();
-      mesh->update();
+      cell_mesh->calculate_heights(_bottom_offset);
+      cell_mesh->inner_mesh()->calculate_normals();
+      cell_mesh->inner_mesh()->update();
     }
   }
 }
@@ -374,10 +375,10 @@ void Honeycomb::calculate_normals() {
 void Honeycomb::calculate_flat_normals() {
   for (auto& row : _tiles_layout) {
     for (auto& tile_ptr : row) {
-      tile_ptr->mesh()->calculate_normals();
+      tile_ptr->mesh()->inner_mesh()->calculate_normals();
 
       HoneycombTile* tile = dynamic_cast<HoneycombTile*>(tile_ptr);
-      tile->honey_mesh()->calculate_normals();
+      tile->honey_mesh()->inner_mesh()->calculate_normals();
     }
   }
 }
@@ -385,21 +386,21 @@ void Honeycomb::calculate_flat_normals() {
 void Honeycomb::meshes_update() {
   for (auto& row : _tiles_layout) {
     for (auto& tile_ptr : row) {
-      tile_ptr->mesh()->update();
-      dynamic_cast<HoneycombTile*>(tile_ptr)->honey_mesh()->update();
+      tile_ptr->mesh()->inner_mesh()->update();
+      dynamic_cast<HoneycombTile*>(tile_ptr)->honey_mesh()->inner_mesh()->update();
     }
   }
 }
 
 void Honeycomb::calculate_smooth_normals() {
-  std::vector<GroupedHexagonMeshVertices> cells_vertex_groups;
+  std::vector<GroupedMeshVertices> cells_vertex_groups;
   for (auto& row : _tiles_layout) {
     for (auto& tile_ptr : row) {
       HoneycombCell* mesh = dynamic_cast<HoneycombCell*>(tile_ptr->mesh().ptr());
       cells_vertex_groups.push_back(mesh->get_grouped_vertices());
     }
   }
-  std::vector<GroupedHexagonMeshVertices> honey_vertex_groups;
+  std::vector<GroupedMeshVertices> honey_vertex_groups;
   for (auto& row : _tiles_layout) {
     for (auto& tile_ptr : row) {
       HoneycombTile* tile = dynamic_cast<HoneycombTile*>(tile_ptr);
@@ -446,7 +447,7 @@ void Honeycomb::calculate_final_heights() {
       HoneycombHoney* honey_mesh = tile->honey_mesh().ptr();
 
       honey_mesh->calculate_heights();
-      honey_mesh->calculate_normals();
+      honey_mesh->inner_mesh()->calculate_normals();
     }
   }
 }
@@ -504,7 +505,7 @@ Vector3 HexagonalHoneycomb::get_center() const {
       if (i == middle) {
         HoneycombTile* tile = dynamic_cast<HoneycombTile*>(tile_ptr);
         HoneycombHoney* cell = tile->honey_mesh().ptr();
-        return cell->get_center() + Vector3(0, 0, radius(_diameter));  // + upper half of 0-row
+        return cell->inner_mesh()->get_center() + Vector3(0, 0, radius(_diameter));  // + upper half of 0-row
       }
       ++i;
     }

@@ -1,28 +1,28 @@
 #include "core/pent_mesh.h"
 
 #include <cmath>
+#include <memory>
 
-#include "Pentagon.h"
 #include "algo/constants.h"
+#include "mesh.h"
+#include "primitives/edge.h"
+#include "primitives/face.h"
+#include "primitives/pentagon.h"
+#include "primitives/triangle.h"
 #include "tal/reference.h"
 #include "tal/vector2.h"
 #include "tal/vector3.h"
 
 namespace sota {
 
-void PentMesh::init_from_pentagon(Pentagon pentagon) {
-  pentagon.check();
-  _pentagon = pentagon;
-}
+PentMesh::PentMesh() : SotaMesh(std::make_unique<Pentagon>(make_unit_pentagon())) { init(); }
 
-PentMesh::PentMesh() { init(); }
-
-PentMesh::PentMesh(Pentagon pentagon, PentagonMeshParams params) {
-  init_from_pentagon(pentagon);
-
+PentMesh::PentMesh(Pentagon pentagon, PentagonMeshParams params) : SotaMesh(std::make_unique<Pentagon>(pentagon)) {
   _id = params.id;
   _divisions = params.divisions;
   set_material(params.material);
+  _tesselation_mode = params.tesselation_mode;
+  _orientation = params.orientation;
 }
 
 void PentMesh::init_impl() {
@@ -32,8 +32,8 @@ void PentMesh::init_impl() {
 
 void PentMesh::calculate_vertices_recursion() {
   vertices_.clear();
-  auto corner_points = _pentagon.points();
-  auto center = _pentagon.center();
+  auto corner_points = _base_ngon->points();
+  auto center = _base_ngon->center();
 
   for (int i = 0; i < 5; ++i) {
     // for simplicity use "convex" center(e.g. in case of polyhedron)
@@ -44,7 +44,7 @@ void PentMesh::calculate_vertices_recursion() {
 
 void PentMesh::calculate_tex_uv1() {
   tex_uv1_.clear();
-  auto corner_points = _pentagon.points();
+  auto corner_points = _base_ngon->points();
 
   float side = (corner_points[0] - corner_points[1]).length();
 
@@ -75,11 +75,5 @@ void PentMesh::calculate_tex_uv1() {
 }
 
 void PentMesh::update() { request_update(); }
-
-Ref<PentMesh> make_pent_mesh(Pentagon pentagon, PentagonMeshParams params) {
-  Ref<PentMesh> mesh = Ref<PentMesh>(memnew(PentMesh(pentagon, params)));
-  mesh->init();
-  return mesh;
-}
 
 }  // namespace sota
