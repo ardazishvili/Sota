@@ -1,10 +1,5 @@
 #include "prism_impl/prism_hex_mesh.h"
 
-#if SOTA_MODULE
-#include "core/os/memory.h"
-#else
-#include "godot_cpp/core/memory.hpp"
-#endif
 #include "hex_mesh.h"
 #include "misc/types.h"
 #include "primitives/Triangle.h"
