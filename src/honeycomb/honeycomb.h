@@ -1,6 +1,6 @@
 #pragma once
 
-#include "hex_grid.h"
+#include "core/hex_grid.h"
 #include "honeycomb/honeycomb_honey.h"
 #include "tal/arrays.h"
 #include "tal/noise.h"

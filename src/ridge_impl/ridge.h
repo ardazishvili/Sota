@@ -2,14 +2,19 @@
 
 #include <vector>
 
-#include "tal/vector3.h"
 #include "misc/types.h"
+#include "tal/vector3.h"
 
 namespace sota {
 
 class Ridge {
  public:
   Ridge(Vector3 start, Vector3 end);
+  Ridge(const Ridge& other) = default;
+  Ridge(Ridge&& other) = default;
+  Ridge& operator=(const Ridge& other) = default;
+  Ridge& operator=(Ridge&& other) = default;
+
   void set_points(std::vector<Vector3> points);
   const std::vector<Vector3> get_points() const;
   Vector3 start() const { return _start; }

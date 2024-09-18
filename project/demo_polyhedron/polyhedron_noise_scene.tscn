@@ -1,0 +1,78 @@
+[gd_scene load_steps=12 format=3 uid="uid://r54herf7ach2"]
+
+[ext_resource type="Shader" path="res://demo_polyhedron/shaders/polyhedron_color.gdshader" id="1_d15u1"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_qjkvq"]
+sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+ground_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+
+[sub_resource type="Sky" id="Sky_d3euk"]
+sky_material = SubResource("ProceduralSkyMaterial_qjkvq")
+
+[sub_resource type="Environment" id="Environment_3pfmk"]
+background_mode = 2
+sky = SubResource("Sky_d3euk")
+tonemap_mode = 2
+glow_enabled = true
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_olqtu"]
+noise_type = 3
+frequency = 0.0944
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_v8gcm"]
+noise_type = 3
+frequency = 0.8716
+
+[sub_resource type="Shader" id="Shader_dpf7n"]
+code = "shader_type spatial;
+
+uniform vec3 albedo : source_color;
+uniform float alpha;
+uniform sampler2D noise;
+
+void vertex() {
+	float disp = texture(noise, VERTEX.xz * TIME * 0.01).r;
+	VERTEX +=  normalize(VERTEX) * (-0.002 + disp * 0.004);
+}
+
+void fragment() {
+	ALBEDO = albedo;
+	ALPHA = alpha;
+}"
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_u1618"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_puu3a"]
+in_3d_space = true
+noise = SubResource("FastNoiseLite_u1618")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_mlfhi"]
+render_priority = 0
+shader = SubResource("Shader_dpf7n")
+shader_parameter/albedo = Color(0.337427, 0.716106, 0.89139, 1)
+shader_parameter/alpha = 0.22
+shader_parameter/noise = SubResource("NoiseTexture2D_puu3a")
+
+[sub_resource type="SphereMesh" id="SphereMesh_ybalp"]
+material = SubResource("ShaderMaterial_mlfhi")
+radius = 1.03
+height = 2.06
+
+[node name="Node3D" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_3pfmk")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="WorldEnvironment"]
+transform = Transform3D(-0.492469, 0, 0.87033, 0, 1, 0, -0.87033, 0, -0.492469, 3.37515, 2.69147, -2.22673)
+
+[node name="NoisePolyhedronMesh" type="NoisePolyhedron" parent="."]
+patch_resolution = 10
+compression_factor = 0.225
+divisions = 2
+shader = ExtResource("1_d15u1")
+noise_biomes = SubResource("FastNoiseLite_olqtu")
+noise = SubResource("FastNoiseLite_v8gcm")
+
+[node name="water_sphere" type="MeshInstance3D" parent="."]
+mesh = SubResource("SphereMesh_ybalp")

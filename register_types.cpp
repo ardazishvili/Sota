@@ -4,13 +4,19 @@
 #include "core/hex_mesh.h"
 #include "core/mesh.h"
 #include "core/pent_mesh.h"
+#include "godot_cpp/core/class_db.hpp"
 #include "honeycomb/honeycomb.h"
 #include "honeycomb/honeycomb_cell.h"
 #include "honeycomb/honeycomb_honey.h"
 #include "polyhedron/hex_polyhedron.h"
+#include "polyhedron/noise_polyhedron.h"
+#include "polyhedron/prism_polyhedron.h"
+#include "polyhedron/ridge_polyhedron.h"
 #include "prism_impl/prism_hex_mesh.h"
+#include "prism_pent_mesh.h"
+#include "ridge_based_polyhedron.h"
 #include "ridge_impl/ridge_hex_grid.h"
-#include "ridge_impl/ridge_hex_mesh.h"
+#include "ridge_impl/ridge_mesh.h"
 #include "src/tal/godot_core.h"
 
 /**
@@ -28,32 +34,43 @@ void initialize_Sota_module(ModuleInitializationLevel p_level) {
     return;
   }
 
-  // base types
+  // meshes - contains vertices, normals, etc
   GDREGISTER_ABSTRACT_CLASS(sota::SotaMesh);
   GDREGISTER_CLASS(sota::HexMesh);
   GDREGISTER_CLASS(sota::PentMesh);
+  GDREGISTER_CLASS(sota::PrismHexMesh);
+  GDREGISTER_CLASS(sota::PrismPentMesh);
 
   // Grids made of hexes
   GDREGISTER_ABSTRACT_CLASS(sota::HexGrid);
   GDREGISTER_CLASS(sota::RectHexGrid);
   GDREGISTER_CLASS(sota::HexagonalHexGrid);
 
+  // Wrappers for "real" meshes - ones which contains vertices, normals, etc.
+  GDREGISTER_ABSTRACT_CLASS(sota::TileMesh);
+  GDREGISTER_ABSTRACT_CLASS(sota::SimpleMesh);      // NOT ABSTRACT, see comment to `initialize_Sota_module`
+  GDREGISTER_ABSTRACT_CLASS(sota::PrismPentTile);   // NOT ABSTRACT, see comment to `initialize_Sota_module`
+  GDREGISTER_ABSTRACT_CLASS(sota::PrismHexTile);    // NOT ABSTRACT, see comment to `initialize_Sota_module`
+  GDREGISTER_ABSTRACT_CLASS(sota::RidgeMesh);       // NOT ABSTRACT, see comment to `initialize_Sota_module`
+  GDREGISTER_ABSTRACT_CLASS(sota::HoneycombCell);   // NOT ABSTRACT, see comment to `initialize_Sota_module`
+  GDREGISTER_ABSTRACT_CLASS(sota::HoneycombHoney);  // NOT ABSTRACT, see comment to `initialize_Sota_module`
+
   // Grids made of ridge hexes - hexes based on global graph of ridges
-  GDREGISTER_ABSTRACT_CLASS(sota::RidgeHexMesh);  // NOT ABSTRACT, see comment to `initialize_Sota_module`
   GDREGISTER_ABSTRACT_CLASS(sota::RidgeHexGrid);
   GDREGISTER_CLASS(sota::RectRidgeHexGrid);
   GDREGISTER_CLASS(sota::HexagonalRidgeHexGrid);
 
   // Grids made of pairs of hexes
-  GDREGISTER_ABSTRACT_CLASS(sota::HoneycombCell);   // NOT ABSTRACT, see comment to `initialize_Sota_module`
-  GDREGISTER_ABSTRACT_CLASS(sota::HoneycombHoney);  // NOT ABSTRACT, see comment to `initialize_Sota_module`
   GDREGISTER_ABSTRACT_CLASS(sota::Honeycomb);
   GDREGISTER_CLASS(sota::RectHoneycomb);
   GDREGISTER_CLASS(sota::HexagonalHoneycomb);
 
   // Volumetric grids of hexes
-  GDREGISTER_CLASS(sota::PrismHexMesh);
-  GDREGISTER_CLASS(sota::PolyhedronMesh);
+  GDREGISTER_ABSTRACT_CLASS(sota::Polyhedron);
+  GDREGISTER_ABSTRACT_CLASS(sota::RidgeBasedPolyhedron);
+  GDREGISTER_CLASS(sota::PrismPolyhedron);
+  GDREGISTER_CLASS(sota::NoisePolyhedron);
+  GDREGISTER_CLASS(sota::RidgePolyhedron);
 }
 
 void uninitialize_Sota_module(ModuleInitializationLevel p_level) {

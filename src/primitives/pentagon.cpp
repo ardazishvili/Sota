@@ -1,4 +1,4 @@
-#include "primitives/Pentagon.h"
+#include "primitives/pentagon.h"
 
 #include "algo/constants.h"
 #include "core/utils.h"

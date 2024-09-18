@@ -1,6 +1,6 @@
 #pragma once
 
-#include "tal//vector3.h"
+#include "tal/vector3.h"
 
 namespace sota {
 

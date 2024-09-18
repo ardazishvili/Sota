@@ -2,6 +2,7 @@
 
 #include "core/general_utility.h"
 #include "core/utils.h"
+#include "hex_mesh.h"
 #include "misc/utilities.h"
 #include "tal/callable.h"
 #include "tal/camera.h"
@@ -11,7 +12,9 @@
 
 namespace sota {
 
-HoneycombCell::HoneycombCell(Hexagon hex, HoneycombCellMeshParams params) : HexMesh(hex, params.hex_mesh_params) {
+HoneycombCell::HoneycombCell(Hexagon hex, HoneycombCellMeshParams params)
+    : _hex_mesh(Ref<HexMesh>(memnew(HexMesh(hex, params.hex_mesh_params)))) {
+  _hex_mesh->init();
   _noise = params.noise;
   _selection_material = params.selection_material;
 }
@@ -26,7 +29,7 @@ void HoneycombCell::handle_input_event(Camera3D* p_camera, const Ref<InputEvent>
                                        const Vector3& p_event_position, const Vector3& p_normal, int32_t p_shape_idx) {
   if (auto* mouse_event = dynamic_cast<InputEventMouse*>(p_event.ptr()); mouse_event) {
     if (mouse_event->get_button_mask().has_flag(MOUSE_BUTTON_MASK_LEFT) && mouse_event->is_pressed()) {
-      set_material(_selection_material);
+      _hex_mesh->set_material(_selection_material);
     }
   }
 }
@@ -42,7 +45,7 @@ void HoneycombCell::set_noise(Ref<FastNoiseLite> p_noise) {
   _noise = p_noise;
   if (_noise.ptr()) {
     _noise->connect("changed", Callable(this, "request_update"));
-    request_update();
+    _hex_mesh->update();
   }
 }
 
@@ -51,13 +54,14 @@ void HoneycombCell::set_selection_material(Ref<ShaderMaterial> p_selection_mater
 }
 
 void HoneycombCell::calculate_heights(float bottom_offset) {
-  auto [coeffs, coeffs_precalc] = GeneralUtility::get_border_line_coeffs(_R, _r, {});
+  auto [coeffs, coeffs_precalc] = GeneralUtility::get_border_line_coeffs(_hex_mesh->get_R(), _hex_mesh->get_r(), {});
 
-  auto center = _hex.center();
+  auto center = _hex_mesh->base().center();
 
   float distance_to_border;
   unsigned int coeffs_size = coeffs.size();
-  for (auto& v : vertices_) {
+  auto vertices = _hex_mesh->get_vertices();
+  for (auto& v : vertices) {
     distance_to_border = std::numeric_limits<float>::max();
     for (unsigned int i = 0; i < coeffs_size; ++i) {
       distance_to_border = std::min(distance_to_border, std::abs(coeffs[i][0] * (v.x - center.x) +
@@ -73,25 +77,22 @@ void HoneycombCell::calculate_heights(float bottom_offset) {
 
     v.y = center.y + cosrp(v.y, approx_end, t(distance_to_border, distance_to_center));
   }
+  _hex_mesh->set_vertices(vertices);
 }
 
 // TODO factor out to super-class?
-GroupedHexagonMeshVertices HoneycombCell::get_grouped_vertices() {
-  GroupedHexagonMeshVertices vertex_groups;
-  int size = vertices_.size();
+GroupedMeshVertices HoneycombCell::get_grouped_vertices() {
+  GroupedMeshVertices vertex_groups;
+  auto vertices = _hex_mesh->get_vertices();
+  auto& normals = _hex_mesh->get_normals();
+  int size = vertices.size();
   for (int i = 0; i < size; ++i) {
-    Vector3 v = vertices_[i];
-    Vector3& n = normals_[i];
-    auto p = to_point_divisioned_position(v, _diameter, _divisions);
+    Vector3 v = vertices[i];
+    Vector3& n = normals[i];
+    auto p = to_point_divisioned_position(v, _hex_mesh->get_R() * 2, _hex_mesh->get_divisions());
     vertex_groups[p].push_back(&n);
   }
   return vertex_groups;
-}
-
-Ref<HoneycombCell> make_honeycomb_cell(Hexagon hex, HoneycombCellMeshParams params) {
-  Ref<HoneycombCell> mesh = memnew(HoneycombCell(hex, params));
-  mesh->init();
-  return mesh;
 }
 
 }  // namespace sota

@@ -1,4 +1,4 @@
-#include "primitives/Polygon.h"
+#include "primitives/polygon.h"
 
 namespace sota {
 

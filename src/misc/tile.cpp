@@ -4,6 +4,7 @@
 #include "honeycomb/honeycomb_honey.h"
 #include "misc/cube_coordinates.h"
 #include "misc/types.h"
+#include "ridge_mesh.h"
 #include "tal/callable.h"
 #include "tal/engine.h"
 #include "tal/godot_core.h"
@@ -15,12 +16,14 @@ namespace sota {
 // Tile definitions
 Tile::~Tile() {}
 
-Tile::Tile(Ref<HexMesh> mesh, Vector3 offset, Node3D* parent, OffsetCoordinates offset_coord)
+Tile::Tile(Ref<TileMesh> mesh, Vector3 offset, Node3D* parent, OffsetCoordinates offset_coord)
     : _mesh(mesh), _offset_coord(offset_coord), _shifted(is_odd(offset_coord.row)) {
   _main_mesh_instance = memnew(MeshInstance3D());
   _sphere_shaped3d = Ref<SphereShape3D>(memnew(SphereShape3D()));
 
-  _sphere_shaped3d->set_radius(small_radius(mesh->get_diameter()));
+  auto points = mesh->inner_mesh()->base().points();
+  auto center = mesh->inner_mesh()->base().center();
+  _sphere_shaped3d->set_radius(center.distance_to(points[0]));
 
   _collision_shape3d = memnew(CollisionShape3D());
   _collision_shape3d->set_shape(_sphere_shaped3d);
@@ -28,7 +31,7 @@ Tile::Tile(Ref<HexMesh> mesh, Vector3 offset, Node3D* parent, OffsetCoordinates 
   _static_body = memnew(StaticBody3D());
   _static_body->set_position(offset);
 
-  _main_mesh_instance->set_mesh(mesh);
+  _main_mesh_instance->set_mesh(mesh->inner_mesh());
 
   add_child(_main_mesh_instance);
   parent->add_child(this);
@@ -47,22 +50,22 @@ Tile::Tile(Ref<HexMesh> mesh, Vector3 offset, Node3D* parent, OffsetCoordinates 
   _static_body->connect("input_event", Callable(mesh.ptr(), "handle_input_event"));
 }
 
-Ref<HexMesh> Tile::mesh() const { return _mesh; }
+Ref<TileMesh> Tile::mesh() const { return _mesh; }
 
 // BiomeTile definitions
 Biome BiomeTile::biome() const { return _biome; }
 
-HexagonNeighbours BiomeTile::neighbours() const { return _neighbours; }
-void BiomeTile::set_neighbours(HexagonNeighbours neighbours) { _neighbours = neighbours; }
+Neighbours BiomeTile::neighbours() const { return _neighbours; }
+void BiomeTile::set_neighbours(Neighbours neighbours) { _neighbours = neighbours; }
 
 // HoneycombTile definitions
 Ref<HoneycombHoney> HoneycombTile::honey_mesh() const { return _honey; }
 HoneycombTile::HoneycombTile(Ref<HoneycombCell> walls, Ref<HoneycombHoney> honey, Node3D* parent,
                              OffsetCoordinates offset_coord)
-    : Tile(walls, walls->get_center(), parent, offset_coord), _honey(honey) {
+    : Tile(walls, walls->inner_mesh()->get_center(), parent, offset_coord), _honey(honey) {
   _second_mesh_instance = memnew(MeshInstance3D());
 
-  _second_mesh_instance->set_mesh(honey);
+  _second_mesh_instance->set_mesh(honey->inner_mesh());
 
   parent->add_child(_second_mesh_instance);
 }

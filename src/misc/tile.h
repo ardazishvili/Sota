@@ -7,7 +7,7 @@
 #include "honeycomb/honeycomb_honey.h"
 #include "misc/cube_coordinates.h"
 #include "misc/types.h"
-#include "ridge_impl/ridge_hex_mesh.h"
+#include "ridge_impl/ridge_mesh.h"
 #include "tal/mesh.h"
 #include "tal/node.h"
 #include "tal/reference.h"
@@ -19,9 +19,9 @@ class Tile : public Node3D {
   Tile() = delete;
   virtual ~Tile();
 
-  Tile(Ref<HexMesh> mesh, Vector3 offset, Node3D* parent, OffsetCoordinates offset_coord);
+  Tile(Ref<TileMesh> mesh, Vector3 offset, Node3D* parent, OffsetCoordinates offset_coord);
 
-  Ref<HexMesh> mesh() const;
+  Ref<TileMesh> mesh() const;
   int id() const { return _mesh->get_id(); }
   bool is_shifted() const { return _shifted; }
   OffsetCoordinates get_offset_coords() const { return _offset_coord; }
@@ -33,7 +33,7 @@ class Tile : public Node3D {
   StaticBody3D* _static_body{nullptr};
   MeshInstance3D* _main_mesh_instance{nullptr};
 
-  Ref<HexMesh> _mesh;
+  Ref<TileMesh> _mesh;
   OffsetCoordinates _offset_coord;
   const bool _shifted;  // odd rows are shifted by half of small radius
 };
@@ -41,19 +41,19 @@ class Tile : public Node3D {
 class BiomeTile : public Tile {
  public:
   BiomeTile() = delete;
-  BiomeTile(Ref<RidgeHexMesh> mesh, Node3D* parent, Biome biome, OffsetCoordinates offset_coord)
-      : Tile(mesh, mesh->get_center(), parent, offset_coord), _biome(biome) {}
+  BiomeTile(Ref<RidgeMesh> ridge_hex_mesh, Node3D* parent, Biome biome, OffsetCoordinates offset_coord)
+      : Tile(ridge_hex_mesh, ridge_hex_mesh->get_center(), parent, offset_coord), _biome(biome) {}
 
   // getters
   Biome biome() const;
-  HexagonNeighbours neighbours() const;
+  Neighbours neighbours() const;
 
   // setters
-  void set_neighbours(HexagonNeighbours neighbours);
+  void set_neighbours(Neighbours neighbours);
 
  private:
   Biome _biome;
-  HexagonNeighbours _neighbours;
+  Neighbours _neighbours;
 };
 
 class HoneycombTile : public Tile {

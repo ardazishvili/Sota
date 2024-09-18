@@ -4,15 +4,15 @@
 #include <memory>
 
 #include "core/hex_mesh.h"
+#include "misc/cube_coordinates.h"
+#include "misc/tile.h"
+#include "misc/types.h"
 #include "tal/arrays.h"
 #include "tal/node.h"
 #include "tal/reference.h"
 #include "tal/shader.h"
 #include "tal/vector3i.h"
 #include "tal/wrapped.h"
-#include "misc/cube_coordinates.h"
-#include "misc/tile.h"
-#include "misc/types.h"
 
 namespace sota {
 
@@ -57,7 +57,7 @@ class HexGrid : public Node3D {
 
   virtual void init_col_row_layout() = 0;
   virtual void init_hexmesh();
-  std::map<CubeCoordinates, HexMesh*> _cube_to_hexagon;
+  std::map<CubeCoordinates, TileMesh*> _cube_to_hexagon;
 
   bool _frame_state{false};
   float _frame_offset{0.0};

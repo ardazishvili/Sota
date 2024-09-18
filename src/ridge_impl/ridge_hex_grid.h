@@ -11,9 +11,9 @@
 
 namespace sota {
 
-using GroupOfHexagonMeshes = std::vector<RidgeHexMesh*>;
-using BiomeGroups = std::vector<GroupOfHexagonMeshes>;
-using BiomeRidgeGroup = std::pair<GroupOfHexagonMeshes, std::unique_ptr<RidgeSet>>;
+using GroupOfRidgeMeshes = std::vector<RidgeMesh*>;
+using BiomeGroups = std::vector<GroupOfRidgeMeshes>;
+using BiomeRidgeGroup = std::pair<GroupOfRidgeMeshes, std::unique_ptr<RidgeSet>>;
 
 class RidgeHexGrid : public HexGrid {
   GDCLASS(RidgeHexGrid, HexGrid)
@@ -69,6 +69,8 @@ class RidgeHexGrid : public HexGrid {
   BiomeGroups _plain_groups;
   BiomeGroups _hill_groups;
 
+  std::map<std::pair<int, int>, float> _distance_keeper;
+
   static void _bind_methods();
 
   void init() override;
@@ -86,11 +88,11 @@ class RidgeHexGrid : public HexGrid {
   float _biomes_hill_level_ratio{0.7};
   float _biomes_plain_hill_gain{0.1f};
 
-  void assign_ridges(GroupOfHexagonMeshes& group, RidgeSet* ridge_set);
-  void calculate_neighbours(GroupOfHexagonMeshes& group);
-  void assign_neighbours(GroupOfHexagonMeshes& group);
+  void assign_ridges(GroupOfRidgeMeshes& group, RidgeSet* ridge_set);
+  void calculate_neighbours(GroupOfRidgeMeshes& group);
+  void assign_neighbours(GroupOfRidgeMeshes& group);
   void create_biome_ridges(std::vector<BiomeRidgeGroup>& group, float ridge_offset);
-  void calculate_corner_points_distances_to_border(GroupOfHexagonMeshes& group);
+  void calculate_corner_points_distances_to_border(GroupOfRidgeMeshes& group);
 
   virtual BiomeGroups collect_biome_groups(Biome b) = 0;
   virtual ClipOptions get_clip_options(int row, int col) const = 0;

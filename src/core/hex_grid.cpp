@@ -5,7 +5,7 @@
 #include "cube_coordinates.h"
 #include "godot_utils.h"
 #include "hexagonal_utility.h"
-#include "primitives/Hexagon.h"
+#include "primitives/hexagon.h"
 #include "rectangular_utility.h"
 #include "tal/arrays.h"
 #include "tal/godot_core.h"
@@ -114,10 +114,10 @@ void HexGrid::init_hexmesh() {
                            .divisions = _divisions,
                            .clip_options = ClipOptions{}};
       Hexagon hex = make_hexagon_at_position(offset, _diameter);
-      Ref<HexMesh> m = make_hex_mesh(hex, params);
 
+      Ref<SimpleMesh> simple_mesh = Ref<SimpleMesh>(memnew(SimpleMesh(hex, params)));
       _tiles_layout.back().push_back(
-          make_non_ref<Tile>(m, offset, this, OffsetCoordinates{.row = val.x, .col = val.z}));
+          make_non_ref<Tile>(simple_mesh, offset, this, OffsetCoordinates{.row = val.x, .col = val.z}));
     }
   }
 }
@@ -126,7 +126,7 @@ Array HexGrid::get_hex_meshes() {
   Array result;
   for (std::vector<Tile*>& row : _tiles_layout) {
     for (Tile* tile : row) {
-      result.append(tile->mesh());
+      result.append(tile->mesh()->inner_mesh());
     }
   }
   return result;

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "primitives/Polygon.h"
+#include "primitives/polygon.h"
 #include "tal/vector3.h"
 
 namespace sota {

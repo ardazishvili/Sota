@@ -1,4 +1,4 @@
-#include "primitives/Hexagon.h"
+#include "primitives/hexagon.h"
 
 #include "algo/constants.h"
 #include "core/utils.h"
