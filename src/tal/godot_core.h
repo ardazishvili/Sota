@@ -11,6 +11,7 @@
 #include "godot_cpp/godot.hpp"
 #include "godot_cpp/variant/utility_functions.hpp"
 #include "godot_cpp/variant/variant.hpp"
+#include "godot_cpp/core/memory.hpp"
 
 using ClassDB = godot::ClassDB;
 using UtilityFunctions = godot::UtilityFunctions;
@@ -39,6 +40,8 @@ auto printerr(Args&&... args) -> decltype(UtilityFunctions::print(std::forward<A
 
 #else
 
+#include "core/object/class_db.h"
+#include "core/os/memory.h"
 #include "core/string/print_string.h"
 #include "core/variant/variant_utility.h"
 #include "editor/editor_interface.h"
