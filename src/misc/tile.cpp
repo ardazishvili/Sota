@@ -35,7 +35,7 @@ Tile::Tile(Ref<HexMesh> mesh, Vector3 offset, Node3D* parent, OffsetCoordinates 
 
   _main_mesh_instance->add_child(_static_body);
   _static_body->add_child(_collision_shape3d);
-#if SOTA_ENGINE
+#ifdef SOTA_ENGINE
   Node* root_scene = EditorInterface::get_singleton()->get_edited_scene_root();
   _main_mesh_instance->set_owner(root_scene);
   _static_body->set_owner(root_scene);
