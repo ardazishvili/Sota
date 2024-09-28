@@ -8,4 +8,6 @@ using Engine = godot::Engine;
 using EditorInterface = godot::EditorInterface;
 
 #else
+#include "editor/editor_interface.h"
+#include "core/config/engine.h"
 #endif
