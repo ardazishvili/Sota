@@ -5,6 +5,7 @@
 
 #include "polyhedron/polyhedron_mesh_processor.h"
 #include "ridge.h"
+#include "ridge_impl/ridge_based_object.h"
 #include "ridge_impl/ridge_group.h"
 #include "ridge_impl/ridge_mesh.h"
 #include "ridge_impl/ridge_set.h"
@@ -15,7 +16,7 @@ namespace sota {
 
 class RidgePolyhedron;
 
-class PolyhedronRidgeProcessor : public PolyhedronProcessor {
+class PolyhedronRidgeProcessor : public PolyhedronProcessor, public RidgeBased {
  public:
   PolyhedronRidgeProcessor() = default;
   PolyhedronRidgeProcessor(const PolyhedronRidgeProcessor &other) = delete;
@@ -29,13 +30,6 @@ class PolyhedronRidgeProcessor : public PolyhedronProcessor {
   void process(Polyhedron &polyhedron_mesh) override;
 
  private:
-  // TODO copypaste from ridge_hex_grid.h
-  std::vector<RidgeGroup> _mountain_groups;
-  std::vector<RidgeGroup> _water_groups;
-  BiomeGroups _plain_groups;
-  BiomeGroups _hill_groups;
-  RidgeConfig _ridge_config;
-
   // TODO fix possibility of zero
   RidgePolyhedron *_polyhedron_mesh;
 
@@ -51,10 +45,7 @@ class PolyhedronRidgeProcessor : public PolyhedronProcessor {
   void process_meshes();
   void set_neighbours();
   void set_group_neighbours();
-  void set_biomes();
-
-  // TODO copypaste from ridge_hex_grid.h
-  void print_biomes();
+  void init_biomes();
 };
 
 }  // namespace sota

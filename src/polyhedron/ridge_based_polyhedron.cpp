@@ -25,7 +25,6 @@ void RidgeBasedPolyhedron::set_compression_factor(const float p_compression_fact
   init();
 }
 
-// TODO: noise code copypasted from RidgeHexGridMap
 void RidgeBasedPolyhedron::set_noise(const Ref<FastNoiseLite> p_noise) {
   _noise = p_noise;
   if (_noise.ptr()) {

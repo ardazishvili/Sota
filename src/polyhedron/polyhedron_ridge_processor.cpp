@@ -12,6 +12,7 @@
 #include "polyhedron/hex_polyhedron.h"
 #include "polyhedron/ridge_polyhedron.h"
 #include "primitives/pentagon.h"
+#include "ridge_group.h"
 #include "ridge_impl/plain_mesh.h"
 #include "ridge_mesh.h"
 #include "ridge_set.h"
@@ -65,22 +66,6 @@ void PolyhedronRidgeProcessor::configure_cell(Pentagon pentagon, Biome biome, in
   polyhedron.add_child(mi);
   polyhedron._pentagon_meshes.push_back(ridge_mesh);
   ++id;
-}
-
-void PolyhedronRidgeProcessor::print_biomes() {
-  print("\n");
-  for (RidgeGroup& group : _mountain_groups) {
-    print("Mountain group of size ", group.meshes().size());
-  }
-  for (RidgeGroup& group : _water_groups) {
-    print("Water group of size ", group.meshes().size());
-  }
-  for (auto& group : _hill_groups) {
-    print("Hill group of size ", group.size());
-  }
-  for (auto& group : _plain_groups) {
-    print("Plain group of size ", group.size());
-  }
 }
 
 void PolyhedronRidgeProcessor::set_neighbours() {
@@ -138,7 +123,7 @@ void dfs(TileMesh* cur, GroupOfRidgeMeshes& cur_group, std::unordered_set<TileMe
   }
 }
 
-void PolyhedronRidgeProcessor::set_biomes() {
+void PolyhedronRidgeProcessor::init_biomes() {
   // Biome groups calculation
   _mountain_groups.clear();
   _water_groups.clear();
@@ -182,33 +167,24 @@ void PolyhedronRidgeProcessor::set_group_neighbours() {
       ridge_mesh->set_neighbours(group_neighbours);
     }
   };
-  for (const auto& g : _plain_groups) {
-    processor(g);
-  }
-  for (const auto& g : _hill_groups) {
-    processor(g);
-  }
-  for (RidgeGroup& ridge_group : _mountain_groups) {
-    ridge_group.fmap(processor);
-  }
-  for (RidgeGroup& ridge_group : _water_groups) {
+  for (RidgeGroup& ridge_group : all_groups()) {
     ridge_group.fmap(processor);
   }
 }
 
 void PolyhedronRidgeProcessor::process_meshes() {
   set_neighbours();
-  set_biomes();
+  init_biomes();
   set_group_neighbours();
 
   // print_biomes();
 
   for (RidgeGroup& group : _mountain_groups) {
-    group.create(_distance_keeper, _ridge_config.top_ridge_offset, _polyhedron_mesh->_divisions);
+    group.init_ridges(_distance_keeper, _ridge_config.top_ridge_offset, _polyhedron_mesh->_divisions);
   }
 
   for (RidgeGroup& group : _water_groups) {
-    group.create(_distance_keeper, _ridge_config.bottom_ridge_offset, _polyhedron_mesh->_divisions);
+    group.init_ridges(_distance_keeper, _ridge_config.bottom_ridge_offset, _polyhedron_mesh->_divisions);
   }
 
   // initial heights calculation
