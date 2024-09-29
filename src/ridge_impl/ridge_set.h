@@ -26,9 +26,6 @@ class RidgeSet {
  private:
   std::vector<Ridge> _ridges;
   RidgeConfig _config;
-
-  // TODO make class/struct for connection and use in RidgeSetMaker
-  using Connection = std::pair<std::pair<Vector3, Vector3>, std::pair<Vector3, Vector3>>;
 };
 
 }  // namespace sota

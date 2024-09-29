@@ -6,6 +6,7 @@
 
 #include "mesh.h"
 #include "misc/types.h"
+#include "ridge_impl/ridge_connection.h"
 #include "ridge_impl/ridge_mesh.h"
 #include "tal/godot_core.h"
 #include "vector3.h"
@@ -32,8 +33,7 @@ RidgeMeshPointerVector RidgeSetMaker::unvisited_neighbours(const RidgeMesh* mesh
   return unvisited;
 }
 
-std::vector<std::pair<std::pair<Vector3, Vector3>, std::pair<Vector3, Vector3>>> RidgeSetMaker::construct(
-    float offset) {
+std::vector<RidgeConnection> RidgeSetMaker::construct(float offset) {
   std::mt19937 random_generator(seed);
   std::uniform_int_distribution<> int_dist(0, 1000);
   auto compare_increasing = [this](const RidgeMesh* lhs, const RidgeMesh* rhs) {
@@ -42,7 +42,7 @@ std::vector<std::pair<std::pair<Vector3, Vector3>, std::pair<Vector3, Vector3>>>
   std::sort(_meshes.begin(), _meshes.end(), compare_increasing);
 
   int iter = variable_int;
-  std::vector<std::pair<std::pair<Vector3, Vector3>, std::pair<Vector3, Vector3>>> res;
+  std::vector<RidgeConnection> res;
   int l = 0;
   int r = _meshes.size() - 1;
   while (iter && l < r) {
@@ -63,8 +63,8 @@ std::vector<std::pair<std::pair<Vector3, Vector3>, std::pair<Vector3, Vector3>>>
       Vector3 next_center = next->get_center();
       Vector3 next_position = next_center + next->inner_mesh()->get_base_normal_direction(next_center) * offset;
 
-      res.emplace_back(std::make_pair(cur_position, cur->inner_mesh()->get_base_normal_direction(cur_position)),
-                       std::make_pair(next_position, next->inner_mesh()->get_base_normal_direction(next_position)));
+      res.emplace_back(RidgeVertex(cur_position, cur->inner_mesh()->get_base_normal_direction(cur_position)),
+                       RidgeVertex(next_position, next->inner_mesh()->get_base_normal_direction(next_position)));
       _visited.insert(cur);
       cur = neighbours[next_idx];
     }
