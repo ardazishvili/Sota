@@ -7,8 +7,6 @@
 
 namespace sota {
 
-RidgeBasedPolyhedron::RidgeBasedPolyhedron() : Polyhedron() {}
-
 void RidgeBasedPolyhedron::_bind_methods() {
   ClassDB::bind_method(D_METHOD("get_compression_factor"), &RidgeBasedPolyhedron::get_compression_factor);
   ClassDB::bind_method(D_METHOD("set_compression_factor", "p_compression_factor"),
