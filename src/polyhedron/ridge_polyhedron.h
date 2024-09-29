@@ -9,12 +9,18 @@ class RidgePolyhedron : public RidgeBasedPolyhedron {
   GDCLASS(RidgePolyhedron, RidgeBasedPolyhedron)
  public:
  protected:
+  RidgePolyhedron() = default;
+  RidgePolyhedron(const RidgePolyhedron& other) = delete;
+  RidgePolyhedron(RidgePolyhedron&& other) = delete;
+  // copying operator= defined inside GDCLASS
+  RidgePolyhedron& operator=(RidgePolyhedron&& rhs) = delete;
+
   static void _bind_methods() {}
 
-  void configure_cell(Hexagon hex, Biome biome, int &id, Ref<ShaderMaterial> mat) override {
+  void configure_cell(Hexagon hex, Biome biome, int& id, Ref<ShaderMaterial> mat) override {
     _ridge_processor.configure_cell(hex, biome, id, mat, *this);
   }
-  void configure_cell(Pentagon pentagon, Biome biome, int &id, Ref<ShaderMaterial> mat) override {
+  void configure_cell(Pentagon pentagon, Biome biome, int& id, Ref<ShaderMaterial> mat) override {
     _ridge_processor.configure_cell(pentagon, biome, id, mat, *this);
   }
 
