@@ -37,7 +37,8 @@ void RidgeMesh::set_ridge_noise(Ref<FastNoiseLite> p_ridge_noise) {
 }
 
 void RidgeMesh::calculate_corner_points_distances_to_border(std::map<std::pair<int, int>, float>& distance_keeper,
-                                                            float diameter, int divisions) {
+                                                            int divisions) {
+  float diameter = _mesh->get_R() * 2;
   // TODO duplicated
   auto divisioned = [diameter, divisions](Vector3 point) {
     return to_point_divisioned_position(point, diameter, divisions);
@@ -103,7 +104,8 @@ std::set<int> RidgeMesh::get_exclude_list() {
 
 void RidgeMesh::calculate_ridge_based_heights(std::function<double(double, double, double)> interpolation_func,
                                               float ridge_offset, std::map<std::pair<int, int>, float>& distance_keeper,
-                                              float diameter, int divisions) {
+                                              int divisions) {
+  float diameter = _mesh->get_R() * 2;
   shift_compress();
 
   std::vector<Vector3> neighbours_corner_points;

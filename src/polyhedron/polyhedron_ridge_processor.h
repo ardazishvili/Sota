@@ -5,6 +5,7 @@
 
 #include "polyhedron/polyhedron_mesh_processor.h"
 #include "ridge.h"
+#include "ridge_impl/ridge_group.h"
 #include "ridge_impl/ridge_mesh.h"
 #include "ridge_impl/ridge_set.h"
 #include "tal/reference.h"
@@ -13,21 +14,6 @@
 namespace sota {
 
 class RidgePolyhedron;
-
-// TODO copypaste from ridge_hex_grid.h
-using GroupOfRidgeMeshes = std::vector<RidgeMesh *>;
-using BiomeGroups = std::vector<GroupOfRidgeMeshes>;
-struct RidgeGroup {
-  GroupOfRidgeMeshes meshes;
-  std::unique_ptr<RidgeSet> ridge_set;
-
-  // TODO make class
-  //  BiomeRG() = default;
-  //  BiomeRG(const BiomeRG &other) = delete;
-  //  BiomeRG(BiomeRG &&other) = default;
-  //  BiomeRG &operator=(const BiomeRG &other) = delete;
-  //  BiomeRG &operator=(BiomeRG &&other) = default;
-};
 
 class PolyhedronRidgeProcessor : public PolyhedronProcessor {
  public:
@@ -69,8 +55,6 @@ class PolyhedronRidgeProcessor : public PolyhedronProcessor {
 
   // TODO copypaste from ridge_hex_grid.h
   void print_biomes();
-  void assign_ridges(GroupOfRidgeMeshes &group, RidgeSet *ridge_set);
-  void calculate_corner_points_distances_to_border(GroupOfRidgeMeshes &group);
 };
 
 }  // namespace sota
