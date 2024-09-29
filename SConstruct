@@ -39,6 +39,10 @@ addon_path = Path(extension_path).parent
 project_name = Path(extension_path).stem
 
 debug_or_release = "release" if env["target"] == "template_release" else "debug"
+
+if env["target"] == "editor":
+    env_sota.Append(CPPDEFINES=["SOTA_ENGINE"])
+
 if env["platform"] == "macos":
     library = env.SharedLibrary(
         "{0}/bin/lib{1}.{2}.{3}.framework/{1}.{2}.{3}".format(

@@ -7,7 +7,7 @@ env_sota = env_modules.Clone()
 
 if env.msvc:
     CXXFLAGS=['/std:c++20']
-    env_sota['CCFLAGS'].remove('/std:c++17')
+    env_sota['CXXFLAGS'].remove('/std:c++17')
     env_sota.Append(CPPDEFINES=["MSVC"])
 else:
     CXXFLAGS=['-std=c++20']
