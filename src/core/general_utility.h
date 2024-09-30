@@ -2,6 +2,7 @@
 
 #include <set>
 #include <vector>
+#include <functional>
 
 #include "misc/types.h"
 #include "noise.h"
