@@ -7,8 +7,6 @@
 
 namespace sota {
 
-RidgeBasedPolyhedron::RidgeBasedPolyhedron() : Polyhedron() {}
-
 void RidgeBasedPolyhedron::_bind_methods() {
   ClassDB::bind_method(D_METHOD("get_compression_factor"), &RidgeBasedPolyhedron::get_compression_factor);
   ClassDB::bind_method(D_METHOD("set_compression_factor", "p_compression_factor"),
@@ -25,7 +23,6 @@ void RidgeBasedPolyhedron::set_compression_factor(const float p_compression_fact
   init();
 }
 
-// TODO: noise code copypasted from RidgeHexGridMap
 void RidgeBasedPolyhedron::set_noise(const Ref<FastNoiseLite> p_noise) {
   _noise = p_noise;
   if (_noise.ptr()) {

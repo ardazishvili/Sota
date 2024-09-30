@@ -12,6 +12,7 @@
 #include "polyhedron/hex_polyhedron.h"
 #include "polyhedron/ridge_polyhedron.h"
 #include "primitives/pentagon.h"
+#include "ridge_group.h"
 #include "ridge_impl/plain_mesh.h"
 #include "ridge_mesh.h"
 #include "ridge_set.h"
@@ -65,22 +66,6 @@ void PolyhedronRidgeProcessor::configure_cell(Pentagon pentagon, Biome biome, in
   polyhedron.add_child(mi);
   polyhedron._pentagon_meshes.push_back(ridge_mesh);
   ++id;
-}
-
-void PolyhedronRidgeProcessor::print_biomes() {
-  print("\n");
-  for (auto& [group, ridge_set] : _mountain_groups) {
-    print("Mountain group of size ", group.size());
-  }
-  for (auto& [group, ridge_set] : _water_groups) {
-    print("Water group of size ", group.size());
-  }
-  for (auto& group : _hill_groups) {
-    print("Hill group of size ", group.size());
-  }
-  for (auto& group : _plain_groups) {
-    print("Plain group of size ", group.size());
-  }
 }
 
 void PolyhedronRidgeProcessor::set_neighbours() {
@@ -138,7 +123,7 @@ void dfs(TileMesh* cur, GroupOfRidgeMeshes& cur_group, std::unordered_set<TileMe
   }
 }
 
-void PolyhedronRidgeProcessor::set_biomes() {
+void PolyhedronRidgeProcessor::init_biomes() {
   // Biome groups calculation
   _mountain_groups.clear();
   _water_groups.clear();
@@ -162,50 +147,15 @@ void PolyhedronRidgeProcessor::set_biomes() {
     } else if (biome == Biome::HILL) {
       _hill_groups.emplace_back(cur_group);
     } else if (biome == Biome::WATER) {
-      _water_groups.push_back(RidgeGroup{.meshes = cur_group, .ridge_set = std::make_unique<RidgeSet>(_ridge_config)});
+      _water_groups.emplace_back(cur_group, std::make_unique<RidgeSet>(_ridge_config));
     } else if (biome == Biome::MOUNTAIN) {
-      _mountain_groups.push_back(
-          RidgeGroup{.meshes = cur_group, .ridge_set = std::make_unique<RidgeSet>(_ridge_config)});
+      _mountain_groups.emplace_back(cur_group, std::make_unique<RidgeSet>(_ridge_config));
     }
-  }
-}
-
-void PolyhedronRidgeProcessor::assign_ridges(GroupOfRidgeMeshes& group, RidgeSet* ridge_set) {
-  auto* ridges = ridge_set->ridges();
-  std::vector<Ridge*> ridge_pointers;
-  std::transform(ridges->begin(), ridges->end(), std::back_inserter(ridge_pointers),
-                 [](Ridge& ridge) { return &ridge; });
-
-  for (auto* mesh : group) {
-    mesh->set_ridges(ridge_pointers);
-  }
-}
-
-void PolyhedronRidgeProcessor::calculate_corner_points_distances_to_border(GroupOfRidgeMeshes& group) {
-  std::vector<RidgeMesh*> meshes;
-  for (Ref<TileMesh>& tile_mesh : _meshes) {
-    RidgeMesh* mesh = dynamic_cast<RidgeMesh*>(tile_mesh.ptr());
-    if (std::find(group.begin(), group.end(), mesh) == group.end()) {
-      continue;
-    }
-    meshes.push_back(mesh);
-  }
-
-  auto compare_increasing = [](const RidgeMesh* lhs, const RidgeMesh* rhs) {
-    return lhs->get_neighbours().size() < rhs->get_neighbours().size();
-  };
-  // TODO : meaningless???
-  std::sort(meshes.begin(), meshes.end(), compare_increasing);
-
-  float approx_diameter = _meshes[0]->inner_mesh()->get_R() * 2;
-  int divisions = _polyhedron_mesh->_divisions;
-  for (auto* m : meshes) {
-    m->calculate_corner_points_distances_to_border(_distance_keeper, approx_diameter, divisions);
   }
 }
 
 void PolyhedronRidgeProcessor::set_group_neighbours() {
-  auto process = [](const GroupOfRidgeMeshes& g) {
+  auto processor = [](const GroupOfRidgeMeshes& g) {
     for (RidgeMesh* ridge_mesh : g) {
       Neighbours group_neighbours;
       Neighbours all_neighbours = ridge_mesh->get_neighbours();
@@ -217,58 +167,35 @@ void PolyhedronRidgeProcessor::set_group_neighbours() {
       ridge_mesh->set_neighbours(group_neighbours);
     }
   };
-  for (const auto& g : _plain_groups) {
-    process(g);
-  }
-  for (const auto& g : _hill_groups) {
-    process(g);
-  }
-  for (const auto& [g, _] : _mountain_groups) {
-    process(g);
-  }
-  for (const auto& [g, _] : _water_groups) {
-    process(g);
+  for (RidgeGroup& ridge_group : all_groups()) {
+    ridge_group.fmap(processor);
   }
 }
 
 void PolyhedronRidgeProcessor::process_meshes() {
   set_neighbours();
-  set_biomes();
+  init_biomes();
   set_group_neighbours();
 
   // print_biomes();
 
-  for (auto& [g, ridge_set] : _mountain_groups) {
-    if (g.size() > 1) {
-      ridge_set->create_dfs_random(g, _ridge_config.top_ridge_offset, g[0]->inner_mesh()->get_divisions());
-    } else {
-      ridge_set->create_single(g[0], _ridge_config.top_ridge_offset);
-    }
-
-    assign_ridges(g, ridge_set.get());
-    calculate_corner_points_distances_to_border(g);
+  for (RidgeGroup& group : _mountain_groups) {
+    group.init_ridges(_distance_keeper, _ridge_config.top_ridge_offset, _polyhedron_mesh->_divisions);
   }
 
-  for (auto& [g, ridge_set] : _water_groups) {
-    if (g.size() > 1) {
-      ridge_set->create_dfs_random(g, _ridge_config.bottom_ridge_offset, g[0]->inner_mesh()->get_divisions());
-    } else {
-      ridge_set->create_single(g[0], _ridge_config.bottom_ridge_offset);
-    }
-
-    assign_ridges(g, ridge_set.get());
-    calculate_corner_points_distances_to_border(g);
+  for (RidgeGroup& group : _water_groups) {
+    group.init_ridges(_distance_keeper, _ridge_config.bottom_ridge_offset, _polyhedron_mesh->_divisions);
   }
 
   // initial heights calculation
   float global_min_y = std::numeric_limits<float>::max();
   float global_max_y = std::numeric_limits<float>::min();
   for (Ref<TileMesh>& mesh : _meshes) {
-    RidgeMesh* plain_mesh = dynamic_cast<RidgeMesh*>(mesh.ptr());
-    plain_mesh->calculate_initial_heights();
-    plain_mesh->calculate_normals();
-    plain_mesh->update();
-    auto [mesh_min_z, mesh_max_z] = plain_mesh->get_min_max_height();
+    RidgeMesh* ridge_mesh = dynamic_cast<RidgeMesh*>(mesh.ptr());
+    ridge_mesh->calculate_initial_heights();
+    ridge_mesh->calculate_normals();
+    ridge_mesh->update();
+    auto [mesh_min_z, mesh_max_z] = ridge_mesh->get_min_max_height();
     global_min_y = std::min(global_min_y, mesh_min_z);
     global_max_y = std::max(global_max_y, mesh_max_z);
   }
@@ -276,18 +203,18 @@ void PolyhedronRidgeProcessor::process_meshes() {
   float amplitude = global_max_y - global_min_y;
   float compress = _polyhedron_mesh->_compression_factor / amplitude;
   for (auto& mesh : _meshes) {
-    RidgeMesh* plain_mesh = dynamic_cast<RidgeMesh*>(mesh.ptr());
-    plain_mesh->set_shift_compress(-global_min_y, compress);
+    RidgeMesh* ridge_mesh = dynamic_cast<RidgeMesh*>(mesh.ptr());
+    ridge_mesh->set_shift_compress(-global_min_y, compress);
   }
 
   // final heights calculation
   for (auto& mesh : _meshes) {
-    RidgeMesh* plain_mesh = dynamic_cast<RidgeMesh*>(mesh.ptr());
+    RidgeMesh* ridge_mesh = dynamic_cast<RidgeMesh*>(mesh.ptr());
 
     float approx_diameter = _meshes[0]->inner_mesh()->get_R() * 2;
-    plain_mesh->calculate_final_heights(_distance_keeper, approx_diameter, _polyhedron_mesh->_divisions);
-    plain_mesh->recalculate_all_except_vertices();
-    plain_mesh->update();
+    ridge_mesh->calculate_final_heights(_distance_keeper, approx_diameter, _polyhedron_mesh->_divisions);
+    ridge_mesh->recalculate_all_except_vertices();
+    ridge_mesh->update();
   }
 }
 

@@ -16,7 +16,7 @@ namespace sota {
 
 void PolyhedronNoiseProcessor::configure_cell(Hexagon hex, Biome biome, int& id, Ref<ShaderMaterial> mat,
                                               Polyhedron& polyhedron) {
-  auto noise_polyhedron = dynamic_cast<NoisePolyhedron&>(polyhedron);
+  auto noise_polyhedron = dynamic_cast<NoisePolyhedron*>(&polyhedron);
   RidgeHexMeshParams params{
       .hex_mesh_params = HexMeshParams{.id = id,
                                        .material = mat,
@@ -24,7 +24,7 @@ void PolyhedronNoiseProcessor::configure_cell(Hexagon hex, Biome biome, int& id,
                                        .clip_options = ClipOptions{},
                                        .tesselation_mode = TesselationMode::Recursive,
                                        .orientation = Orientation::Polyhedron},
-      .plain_noise = noise_polyhedron._noise,
+      .plain_noise = noise_polyhedron->_noise,
       .ridge_noise = nullptr,
   };
 
@@ -39,14 +39,14 @@ void PolyhedronNoiseProcessor::configure_cell(Hexagon hex, Biome biome, int& id,
 
 void PolyhedronNoiseProcessor::configure_cell(Pentagon pentagon, Biome biome, int& id, Ref<ShaderMaterial> mat,
                                               Polyhedron& polyhedron) {
-  auto noise_polyhedron = dynamic_cast<NoisePolyhedron&>(polyhedron);
+  auto noise_polyhedron = dynamic_cast<NoisePolyhedron*>(&polyhedron);
   RidgePentagonMeshParams params{
       .pentagon_mesh_params = PentagonMeshParams{.id = id,
                                                  .divisions = polyhedron._divisions,
                                                  .material = mat,
                                                  .tesselation_mode = TesselationMode::Recursive,
                                                  .orientation = Orientation::Polyhedron},
-      .plain_noise = noise_polyhedron._noise,
+      .plain_noise = noise_polyhedron->_noise,
       .ridge_noise = nullptr,
   };
 
@@ -60,7 +60,7 @@ void PolyhedronNoiseProcessor::configure_cell(Pentagon pentagon, Biome biome, in
 }
 
 void PolyhedronNoiseProcessor::process_meshes(Polyhedron& polyhedron, std::vector<Ref<TileMesh>>& meshes) {
-  auto noise_polyhedron = dynamic_cast<NoisePolyhedron&>(polyhedron);
+  auto noise_polyhedron = dynamic_cast<NoisePolyhedron*>(&polyhedron);
 
   // initial heights calculation
   float global_min_y = std::numeric_limits<float>::max();
@@ -76,7 +76,7 @@ void PolyhedronNoiseProcessor::process_meshes(Polyhedron& polyhedron, std::vecto
   }
 
   float amplitude = global_max_y - global_min_y;
-  float compress = noise_polyhedron._compression_factor / amplitude;
+  float compress = noise_polyhedron->_compression_factor / amplitude;
   for (auto& mesh : meshes) {
     PlainMesh* plain_mesh = dynamic_cast<PlainMesh*>(mesh.ptr());
     plain_mesh->set_shift_compress(-global_min_y, compress);

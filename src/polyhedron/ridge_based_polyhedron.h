@@ -9,7 +9,11 @@ namespace sota {
 class RidgeBasedPolyhedron : public Polyhedron {
   GDCLASS(RidgeBasedPolyhedron, Polyhedron)
  public:
-  RidgeBasedPolyhedron();
+  RidgeBasedPolyhedron() = default;
+  RidgeBasedPolyhedron(const RidgeBasedPolyhedron& other) = delete;
+  RidgeBasedPolyhedron(RidgeBasedPolyhedron&& other) = delete;
+  // copying operator= defined inside GDCLASS
+  RidgeBasedPolyhedron& operator=(RidgeBasedPolyhedron&& rhs) = delete;
 
   void set_compression_factor(const float p_compression_factor);
   float get_compression_factor() const;

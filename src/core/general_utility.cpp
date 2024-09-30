@@ -66,10 +66,11 @@ Vector3Array FlatMeshProcessor::shift_compress(Vector3Array vertices, float shif
   Vector3Array result;
   int n = vertices.size();
   for (int i = 0; i < n; ++i) {
-    vertices[i].y += shift;
-    vertices[i].y *= compress;
-    vertices[i].y += offset;
-    result.push_back(vertices[i]);
+    Vector3 p = vertices[i];
+    p.y += shift;
+    p.y *= compress;
+    p.y += offset;
+    result.push_back(p);
   }
   return result;
 }
@@ -97,8 +98,9 @@ Vector3Array FlatMeshProcessor::calculate_ridge_based_heights(
   auto divisioned = [diameter, divisions](Vector3 point) {
     return to_point_divisioned_position(point, diameter, divisions);
   };
+  Vector3Array result;
   for (int i = 0; i < vertices.size(); ++i) {
-    Vector3& v = vertices[i];
+    Vector3 v = vertices[i];
     auto center = base.center();
     std::vector<Vector3> ridge_points;
     for (const Ridge* ridge : ridges) {
@@ -141,9 +143,11 @@ Vector3Array FlatMeshProcessor::calculate_ridge_based_heights(
 
     min_height = std::min(min_height, v.y);
     max_height = std::max(max_height, v.y);
+
+    result.push_back(v);
   }
 
-  return vertices;
+  return result;
 }
 
 // VolumeMeshProcessor definitions
@@ -188,8 +192,9 @@ Vector3Array VolumeMeshProcessor::calculate_ridge_based_heights(
   auto divisioned = [diameter, divisions](Vector3 point) {
     return to_point_divisioned_position(point, diameter, divisions);
   };
+  Vector3Array result;
   for (int i = 0; i < vertices.size(); ++i) {
-    Vector3& v = _initial_vertices[i];
+    Vector3 v = _initial_vertices[i];
     auto center = base.center();
     std::vector<Vector3> ridge_points;
     for (const Ridge* ridge : ridges) {
@@ -222,9 +227,9 @@ Vector3Array VolumeMeshProcessor::calculate_ridge_based_heights(
     auto t_result = t(distance_to_border, distance_to_ridge_projection);
 
     // TODO add noise
-    vertices[i] += t_result * direction * length;
+    result.push_back(vertices[i] + t_result * direction * length);
   }
 
-  return vertices;
+  return result;
 }
 }  // namespace sota

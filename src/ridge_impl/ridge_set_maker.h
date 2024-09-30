@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "ridge.h"
+#include "ridge_impl/ridge_connection.h"
 #include "ridge_mesh.h"
 #include "tal/vector3.h"
 
@@ -16,7 +17,7 @@ using RidgeVector = std::vector<Ridge>;
 class RidgeSetMaker {
  public:
   RidgeSetMaker(RidgeMeshPointerVector meshes) : _meshes(meshes) {}
-  std::vector<std::pair<std::pair<Vector3, Vector3>, std::pair<Vector3, Vector3>>> construct(float offset);
+  std::vector<RidgeConnection> construct(float offset);
 
  private:
   RidgeMeshPointerVector _meshes;

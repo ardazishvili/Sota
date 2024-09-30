@@ -5,6 +5,7 @@
 
 #include "mesh.h"
 #include "ridge_impl/ridge_config.h"
+#include "ridge_impl/ridge_connection.h"
 #include "ridge_impl/ridge_mesh.h"
 #include "ridge_impl/ridge_set_maker.h"
 #include "tal/godot_core.h"
@@ -44,7 +45,7 @@ void RidgeSet::create_dfs_random(std::vector<RidgeMesh*>& list, float offset, in
   std::mt19937 random_generator(seed);
   std::uniform_int_distribution<> int_dist(0, 1000);
   RidgeSetMaker maker(list);
-  std::vector<Connection> connections = maker.construct(offset);
+  std::vector<RidgeConnection> connections = maker.construct(offset);
 
   unsigned int fracture_num = int_dist(random_generator) % 4;
   unsigned int connection_pieces_num = fracture_num + 1;
@@ -60,14 +61,14 @@ void RidgeSet::create_dfs_random(std::vector<RidgeMesh*>& list, float offset, in
   std::vector<Vector3> displacement_xyz(connection_pieces_num);
   unsigned int connection_num = connections.size();
   for (unsigned int k = 0; k < connection_num; ++k) {
-    auto& [lhs_pair, rhs_pair] = connections[k];
-    auto& [lhs, lhs_normal] = lhs_pair;
-    auto& [rhs, rhs_normal] = rhs_pair;
-    auto ts = tangents(lhs, rhs, lhs_normal);
-    Vector3 distance = rhs - lhs;
+    auto [lhs_vertex, rhs_vertex] = connections[k].get();
+    Vector3 lhs_coord = lhs_vertex.coord;
+    Vector3 rhs_coord = rhs_vertex.coord;
+    auto ts = tangents(lhs_coord, rhs_coord, lhs_vertex.normal);
+    Vector3 distance = rhs_coord - lhs_coord;
     for (unsigned int i = 0; i < connection_pieces_num; ++i) {
-      Vector3 a = lhs + static_cast<float>(i) * distance / connection_pieces_num;
-      Vector3 b = lhs + static_cast<float>(i + 1) * distance / connection_pieces_num;
+      Vector3 a = lhs_coord + static_cast<float>(i) * distance / connection_pieces_num;
+      Vector3 b = lhs_coord + static_cast<float>(i + 1) * distance / connection_pieces_num;
       bounds.emplace_back(a, b);
       float randomness = height_dist(random_generator);
       Vector3 random_vector = randomness * ((i & 1) ? ts[1] : ts[0]);

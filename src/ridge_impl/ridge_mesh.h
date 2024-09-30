@@ -56,7 +56,7 @@ class RidgeMesh : public TileMesh {
 
   // calculation
   void calculate_corner_points_distances_to_border(std::map<std::pair<int, int>, float>& distance_keeper,
-                                                   float diameter, int divisions);
+                                                   int divisions);
   void calculate_initial_heights();
   virtual void calculate_final_heights(std::map<std::pair<int, int>, float>& distance_keeper, float diameter,
                                        int divisions) = 0;
@@ -90,7 +90,7 @@ class RidgeMesh : public TileMesh {
   void shift_compress();
   void calculate_ridge_based_heights(std::function<double(double, double, double)> interpolation_func,
                                      float ridge_offset, std::map<std::pair<int, int>, float>& distance_keeper,
-                                     float diameter, int divisions);
+                                     int divisions);
 
   Ref<FastNoiseLite> _plain_noise;
   Ref<FastNoiseLite> _ridge_noise;

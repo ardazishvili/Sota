@@ -19,6 +19,7 @@
 #include "misc/types.h"
 #include "misc/utilities.h"
 #include "primitives/hexagon.h"
+#include "ridge_group.h"
 #include "ridge_impl/ridge.h"
 #include "ridge_impl/ridge_config.h"
 #include "ridge_impl/ridge_mesh.h"
@@ -347,8 +348,15 @@ void RidgeHexGrid::init_biomes() {
     _mountain_groups.emplace_back(group, std::make_unique<RidgeSet>(_ridge_config));
   }
 
-  _plain_groups = collect_biome_groups(Biome::PLAIN);
-  _hill_groups = collect_biome_groups(Biome::HILL);
+  BiomeGroups plain_groups = collect_biome_groups(Biome::PLAIN);
+  for (auto group : plain_groups) {
+    _plain_groups.emplace_back(group);
+  }
+
+  BiomeGroups hill_groups = collect_biome_groups(Biome::HILL);
+  for (auto group : hill_groups) {
+    _hill_groups.emplace_back(group);
+  }
 
   BiomeGroups water_groups = collect_biome_groups(Biome::WATER);
   for (auto group : water_groups) {
@@ -356,7 +364,7 @@ void RidgeHexGrid::init_biomes() {
   }
 }
 
-void RidgeHexGrid::calculate_neighbours(GroupOfRidgeMeshes& group) {
+void RidgeHexGrid::calculate_neighbours(const GroupOfRidgeMeshes& group) {
   auto member_of_group = [&group](RidgeMesh& ridge_hex_mesh) {
     return std::find(group.begin(), group.end(), &ridge_hex_mesh) != group.end();
   };
@@ -384,7 +392,7 @@ void RidgeHexGrid::calculate_neighbours(GroupOfRidgeMeshes& group) {
   }
 }
 
-void RidgeHexGrid::assign_neighbours(GroupOfRidgeMeshes& group) {
+void RidgeHexGrid::assign_neighbours(const GroupOfRidgeMeshes& group) {
   for (auto& row : _tiles_layout) {
     for (auto& tile_ptr : row) {
       BiomeTile* tile = dynamic_cast<BiomeTile*>(tile_ptr);
@@ -397,72 +405,23 @@ void RidgeHexGrid::assign_neighbours(GroupOfRidgeMeshes& group) {
   }
 }
 
-void RidgeHexGrid::assign_ridges(GroupOfRidgeMeshes& group, RidgeSet* ridge_set) {
-  auto* ridges = ridge_set->ridges();
-  std::vector<Ridge*> ridge_pointers;
-  std::transform(ridges->begin(), ridges->end(), std::back_inserter(ridge_pointers),
-                 [](Ridge& ridge) { return &ridge; });
-
-  for (auto* mesh : group) {
-    mesh->set_ridges(ridge_pointers);
-  }
-}
-
-void RidgeHexGrid::calculate_corner_points_distances_to_border(GroupOfRidgeMeshes& group) {
-  std::vector<RidgeMesh*> meshes;
-  for (auto& row : _tiles_layout) {
-    for (auto& tile_ptr : row) {
-      RidgeMesh* mesh = dynamic_cast<RidgeMesh*>(tile_ptr->mesh().ptr());
-      if (std::find(group.begin(), group.end(), mesh) == group.end()) {
-        continue;
-      }
-      meshes.push_back(mesh);
-    }
-  }
-
-  auto compare_increasing = [](const RidgeMesh* lhs, const RidgeMesh* rhs) {
-    return lhs->get_neighbours().size() < rhs->get_neighbours().size();
-  };
-  for (auto* m : meshes) {
-    m->calculate_corner_points_distances_to_border(_distance_keeper, _diameter, _divisions);
-  }
-  // TODO : meaningless???
-  std::sort(meshes.begin(), meshes.end(), compare_increasing);
-}
-
-void RidgeHexGrid::create_biome_ridges(std::vector<BiomeRidgeGroup>& group, float ridge_offset) {
-  for (auto& [g, ridge_set] : group) {
-    calculate_neighbours(g);
-    assign_neighbours(g);
-    if (g.size() > 1) {
-      ridge_set->create_dfs_random(g, ridge_offset, _divisions);
-    } else {
-      ridge_set->create_single(g[0], ridge_offset);
-    }
-    auto ridges = *ridge_set->ridges();
-
-    assign_ridges(g, ridge_set.get());
-    calculate_corner_points_distances_to_border(g);
+void RidgeHexGrid::init_ridges(std::vector<RidgeGroup>& group, float ridge_offset) {
+  for (RidgeGroup& group : group) {
+    group.init_ridges(_distance_keeper, ridge_offset, _divisions);
   }
 }
 
 void RidgeHexGrid::prepare_heights_calculation() {
-  create_biome_ridges(_mountain_groups, _ridge_config.top_ridge_offset);
-  create_biome_ridges(_water_groups, _ridge_config.bottom_ridge_offset);
-
-  for (auto& group : _plain_groups) {
-    calculate_neighbours(group);
-    assign_neighbours(group);
+  for (RidgeGroup& group : all_groups()) {
+    calculate_neighbours(group.meshes());
+    assign_neighbours(group.meshes());
   }
-
-  for (auto& group : _hill_groups) {
-    calculate_neighbours(group);
-    assign_neighbours(group);
-  }
+  init_ridges(_mountain_groups, _ridge_config.top_ridge_offset);
+  init_ridges(_water_groups, _ridge_config.bottom_ridge_offset);
 
   float global_min_y = std::numeric_limits<float>::max();
   float global_max_y = std::numeric_limits<float>::min();
-  auto calculate_initial = [&global_max_y, &global_min_y](GroupOfRidgeMeshes& group) {
+  auto calculate_initial = [&global_max_y, &global_min_y](const GroupOfRidgeMeshes& group) {
     for (auto* mesh : group) {
       mesh->calculate_initial_heights();
       auto [mesh_min_z, mesh_max_z] = mesh->get_min_max_height();
@@ -470,44 +429,21 @@ void RidgeHexGrid::prepare_heights_calculation() {
       global_max_y = std::max(global_max_y, mesh_max_z);
     }
   };
-  for (auto& [group, ridge_set] : _mountain_groups) {
-    calculate_initial(group);
-  }
-  for (auto& [group, ridge_set] : _water_groups) {
-    calculate_initial(group);
-  }
-  for (auto& group : _hill_groups) {
-    calculate_initial(group);
-  }
-  for (auto& group : _plain_groups) {
-    calculate_initial(group);
+  for (RidgeGroup& group : all_groups()) {
+    group.fmap(calculate_initial);
   }
 
   float amplitude = global_max_y - global_min_y;
   float compression_factor = _biomes_plain_hill_gain / amplitude;
 
-  for (auto& [group, ridge_set] : _mountain_groups) {
+  auto shift_compress = [global_min_y, compression_factor](const GroupOfRidgeMeshes& group) {
     for (auto* mesh : group) {
       mesh->set_shift_compress(-global_min_y, compression_factor);
     }
-  }
+  };
 
-  for (auto& [group, ridge_set] : _water_groups) {
-    for (auto* mesh : group) {
-      mesh->set_shift_compress(-global_min_y, compression_factor);
-    }
-  }
-
-  for (auto& group : _hill_groups) {
-    for (auto* mesh : group) {
-      mesh->set_shift_compress(-global_min_y, compression_factor);
-    }
-  }
-
-  for (auto& group : _plain_groups) {
-    for (auto* mesh : group) {
-      mesh->set_shift_compress(-global_min_y, compression_factor);
-    }
+  for (RidgeGroup& group : all_groups()) {
+    group.fmap(shift_compress);
   }
 }
 
@@ -529,21 +465,6 @@ void RidgeHexGrid::calculate_final_heights() {
       mesh->calculate_normals();
       mesh->update();
     }
-  }
-}
-
-void RidgeHexGrid::print_biomes() {
-  for (auto& [group, ridge_set] : _mountain_groups) {
-    print("Mountain group of size ", group.size());
-  }
-  for (auto& [group, ridge_set] : _water_groups) {
-    print("Water group of size ", group.size());
-  }
-  for (auto& group : _hill_groups) {
-    print("Hill group of size ", group.size());
-  }
-  for (auto& group : _plain_groups) {
-    print("Plain group of size ", group.size());
   }
 }
 

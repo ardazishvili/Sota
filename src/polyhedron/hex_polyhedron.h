@@ -26,6 +26,10 @@ class Polyhedron : public Node3D {
 
  public:
   Polyhedron();
+  Polyhedron(const Polyhedron& other) = delete;
+  Polyhedron(Polyhedron&& other) = delete;
+  // copying operator= defined inside GDCLASS
+  Polyhedron& operator=(Polyhedron&& rhs) = delete;
 
   void set_divisions(const int p_divisions);
   int get_divisions() const;
@@ -59,8 +63,8 @@ class Polyhedron : public Node3D {
 
   static void _bind_methods();
 
-  virtual void configure_cell(Hexagon hex, Biome biome, int &id, Ref<ShaderMaterial> mat) = 0;
-  virtual void configure_cell(Pentagon hex, Biome biome, int &id, Ref<ShaderMaterial> mat) = 0;
+  virtual void configure_cell(Hexagon hex, Biome biome, int& id, Ref<ShaderMaterial> mat) = 0;
+  virtual void configure_cell(Pentagon hex, Biome biome, int& id, Ref<ShaderMaterial> mat) = 0;
   virtual void process_cells() = 0;
   virtual void set_material_parameters(Ref<ShaderMaterial> mat) = 0;
   void init();
@@ -83,7 +87,7 @@ class Polyhedron : public Node3D {
 
   template <typename TGON>
   void insert_to_polygons(Vector3 start_point, float diameter, float R, float r, int i, int j,
-                          Vector3Array icosahedron_points, Vector3i triangle, std::map<Vector3i, TGON> &polygons) const;
+                          Vector3Array icosahedron_points, Vector3i triangle, std::map<Vector3i, TGON>& polygons) const;
 
   void clear();
 };

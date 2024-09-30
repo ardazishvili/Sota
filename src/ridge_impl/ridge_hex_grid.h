@@ -5,17 +5,15 @@
 
 #include "core/hex_grid.h"
 #include "cube_coordinates.h"
+#include "ridge_impl/ridge_based_object.h"
+#include "ridge_impl/ridge_group.h"
 #include "ridge_impl/ridge_set.h"
 #include "tal/noise.h"
 #include "tal/texture.h"
 
 namespace sota {
 
-using GroupOfRidgeMeshes = std::vector<RidgeMesh*>;
-using BiomeGroups = std::vector<GroupOfRidgeMeshes>;
-using BiomeRidgeGroup = std::pair<GroupOfRidgeMeshes, std::unique_ptr<RidgeSet>>;
-
-class RidgeHexGrid : public HexGrid {
+class RidgeHexGrid : public HexGrid, public RidgeBased {
   GDCLASS(RidgeHexGrid, HexGrid)
 
  public:
@@ -64,11 +62,6 @@ class RidgeHexGrid : public HexGrid {
   bool get_smooth_normals() const;
 
  protected:
-  std::vector<BiomeRidgeGroup> _mountain_groups;
-  std::vector<BiomeRidgeGroup> _water_groups;
-  BiomeGroups _plain_groups;
-  BiomeGroups _hill_groups;
-
   std::map<std::pair<int, int>, float> _distance_keeper;
 
   static void _bind_methods();
@@ -84,15 +77,12 @@ class RidgeHexGrid : public HexGrid {
   Ref<FastNoiseLite> _ridge_noise;
 
   bool _smooth_normals{false};
-  RidgeConfig _ridge_config;
   float _biomes_hill_level_ratio{0.7};
   float _biomes_plain_hill_gain{0.1f};
 
-  void assign_ridges(GroupOfRidgeMeshes& group, RidgeSet* ridge_set);
-  void calculate_neighbours(GroupOfRidgeMeshes& group);
-  void assign_neighbours(GroupOfRidgeMeshes& group);
-  void create_biome_ridges(std::vector<BiomeRidgeGroup>& group, float ridge_offset);
-  void calculate_corner_points_distances_to_border(GroupOfRidgeMeshes& group);
+  void calculate_neighbours(const GroupOfRidgeMeshes& group);
+  void assign_neighbours(const GroupOfRidgeMeshes& group);
+  void init_ridges(std::vector<RidgeGroup>& group, float ridge_offset);
 
   virtual BiomeGroups collect_biome_groups(Biome b) = 0;
   virtual ClipOptions get_clip_options(int row, int col) const = 0;
@@ -106,7 +96,6 @@ class RidgeHexGrid : public HexGrid {
   void calculate_smooth_normals();
   void calculate_flat_normals();
   void meshes_update();
-  void print_biomes();
 };
 
 class RectRidgeHexGrid : public RidgeHexGrid {
