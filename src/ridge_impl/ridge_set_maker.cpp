@@ -1,15 +1,13 @@
 #include "ridge_set_maker.h"
 
-#include <algorithm>
-#include <random>
-#include <utility>
+#include <algorithm>  // for find, sort
+#include <random>     // for mt19937, uniform_int_distri...
 
-#include "mesh.h"
-#include "misc/types.h"
-#include "ridge_impl/ridge_connection.h"
-#include "ridge_impl/ridge_mesh.h"
-#include "tal/godot_core.h"
-#include "vector3.h"
+#include "core/mesh.h"                    // for SotaMesh
+#include "core/tile_mesh.h"               // for TileMesh
+#include "ridge_impl/ridge_connection.h"  // for RidgeConnection, RidgeVertex
+#include "ridge_impl/ridge_mesh.h"        // for RidgeMesh
+#include "tal/vector3.h"                  // for Vector3
 
 namespace sota {
 

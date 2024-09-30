@@ -1,14 +1,18 @@
 #pragma once
 
-#include <memory>
+#include <limits>   // for numeric_limits
+#include <memory>   // for unique_ptr
+#include <utility>  // for pair
 
-#include "core/general_utility.h"
-#include "core/hex_mesh.h"
-#include "misc/types.h"
-#include "tal/noise.h"
-#include "tal/reference.h"
+#include "core/general_utility.h"  // for MeshProcessor
+#include "core/hex_mesh.h"         // for HexMesh, HexMeshParams
+#include "core/tile_mesh.h"        // for TileMesh
+#include "misc/types.h"            // for GroupedMeshVertices
+#include "tal/noise.h"             // for FastNoiseLite
+#include "tal/reference.h"         // for Ref
 
 namespace sota {
+class Hexagon;
 
 struct HoneycombHoneyMeshParams {
   HexMeshParams hex_mesh_params;

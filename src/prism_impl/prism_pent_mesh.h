@@ -1,10 +1,12 @@
 #pragma once
 
-#include "core/pent_mesh.h"
-#include "core/tile_mesh.h"
+#include "core/pent_mesh.h"  // for PentMesh, PentagonMeshParams
+#include "core/tile_mesh.h"  // for TileMesh
 #include "core/utils.h"
+#include "misc/types.h"
+#include "primitives/pentagon.h"  // for Pentagon
+#include "tal/reference.h"        // for Ref
 #include "tal/wrapped.h"
-#include "types.h"
 
 namespace sota {
 

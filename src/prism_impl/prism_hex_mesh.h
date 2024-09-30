@@ -1,10 +1,12 @@
 #pragma once
 
-#include "core/hex_mesh.h"
-#include "primitives/hexagon.h"
+#include "core/hex_mesh.h"   // for HexMesh, HexMeshParams
+#include "core/tile_mesh.h"  // for TileMesh
+#include "misc/types.h"
+#include "primitives/hexagon.h"  // for Hexagon
 #include "tal/godot_core.h"
+#include "tal/reference.h"  // for Ref
 #include "tal/wrapped.h"
-#include "types.h"
 
 namespace sota {
 

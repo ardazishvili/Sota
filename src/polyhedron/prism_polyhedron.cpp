@@ -1,6 +1,8 @@
 #include "polyhedron/prism_polyhedron.h"
 
-#include "tal/godot_core.h"
+#include <utility>  // for pair
+
+#include "tal/godot_core.h"  // for D_METHOD, ClassDB
 
 namespace sota {
 

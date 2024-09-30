@@ -1,12 +1,17 @@
 #pragma once
 
-#include <memory>
-#include <optional>
+#include <functional>  // for function
+#include <map>         // for map
+#include <memory>      // for unique_ptr
+#include <optional>    // for optional
+#include <utility>     // for move, pair
+#include <vector>      // for vector
 
 #include "ridge_impl/ridge_mesh.h"
-#include "ridge_impl/ridge_set.h"
+#include "ridge_impl/ridge_set.h"  // for RidgeSet
 
 namespace sota {
+class RidgeMesh;
 
 using GroupOfRidgeMeshes = std::vector<RidgeMesh*>;
 using BiomeGroups = std::vector<GroupOfRidgeMeshes>;

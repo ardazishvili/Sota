@@ -2,9 +2,9 @@
 
 #include <algorithm>
 #include <cmath>
-#include <vector>
+#include <vector>         // for vector
 
-#include "tal/vector3.h"
+#include "tal/vector3.h"  // for Vector3
 
 namespace sota {
 

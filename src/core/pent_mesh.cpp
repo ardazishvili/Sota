@@ -1,17 +1,16 @@
 #include "core/pent_mesh.h"
 
-#include <cmath>
-#include <memory>
+#include <cmath>   // for sin, tan
+#include <memory>  // for make_unique
+#include <vector>  // for vector
 
-#include "algo/constants.h"
-#include "mesh.h"
-#include "primitives/edge.h"
-#include "primitives/face.h"
-#include "primitives/pentagon.h"
-#include "primitives/triangle.h"
-#include "tal/reference.h"
-#include "tal/vector2.h"
-#include "tal/vector3.h"
+#include "algo/constants.h"       // for PI
+#include "core/mesh.h"            // for SotaMesh
+#include "primitives/pentagon.h"  // for Pentagon, make...
+#include "primitives/polygon.h"   // for RegularPolygon
+#include "tal/arrays.h"           // for Vector3Array
+#include "tal/vector2.h"          // for Vector2
+#include "tal/vector3.h"          // for Vector3
 
 namespace sota {
 

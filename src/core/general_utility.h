@@ -1,17 +1,26 @@
 #pragma once
 
-#include <set>
-#include <vector>
-#include <functional>
+#include <algorithm>   // for min
+#include <array>       // for array
+#include <cmath>       // for abs
+#include <functional>  // for function
+#include <limits>      // for numeric_limits
+#include <map>         // for map
+#include <set>         // for set
+#include <utility>     // for pair
+#include <vector>      // for vector
 
-#include "misc/types.h"
-#include "noise.h"
+#include "misc/types.h"  // for GroupedMeshVertices
 #include "primitives/polygon.h"
 #include "ridge_impl/ridge.h"
-#include "tal/arrays.h"
-#include "tal/reference.h"
-#include "tal/vector3.h"
+#include "tal/arrays.h"     // for Vector3Array
+#include "tal/noise.h"      // for FastNoiseLite
+#include "tal/reference.h"  // for Ref
+#include "tal/vector3.h"    // for Vector3
+
 namespace sota {
+class RegularPolygon;
+class Ridge;
 
 class MeshProcessor {
  public:

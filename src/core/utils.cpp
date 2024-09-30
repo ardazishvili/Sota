@@ -1,10 +1,14 @@
 #include "core/utils.h"
 
-#include <cmath>
+#include <cmath>  // for abs
 
-#include "algo/constants.h"
-#include "tal/arrays.h"
-#include "tal/vector3i.h"
+#include <cmath>  // for sqrt, cos, sin
+
+#include "algo/constants.h"  // for PI
+#include "tal/arrays.h"      // for Array, Vector3Array
+#include "tal/vector2.h"     // for Vector2
+#include "tal/vector3.h"     // for Vector3
+#include "tal/vector3i.h"    // for Vector3i
 
 namespace sota {
 

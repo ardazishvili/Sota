@@ -1,8 +1,11 @@
 #include "primitives/hexagon.h"
 
-#include "algo/constants.h"
-#include "core/utils.h"
-#include "tal/godot_core.h"
+#include <cmath>  // for cos, sin
+
+#include "algo/constants.h"  // for PI
+#include "core/utils.h"      // for radius
+#include "tal/godot_core.h"  // for printerr
+#include "tal/vector3.h"     // for Vector3
 
 namespace sota {
 

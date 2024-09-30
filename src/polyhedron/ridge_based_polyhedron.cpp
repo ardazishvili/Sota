@@ -1,9 +1,9 @@
 #include "polyhedron/ridge_based_polyhedron.h"
 
-#include "hex_polyhedron.h"
-#include "misc/biome_calculator.h"
-#include "tal/callable.h"
-#include "tal/godot_core.h"
+#include "tal/callable.h"    // for Callable
+#include "tal/godot_core.h"  // for D_METHOD, ClassDB
+#include "tal/material.h"    // for ShaderMaterial
+#include "tal/reference.h"   // for Ref
 
 namespace sota {
 

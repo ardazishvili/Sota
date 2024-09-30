@@ -1,22 +1,25 @@
 #include "core/hex_grid.h"
 
-#include "core/hex_mesh.h"
-#include "core/utils.h"
-#include "cube_coordinates.h"
-#include "godot_utils.h"
-#include "hexagonal_utility.h"
-#include "primitives/hexagon.h"
-#include "rectangular_utility.h"
-#include "tal/arrays.h"
-#include "tal/godot_core.h"
-#include "tal/object.h"
-#include "tal/reference.h"
-#include "tal/shader.h"
-#include "tal/vector2.h"
-#include "tal/vector3.h"
-#include "tal/vector3i.h"
-#include "tal/wrapped.h"
-#include "types.h"
+#include <memory>  // for allocator_traits<>:...
+
+#include "core/godot_utils.h"          // for clean_children
+#include "core/hex_mesh.h"             // for SimpleMesh, HexMesh...
+#include "core/hexagonal_utility.h"    // for HexagonalUtility
+#include "core/mesh.h"                 // for SotaMesh
+#include "core/rectangular_utility.h"  // for RectangularUtility
+#include "core/tile_mesh.h"            // for TileMesh
+#include "core/utils.h"                // for pointy_top_x_offset
+#include "misc/cube_coordinates.h"     // for OffsetCoordinates
+#include "misc/tile.h"                 // for Tile
+#include "misc/types.h"                // for ClipOptions
+#include "primitives/hexagon.h"        // for make_hexagon_at_pos...
+#include "tal/arrays.h"                // for Array
+#include "tal/godot_core.h"            // for D_METHOD, ClassDB
+#include "tal/material.h"              // for ShaderMaterial
+#include "tal/reference.h"             // for Ref
+#include "tal/shader.h"                // for Shader
+#include "tal/vector3.h"               // for Vector3
+#include "tal/vector3i.h"              // for Vector3i
 
 namespace sota {
 

@@ -1,5 +1,9 @@
 #include "primitives/polygon.h"
 
+#include <algorithm>  // for sort
+
+#include "tal/vector3.h"  // for Vector3
+
 namespace sota {
 
 void RegularPolygon::sort_points() {

@@ -1,7 +1,11 @@
 #pragma once
 
-#include "primitives/pentagon.h"
-#include "ridge_impl/ridge_mesh.h"
+#include <map>      // for map
+#include <utility>  // for pair
+
+#include "primitives/hexagon.h"     // for Hexagon
+#include "primitives/pentagon.h"    // for Pentagon
+#include "ridge_impl/ridge_mesh.h"  // for RidgeMesh, RidgeHexMeshParams
 
 namespace sota {
 

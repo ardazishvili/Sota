@@ -1,6 +1,13 @@
 #include "ridge_impl/ridge_group.h"
 
+#include <algorithm>  // for transform
+#include <iterator>   // for back_insert_iterator, back_inserter
+
+#include "ridge_impl/ridge_mesh.h"  // for RidgeMesh
+#include "ridge_impl/ridge_set.h"   // for RidgeSet
+
 namespace sota {
+class Ridge;
 
 void RidgeGroup::init_ridges(std::map<std::pair<int, int>, float>& distance_keeper, float offset, int divisions) {
   if (!_ridge_set) {

@@ -1,19 +1,26 @@
 #pragma once
 
+#include <map>  // for map
 #include <memory>
-#include <vector>
+#include <utility>  // for pair
+#include <vector>   // for vector
 
-#include "polyhedron/polyhedron_mesh_processor.h"
-#include "ridge.h"
-#include "ridge_impl/ridge_based_object.h"
+#include "core/tile_mesh.h"                        // for TileMesh
+#include "misc/types.h"                            // for Biome
+#include "polyhedron/polyhedron_mesh_processor.h"  // for PolyhedronProcessor
+#include "ridge_impl/ridge.h"
+#include "ridge_impl/ridge_based_object.h"  // for RidgeBased
 #include "ridge_impl/ridge_group.h"
 #include "ridge_impl/ridge_mesh.h"
 #include "ridge_impl/ridge_set.h"
-#include "tal/reference.h"
-#include "tile_mesh.h"
+#include "tal/material.h"   // for ShaderMaterial
+#include "tal/reference.h"  // for Ref
 
 namespace sota {
 
+class Hexagon;
+class Pentagon;
+class Polyhedron;
 class RidgePolyhedron;
 
 class PolyhedronRidgeProcessor : public PolyhedronProcessor, public RidgeBased {

@@ -1,7 +1,8 @@
 #pragma once
-#include "tal/arrays.h"
-#include "tal/vector2.h"
-#include "tal/vector3.h"
+
+#include "tal/arrays.h"   // for Array, Vector3Array
+#include "tal/vector2.h"  // for Vector2
+#include "tal/vector3.h"  // for Vector3
 
 namespace sota {
 

@@ -1,16 +1,17 @@
 #pragma once
 
 #include <utility>
-#include <vector>
+#include <vector>  // for vector
 
-#include "ridge.h"
-#include "ridge_config.h"
+#include "ridge_impl/ridge.h"         // for Ridge
+#include "ridge_impl/ridge_config.h"  // for RidgeConfig
 #include "tal/vector3.h"
 
 namespace sota {
 
 // TODO remove dependency on RidgeHexMesh
 class RidgeMesh;
+
 class RidgeSet {
  public:
   RidgeSet(RidgeConfig config);

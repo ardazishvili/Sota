@@ -1,20 +1,23 @@
 #pragma once
 
-#include <map>
+#include <map>  // for map
 #include <memory>
+#include <vector>  // for vector
 
 #include "core/hex_mesh.h"
-#include "misc/cube_coordinates.h"
+#include "misc/cube_coordinates.h"  // for CubeCoordinates
 #include "misc/tile.h"
 #include "misc/types.h"
-#include "tal/arrays.h"
-#include "tal/node.h"
-#include "tal/reference.h"
-#include "tal/shader.h"
-#include "tal/vector3i.h"
+#include "tal/arrays.h"     // for Array
+#include "tal/node.h"       // for Node3D
+#include "tal/reference.h"  // for Ref
+#include "tal/shader.h"     // for Shader
+#include "tal/vector3i.h"   // for Vector3i
 #include "tal/wrapped.h"
 
 namespace sota {
+class Tile;
+class TileMesh;
 
 using TilesLayout = std::vector<std::vector<Tile*>>;
 

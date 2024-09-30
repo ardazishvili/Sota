@@ -1,8 +1,10 @@
 #include "core/hexagonal_utility.h"
 
-#include "core/utils.h"
-#include "misc/cube_coordinates.h"
-#include "misc/types.h"
+#include <memory>  // for allocator_traits<>::value_type
+
+#include "core/utils.h"             // for is_odd
+#include "misc/cube_coordinates.h"  // for OffsetCoordinates, cubeToOffset
+#include "tal/vector3i.h"           // for Vector3i
 
 namespace sota {
 

@@ -1,9 +1,8 @@
 #include "prism_impl/prism_hex_mesh.h"
 
-#include "hex_mesh.h"
-#include "misc/types.h"
-#include "primitives/triangle.h"
-#include "tal/godot_core.h"
+#include "core/hex_mesh.h"       // for HexMesh
+#include "primitives/hexagon.h"  // for Hexagon
+#include "tal/godot_core.h"      // for D_METHOD, ClassDB, PropertyInfo
 
 namespace sota {
 PrismHexMesh::PrismHexMesh(Hexagon hex, PrismHexMeshParams params) : HexMesh(hex, params.hex_mesh_params) {

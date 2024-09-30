@@ -1,16 +1,19 @@
 #include "polyhedron/polyhedron_noise_processor.h"
 
-#include "core/hex_mesh.h"
-#include "misc/types.h"
-#include "misc/utilities.h"
-#include "pent_mesh.h"
-#include "polyhedron/hex_polyhedron.h"
-#include "polyhedron/noise_polyhedron.h"
-#include "primitives/pentagon.h"
-#include "prism_pent_mesh.h"
-#include "ridge_impl/plain_mesh.h"
-#include "ridge_impl/ridge_mesh.h"
-#include "tal/godot_core.h"
+#include <algorithm>  // for max, min
+#include <limits>     // for numeric_limits
+
+#include "core/hex_mesh.h"                // for HexMeshParams
+#include "core/mesh.h"                    // for Orientation, Orient...
+#include "core/pent_mesh.h"               // for PentagonMeshParams
+#include "core/tile_mesh.h"               // for TileMesh
+#include "misc/types.h"                   // for ClipOptions, Biome
+#include "polyhedron/hex_polyhedron.h"    // for Polyhedron
+#include "polyhedron/noise_polyhedron.h"  // for NoisePolyhedron
+#include "primitives/hexagon.h"           // for Hexagon
+#include "primitives/pentagon.h"          // for Pentagon
+#include "ridge_impl/plain_mesh.h"        // for PlainMesh
+#include "ridge_impl/ridge_mesh.h"        // for make_ridge_hex_mesh
 
 namespace sota {
 

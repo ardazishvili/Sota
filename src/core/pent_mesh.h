@@ -2,13 +2,15 @@
 
 #include <memory>
 
-#include "core/mesh.h"
+#include "core/mesh.h"  // for SotaMesh, Orientation, Tess...
 #include "primitives/edge.h"
 #include "primitives/pentagon.h"
 #include "primitives/polygon.h"
-#include "tal/material.h"
-#include "tal/reference.h"
+#include "tal/material.h"   // for Material
+#include "tal/reference.h"  // for Ref
+
 namespace sota {
+class Pentagon;
 
 struct PentagonMeshParams {
   int id{0};

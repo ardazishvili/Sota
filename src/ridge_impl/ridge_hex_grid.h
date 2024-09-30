@@ -1,15 +1,20 @@
 #pragma once
 
+#include <map>  // for map
 #include <memory>
-#include <unordered_map>
+#include <unordered_map>  // for unordered_map
+#include <utility>        // for pair
+#include <vector>         // for vector
 
-#include "core/hex_grid.h"
-#include "cube_coordinates.h"
-#include "ridge_impl/ridge_based_object.h"
-#include "ridge_impl/ridge_group.h"
+#include "core/hex_grid.h"  // for HexGrid
+#include "misc/cube_coordinates.h"
+#include "misc/types.h"                     // for Biome, ClipOptions
+#include "ridge_impl/ridge_based_object.h"  // for RidgeBased
+#include "ridge_impl/ridge_group.h"         // for BiomeGroups, GroupOfRidge...
 #include "ridge_impl/ridge_set.h"
-#include "tal/noise.h"
-#include "tal/texture.h"
+#include "tal/noise.h"      // for FastNoiseLite
+#include "tal/reference.h"  // for Ref
+#include "tal/texture.h"    // for Texture
 
 namespace sota {
 

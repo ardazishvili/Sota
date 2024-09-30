@@ -1,31 +1,38 @@
 #include "ridge_hex_grid.h"
 
-#include <algorithm>
-#include <iostream>
-#include <limits>
-#include <memory>
-#include <unordered_map>
+#include <algorithm>      // for find, max, min
+#include <functional>     // for reference_wrapper
+#include <limits>         // for numeric_limits
+#include <memory>         // for make_unique, alloca...
+#include <unordered_map>  // for unordered_map, unor...
 
-#include "algo/dsu.h"
-#include "biome_calculator.h"
-#include "core/general_utility.h"
-#include "core/godot_utils.h"
-#include "core/hex_mesh.h"
-#include "core/hexagonal_utility.h"
-#include "core/rectangular_utility.h"
-#include "core/utils.h"
-#include "misc/cube_coordinates.h"
-#include "misc/tile.h"
-#include "misc/types.h"
-#include "misc/utilities.h"
-#include "primitives/hexagon.h"
-#include "ridge_group.h"
-#include "ridge_impl/ridge.h"
-#include "ridge_impl/ridge_config.h"
-#include "ridge_impl/ridge_mesh.h"
-#include "tal/callable.h"
-#include "tal/godot_core.h"
-#include "tal/vector3.h"
+#include "algo/dsu.h"                  // for DSU
+#include "core/general_utility.h"      // for GeneralUtility
+#include "core/godot_utils.h"          // for clean_children
+#include "core/hex_grid.h"             // for TilesLayout
+#include "core/hex_mesh.h"             // for HexMeshParams
+#include "core/hexagonal_utility.h"    // for HexagonalUtility
+#include "core/mesh.h"                 // for SotaMesh
+#include "core/rectangular_utility.h"  // for RectangularUtility
+#include "core/tile_mesh.h"            // for TileMesh
+#include "core/utils.h"                // for is_odd, pointy_top_...
+#include "misc/biome_calculator.h"     // for BiomeCalculator
+#include "misc/cube_coordinates.h"     // for CubeCoordinates
+#include "misc/tile.h"                 // for BiomeTile, Tile
+#include "misc/types.h"                // for Biome, GroupedMeshV...
+#include "misc/utilities.h"            // for create_hex_mesh
+#include "primitives/hexagon.h"        // for make_hexagon_at_pos...
+#include "ridge_impl/ridge_config.h"   // for RidgeConfig
+#include "ridge_impl/ridge_group.h"    // for RidgeGroup, GroupOf...
+#include "ridge_impl/ridge_mesh.h"     // for RidgeMesh, RidgeHex...
+#include "ridge_impl/ridge_set.h"      // for RidgeSet
+#include "tal/callable.h"              // for Callable
+#include "tal/godot_core.h"            // for D_METHOD, ClassDB
+#include "tal/material.h"              // for ShaderMaterial
+#include "tal/noise.h"                 // for FastNoiseLite
+#include "tal/texture.h"               // for Texture
+#include "tal/vector3.h"               // for Vector3
+#include "tal/vector3i.h"              // for Vector3i
 
 namespace sota {
 
