@@ -2,21 +2,22 @@
 
 #include <memory>
 
-#include "core/mesh.h"
-#include "core/tile_mesh.h"
-#include "misc/types.h"
+#include "core/mesh.h"       // for SotaMesh, Orientation, Tess...
+#include "core/tile_mesh.h"  // for TileMesh
+#include "misc/types.h"      // for ClipOptions
 #include "primitives/edge.h"
 #include "primitives/face.h"
 #include "primitives/hexagon.h"
 #include "primitives/polygon.h"
 #include "primitives/triangle.h"
 #include "tal/arrays.h"
-#include "tal/material.h"
-#include "tal/reference.h"
+#include "tal/material.h"   // for Material
+#include "tal/reference.h"  // for Ref
 #include "tal/vector3.h"
 #include "tal/wrapped.h"
 
 namespace sota {
+class Hexagon;
 
 struct HexMeshParams {
   int id{0};

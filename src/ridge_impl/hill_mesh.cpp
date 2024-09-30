@@ -1,10 +1,11 @@
 #include "hill_mesh.h"
 
-#include <cmath>
+#include <memory>  // for unique_ptr
 
-#include "mesh.h"
-#include "tal/vector2.h"
-#include "vector3.h"
+#include "core/mesh.h"           // for SotaMesh
+#include "general_utility.h"     // for MeshProcessor
+#include "primitives/polygon.h"  // for RegularPolygon
+#include "tal/vector3.h"         // for Vector3
 
 namespace sota {
 

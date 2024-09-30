@@ -1,14 +1,26 @@
 #include "honeycomb/honeycomb_cell.h"
 
-#include "core/general_utility.h"
-#include "core/utils.h"
-#include "hex_mesh.h"
-#include "misc/utilities.h"
-#include "tal/callable.h"
-#include "tal/camera.h"
-#include "tal/event.h"
-#include "tal/godot_core.h"
-#include "tal/vector2.h"
+#include <cmath>  // for abs
+
+#include <algorithm>  // for min
+#include <limits>     // for numeric_limits
+#include <utility>    // for tuple_element<...
+#include <vector>     // for vector
+
+#include "core/general_utility.h"  // for GeneralUtility
+#include "core/hex_mesh.h"         // for HexMesh
+#include "core/utils.h"            // for cosrp
+#include "misc/types.h"            // for GroupedMeshVer...
+#include "misc/utilities.h"        // for to_point_divis...
+#include "primitives/hexagon.h"    // for Hexagon
+#include "primitives/polygon.h"    // for RegularPolygon
+#include "tal/callable.h"          // for Callable
+#include "tal/camera.h"            // for Camera3D
+#include "tal/event.h"             // for InputEventMouse
+#include "tal/godot_core.h"        // for D_METHOD, ClassDB
+#include "tal/material.h"          // for ShaderMaterial
+#include "tal/noise.h"             // for FastNoiseLite
+#include "tal/vector2.h"           // for Vector2
 
 namespace sota {
 

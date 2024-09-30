@@ -1,9 +1,20 @@
 #pragma once
 
-#include "polyhedron/polyhedron_mesh_processor.h"
-#include "tile_mesh.h"
+#include <map>      // for map
+#include <utility>  // for pair
+#include <vector>   // for vector
+
+#include "core/tile_mesh.h"
+#include "misc/types.h"                            // for Biome
+#include "polyhedron/polyhedron_mesh_processor.h"  // for PolyhedronProcessor
+#include "tal/material.h"                          // for ShaderMaterial
+#include "tal/reference.h"                         // for Ref
 
 namespace sota {
+class Hexagon;
+class Pentagon;
+class Polyhedron;
+class TileMesh;
 
 class PolyhedronNoiseProcessor : public PolyhedronProcessor {
  public:

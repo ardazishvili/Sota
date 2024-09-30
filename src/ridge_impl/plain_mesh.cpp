@@ -1,5 +1,9 @@
 #include "plain_mesh.h"
 
+#include "core/mesh.h"           // for SotaMesh
+#include "primitives/polygon.h"  // for RegularPolygon
+#include "tal/vector3.h"         // for Vector3
+
 namespace sota {
 
 void PlainMesh::calculate_final_heights(std::map<std::pair<int, int>, float>& distance_keeper, float diameter,

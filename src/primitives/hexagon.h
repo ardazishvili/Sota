@@ -1,7 +1,9 @@
 #pragma once
 
-#include "primitives/polygon.h"
-#include "tal/vector3.h"
+#include <vector>                // for vector
+
+#include "primitives/polygon.h"  // for RegularPolygon
+#include "tal/vector3.h"         // for Vector3
 
 namespace sota {
 

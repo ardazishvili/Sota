@@ -1,15 +1,17 @@
 #pragma once
 
-#include <memory>
-#include <vector>
+#include <memory>   // for unique_ptr
+#include <utility>  // for move, swap
+#include <vector>   // for vector
 
-#include "primitives/edge.h"
-#include "primitives/face.h"
-#include "primitives/polygon.h"
-#include "primitives/triangle.h"
-#include "tal/arrays.h"
-#include "tal/mesh.h"
-#include "tal/vector3.h"
+#include "mesh.h"
+#include "primitives/edge.h"      // for Edge
+#include "primitives/face.h"      // for Face
+#include "primitives/polygon.h"   // for RegularPolygon
+#include "primitives/triangle.h"  // for Triangle
+#include "tal/arrays.h"           // for Vector3Array
+#include "tal/mesh.h"             // for PrimitiveMesh
+#include "tal/vector3.h"          // for Vector3
 
 namespace sota {
 

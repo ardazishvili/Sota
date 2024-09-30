@@ -1,9 +1,7 @@
 #include "prism_impl/prism_pent_mesh.h"
 
-#include "misc/types.h"
-#include "pent_mesh.h"
-#include "primitives/triangle.h"
-#include "tal/godot_core.h"
+#include "core/pent_mesh.h"  // for PentMesh
+#include "tal/godot_core.h"  // for D_METHOD, ClassDB, PropertyInfo
 
 namespace sota {
 PrismPentMesh::PrismPentMesh(Pentagon pent, PrismPentMeshParams params) : PentMesh(pent, params.pent_mesh_params) {

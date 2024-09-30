@@ -1,14 +1,18 @@
 #pragma once
 
-#include "core/hex_grid.h"
+#include <functional>  // for function
+
+#include "core/hex_grid.h"  // for HexGrid
 #include "honeycomb/honeycomb_honey.h"
-#include "tal/arrays.h"
-#include "tal/noise.h"
-#include "tal/reference.h"
-#include "tal/shader.h"
-#include "tal/texture.h"
-#include "tal/vector3.h"
+#include "tal/arrays.h"     // for Array
+#include "tal/noise.h"      // for FastNoiseLite
+#include "tal/reference.h"  // for Ref
+#include "tal/shader.h"     // for Shader
+#include "tal/texture.h"    // for Texture
+#include "tal/vector3.h"    // for Vector3
+
 namespace sota {
+class HoneycombHoney;
 
 class Honeycomb : public HexGrid {
   GDCLASS(Honeycomb, HexGrid)

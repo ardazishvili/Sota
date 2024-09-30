@@ -1,28 +1,28 @@
 #include "polyhedron/hex_polyhedron.h"
 
-#include <algorithm>
-#include <vector>
+#include <algorithm>  // for transform, max, min
+#include <cmath>      // for sqrt, round, cos, sin
+#include <iterator>   // for back_insert_iterator
+#include <limits>     // for numeric_limits
+#include <vector>     // for vector
 
-#include "algo/constants.h"
-#include "biome_calculator.h"
-#include "core/godot_utils.h"
-#include "core/utils.h"
-#include "mesh.h"
-#include "pent_mesh.h"
-#include "primitives/hexagon.h"
-#include "primitives/pentagon.h"
-#include "prism_pent_mesh.h"
-#include "tal/arrays.h"
-#include "tal/callable.h"
-#include "tal/godot_core.h"
-#include "tal/material.h"
-#include "tal/mesh.h"
-#include "tal/noise.h"
-#include "tal/shader.h"
-#include "tal/vector2.h"
-#include "tal/vector3.h"
-#include "tal/vector3i.h"
-#include "types.h"
+#include "algo/constants.h"         // for PI
+#include "core/godot_utils.h"       // for clean_children
+#include "core/utils.h"             // for map2d_to_3d, ico_in...
+#include "misc/biome_calculator.h"  // for BiomeCalculator
+#include "misc/types.h"             // for Biome, Biome::HILL
+#include "primitives/hexagon.h"     // for Hexagon
+#include "primitives/pentagon.h"    // for Pentagon
+#include "tal/arrays.h"             // for Vector3Array, Array
+#include "tal/callable.h"           // for Callable
+#include "tal/godot_core.h"         // for D_METHOD, ClassDB
+#include "tal/material.h"           // for ShaderMaterial
+#include "tal/noise.h"              // for FastNoiseLite
+#include "tal/shader.h"             // for Shader
+#include "tal/texture.h"            // for Texture
+#include "tal/vector2.h"            // for Vector2
+#include "tal/vector3.h"            // for Vector3
+#include "tal/vector3i.h"           // for Vector3i
 
 namespace sota {
 

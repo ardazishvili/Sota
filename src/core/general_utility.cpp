@@ -1,16 +1,18 @@
 #include "core/general_utility.h"
 
-#include <cstdlib>
-#include <functional>
+#include <cmath>       // for lerp
+#include <functional>  // for function
 
-#include "misc/types.h"
-#include "misc/utilities.h"
-#include "primitives/polygon.h"
-#include "tal/arrays.h"
-#include "tal/godot_core.h"
-#include "tal/noise.h"
-#include "tal/vector2.h"
-#include "tal/vector3.h"
+#include "core/utils.h"          // for epsilonEqual
+#include "misc/types.h"          // for GroupedMeshVer...
+#include "misc/utilities.h"      // for to_point_divis...
+#include "primitives/polygon.h"  // for RegularPolygon
+#include "ridge_impl/ridge.h"    // for Ridge
+#include "tal/arrays.h"          // for Vector3Array
+#include "tal/noise.h"           // for FastNoiseLite
+#include "tal/reference.h"       // for Ref
+#include "tal/vector2.h"         // for Vector2
+#include "tal/vector3.h"         // for Vector3
 
 namespace sota {
 

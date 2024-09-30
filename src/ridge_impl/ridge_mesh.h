@@ -1,25 +1,30 @@
 #pragma once
 
-#include <functional>
-#include <limits>
-#include <map>
-#include <memory>
-#include <vector>
+#include <functional>  // for function
+#include <limits>      // for numeric_limits
+#include <map>         // for map
+#include <memory>      // for make_unique, unique_ptr
+#include <set>         // for set
+#include <utility>     // for pair
+#include <vector>      // for vector
 
-#include "core/hex_mesh.h"
-#include "general_utility.h"
-#include "mesh.h"
-#include "misc/types.h"
-#include "pent_mesh.h"
-#include "primitives/pentagon.h"
+#include "core/general_utility.h"  // for FlatMeshProcessor, MeshProc...
+#include "core/hex_mesh.h"         // for HexMeshParams, HexMesh
+#include "core/mesh.h"             // for SotaMesh, Orientation, Orie...
+#include "core/pent_mesh.h"        // for PentagonMeshParams, PentMesh
+#include "core/tile_mesh.h"        // for TileMesh
+#include "core/utils.h"
+#include "misc/types.h"           // for Neighbours, GroupedMeshVert...
+#include "primitives/hexagon.h"   // for Hexagon
+#include "primitives/pentagon.h"  // for Pentagon
 #include "ridge_impl/ridge.h"
-#include "tal/arrays.h"
-#include "tal/noise.h"
-#include "tal/reference.h"
-#include "tal/vector3.h"
-#include "utils.h"
+#include "tal/arrays.h"     // for Vector3Array
+#include "tal/noise.h"      // for FastNoiseLite
+#include "tal/reference.h"  // for Ref
+#include "tal/vector3.h"    // for Vector3
 
 namespace sota {
+class Ridge;
 
 struct RidgeHexMeshParams {
   HexMeshParams hex_mesh_params;

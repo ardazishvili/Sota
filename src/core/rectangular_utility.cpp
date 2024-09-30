@@ -1,6 +1,6 @@
 #include "core/rectangular_utility.h"
 
-#include "misc/types.h"
+#include "tal/vector3i.h"  // for Vector3i
 
 namespace sota {
 

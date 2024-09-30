@@ -1,8 +1,11 @@
 #pragma once
 
-#include "polyhedron/hex_polyhedron.h"
-#include "tal/material.h"
-#include "tal/reference.h"
+#include <vector>  // for vector
+
+#include "polyhedron/hex_polyhedron.h"  // for Polyhedron
+#include "tal/material.h"               // for ShaderMaterial
+#include "tal/noise.h"                  // for FastNoiseLite
+#include "tal/reference.h"              // for Ref
 
 namespace sota {
 

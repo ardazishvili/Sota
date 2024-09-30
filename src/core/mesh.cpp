@@ -1,9 +1,9 @@
 #include "core/mesh.h"
 
-#include "core/dummy_mesher.h"
-#include "tal/arrays.h"
-#include "tal/godot_core.h"
-#include "tal/vector3.h"
+#include "core/dummy_mesher.h"  // for DummyMesher
+#include "tal/arrays.h"         // for Vector3Array, Array, ByteArray
+#include "tal/godot_core.h"     // for D_METHOD, ClassDB, Property...
+#include "tal/vector3.h"        // for Vector3
 
 namespace sota {
 

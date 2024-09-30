@@ -1,9 +1,9 @@
 #pragma once
 
-#include <vector>
+#include <vector>  // for vector
 
 #include "misc/types.h"
-#include "tal/vector3.h"
+#include "tal/vector3.h"  // for Vector3
 
 namespace sota {
 

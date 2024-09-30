@@ -1,25 +1,33 @@
 #pragma once
 
+#include <map>  // for map
 #include <memory>
+#include <unordered_map>  // for unordered_map
+#include <utility>        // for pair
+#include <vector>         // for vector
 
-#include "misc/types.h"
+#include "core/tile_mesh.h"  // for TileMesh
+#include "misc/types.h"      // for Biome
 #include "polyhedron/polyhedron_mesh_processor.h"
 #include "polyhedron/polyhedron_noise_processor.h"
 #include "polyhedron/polyhedron_prism_processor.h"
 #include "polyhedron/polyhedron_ridge_processor.h"
 #include "primitives/hexagon.h"
 #include "primitives/pentagon.h"
-#include "tal/arrays.h"
-#include "tal/material.h"
+#include "tal/arrays.h"    // for Vector3Array
+#include "tal/material.h"  // for ShaderMaterial
 #include "tal/mesh.h"
-#include "tal/node.h"
-#include "tal/noise.h"
-#include "tal/shader.h"
-#include "tal/texture.h"
-#include "tal/vector3.h"
-#include "tal/vector3i.h"
+#include "tal/node.h"       // for Node3D
+#include "tal/noise.h"      // for FastNoiseLite
+#include "tal/reference.h"  // for Ref
+#include "tal/shader.h"     // for Shader
+#include "tal/texture.h"    // for Texture
+#include "tal/vector3.h"    // for Vector3
+#include "tal/vector3i.h"   // for Vector3i
 
 namespace sota {
+class Hexagon;
+class Pentagon;
 
 class Polyhedron : public Node3D {
   GDCLASS(Polyhedron, Node3D)

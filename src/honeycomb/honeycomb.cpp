@@ -1,27 +1,40 @@
 #include "honeycomb.h"
 
-#include <algorithm>
-#include <memory>
-#include <random>
-#include <unordered_map>
+#include <algorithm>      // for sort, max, min
+#include <cmath>          // for pow
+#include <limits>         // for numeric_limits
+#include <memory>         // for allocator_traits<>:...
+#include <random>         // for mt19937, uniform_in...
+#include <unordered_map>  // for unordered_map, unor...
+#include <utility>        // for pair
+#include <vector>         // for vector
 
-#include "core/utils.h"
-#include "cube_coordinates.h"
-#include "general_utility.h"
-#include "godot_utils.h"
-#include "hexagonal_utility.h"
-#include "honeycomb/honeycomb_cell.h"
-#include "honeycomb/honeycomb_honey.h"
-#include "primitives/hexagon.h"
-#include "rectangular_utility.h"
-#include "tal/arrays.h"
-#include "tal/callable.h"
-#include "tal/godot_core.h"
-#include "tal/object.h"
-#include "tal/vector2.h"
-#include "tal/vector3.h"
-#include "tile.h"
-#include "types.h"
+#include "core/general_utility.h"       // for GeneralUtility
+#include "core/godot_utils.h"           // for clean_children
+#include "core/hex_grid.h"              // for TilesLayout
+#include "core/hex_mesh.h"              // for HexMesh, HexMeshParams
+#include "core/hexagonal_utility.h"     // for HexagonalUtility
+#include "core/mesh.h"                  // for SotaMesh
+#include "core/rectangular_utility.h"   // for RectangularUtility
+#include "core/tile_mesh.h"             // for TileMesh
+#include "core/utils.h"                 // for pointy_top_x_offset
+#include "honeycomb/honeycomb_cell.h"   // for HoneycombCell, Hone...
+#include "honeycomb/honeycomb_honey.h"  // for HoneycombHoney, Hon...
+#include "misc/cube_coordinates.h"      // for OffsetCoordinates
+#include "misc/tile.h"                  // for HoneycombTile, Tile
+#include "misc/types.h"                 // for GroupedMeshVertices
+#include "primitives/hexagon.h"         // for make_hexagon_at_pos...
+#include "tal/arrays.h"                 // for Array
+#include "tal/callable.h"               // for Callable
+#include "tal/godot_core.h"             // for D_METHOD, ClassDB
+#include "tal/material.h"               // for ShaderMaterial
+#include "tal/noise.h"                  // for FastNoiseLite
+#include "tal/reference.h"              // for Ref
+#include "tal/shader.h"                 // for Shader
+#include "tal/texture.h"                // for Texture
+#include "tal/vector2.h"                // for Vector2
+#include "tal/vector3.h"                // for Vector3
+#include "tal/vector3i.h"               // for Vector3i
 
 namespace sota {
 

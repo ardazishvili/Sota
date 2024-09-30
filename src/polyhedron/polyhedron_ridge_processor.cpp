@@ -1,25 +1,32 @@
 #include "polyhedron/polyhedron_ridge_processor.h"
 
-#include <algorithm>
-#include <iterator>
-#include <memory>
-#include <numeric>
-#include <unordered_set>
-#include <vector>
+#include <algorithm>      // for copy_if, find, max
+#include <functional>     // for reference_wrapper
+#include <iterator>       // for back_insert_iterator
+#include <limits>         // for numeric_limits
+#include <memory>         // for make_unique, alloca...
+#include <numeric>        // for accumulate
+#include <optional>       // for optional
+#include <unordered_set>  // for unordered_set
+#include <vector>         // for vector, vector<>::i...
 
-#include "core/hex_mesh.h"
-#include "misc/utilities.h"
-#include "polyhedron/hex_polyhedron.h"
-#include "polyhedron/ridge_polyhedron.h"
-#include "primitives/pentagon.h"
-#include "ridge_group.h"
-#include "ridge_impl/plain_mesh.h"
-#include "ridge_mesh.h"
-#include "ridge_set.h"
-#include "tal/godot_core.h"
-#include "tile_mesh.h"
-#include "types.h"
-#include "utils.h"
+#include "core/hex_mesh.h"                // for HexMeshParams
+#include "core/mesh.h"                    // for Orientation, Orient...
+#include "core/pent_mesh.h"               // for PentagonMeshParams
+#include "core/tile_mesh.h"               // for TileMesh
+#include "misc/types.h"                   // for Biome, ClipOptions
+#include "misc/utilities.h"               // for get_biome, create_h...
+#include "polyhedron/hex_polyhedron.h"    // for Polyhedron
+#include "polyhedron/ridge_polyhedron.h"  // for RidgePolyhedron
+#include "primitives/hexagon.h"           // for Hexagon
+#include "primitives/pentagon.h"          // for Pentagon
+#include "ridge_impl/ridge_config.h"      // for RidgeConfig
+#include "ridge_impl/ridge_group.h"       // for RidgeGroup, GroupOf...
+#include "ridge_impl/ridge_mesh.h"        // for RidgeMesh, RidgeHex...
+#include "ridge_impl/ridge_set.h"         // for RidgeSet
+#include "tal/godot_core.h"               // for print, printerr
+#include "tal/reference.h"                // for Ref
+#include "tal/vector3.h"                  // for Vector3
 
 namespace sota {
 

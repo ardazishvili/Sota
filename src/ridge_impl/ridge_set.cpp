@@ -1,17 +1,17 @@
 #include "ridge_set.h"
 
-#include <array>
-#include <random>
+#include <array>    // for array
+#include <memory>   // for allocator_traits<>::value_type
+#include <random>   // for mt19937, uniform_int_distri...
+#include <utility>  // for pair
 
-#include "mesh.h"
-#include "ridge_impl/ridge_config.h"
-#include "ridge_impl/ridge_connection.h"
-#include "ridge_impl/ridge_mesh.h"
-#include "ridge_impl/ridge_set_maker.h"
-#include "tal/godot_core.h"
-#include "tal/vector2.h"
-#include "tal/vector3.h"
-#include "utilities.h"
+#include "core/mesh.h"                    // for SotaMesh
+#include "primitives/polygon.h"           // for RegularPolygon
+#include "ridge_impl/ridge_config.h"      // for RidgeConfig
+#include "ridge_impl/ridge_connection.h"  // for RidgeVertex, RidgeConnection
+#include "ridge_impl/ridge_mesh.h"        // for RidgeMesh
+#include "ridge_impl/ridge_set_maker.h"   // for RidgeSetMaker
+#include "tal/vector3.h"                  // for Vector3
 
 namespace sota {
 

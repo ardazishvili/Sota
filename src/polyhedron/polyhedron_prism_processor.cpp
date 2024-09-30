@@ -1,16 +1,22 @@
 #include "polyhedron/polyhedron_prism_processor.h"
 
-#include "core/hex_mesh.h"
-#include "polyhedron/hex_polyhedron.h"
-#include "primitives/pentagon.h"
-#include "prism_hex_mesh.h"
-#include "prism_pent_mesh.h"
-#include "prism_polyhedron.h"
-#include "tal/godot_core.h"
-#include "tal/mesh.h"
-#include "tal/reference.h"
-#include "types.h"
-#include "utils.h"
+#include <unordered_map>  // for unordered_map
+#include <vector>         // for vector
+
+#include "core/hex_mesh.h"               // for HexMeshParams, HexMesh
+#include "core/mesh.h"                   // for Orientation, Orient...
+#include "core/pent_mesh.h"              // for PentagonMeshParams
+#include "core/tile_mesh.h"              // for TileMesh
+#include "misc/types.h"                  // for Biome, ClipOptions
+#include "polyhedron/hex_polyhedron.h"   // for Polyhedron
+#include "primitives/hexagon.h"          // for Hexagon
+#include "primitives/pentagon.h"         // for Pentagon
+#include "prism_impl/prism_hex_mesh.h"   // for PrismHexTile, Prism...
+#include "prism_impl/prism_pent_mesh.h"  // for PrismPentTile, Pris...
+#include "prism_polyhedron.h"            // for PrismPolyhedron
+#include "tal/material.h"                // for ShaderMaterial
+#include "tal/mesh.h"                    // for MeshInstance3D
+#include "tal/reference.h"               // for Ref
 
 namespace sota {
 

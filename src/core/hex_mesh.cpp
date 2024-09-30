@@ -1,18 +1,20 @@
 #include "hex_mesh.h"
 
-#include <memory>
-#include <type_traits>
+#include <cmath>   // for sqrt
+#include <memory>  // for make_unique
+#include <vector>  // for vector
 
-#include "core/utils.h"
-#include "mesh.h"
-#include "primitives/edge.h"
-#include "primitives/face.h"
-#include "primitives/hexagon.h"
-#include "primitives/triangle.h"
-#include "tal/arrays.h"
-#include "tal/godot_core.h"
-#include "tal/vector2.h"
-#include "tal/vector3.h"
+#include "core/mesh.h"           // for SotaMesh, Tess...
+#include "core/utils.h"          // for radius, small_...
+#include "misc/types.h"          // for ClipOptions
+#include "primitives/edge.h"     // for Edge
+#include "primitives/hexagon.h"  // for Hexagon, make_...
+#include "primitives/polygon.h"  // for RegularPolygon
+#include "tal/arrays.h"          // for Vector3Array
+#include "tal/godot_core.h"      // for D_METHOD, ClassDB
+#include "tal/reference.h"       // for Ref
+#include "tal/vector2.h"         // for Vector2
+#include "tal/vector3.h"         // for Vector3
 
 namespace sota {
 

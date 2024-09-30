@@ -1,6 +1,15 @@
 #pragma once
 
-#include "polyhedron/hex_polyhedron.h"
+#include <unordered_map>  // for unordered_map
+#include <vector>         // for vector
+
+#include "misc/types.h"                  // for Biome, Biome::HILL, Biome::...
+#include "polyhedron/hex_polyhedron.h"   // for Polyhedron
+#include "polyhedron_prism_processor.h"  // for PolyhedronPrismProcessor
+#include "primitives/hexagon.h"          // for Hexagon
+#include "primitives/pentagon.h"         // for Pentagon
+#include "tal/material.h"                // for ShaderMaterial
+#include "tal/reference.h"               // for Ref
 
 namespace sota {
 

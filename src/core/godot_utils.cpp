@@ -1,7 +1,8 @@
 #include "core/godot_utils.h"
 
-#include "tal/arrays.h"
-#include "tal/object.h"
+#include "tal/arrays.h"  // for TypedArray
+#include "tal/node.h"    // for Node, Node3D
+#include "tal/object.h"  // for Object
 
 namespace sota {
 

@@ -1,22 +1,25 @@
 #include "ridge_impl/ridge_mesh.h"
 
-#include <algorithm>
-#include <limits>
-#include <set>
-#include <unordered_set>
+#include <algorithm>  // for min, any_of
+#include <iterator>   // for back_insert_it...
+#include <set>        // for set
 
-#include "core/general_utility.h"
-#include "core/utils.h"
-#include "mesh.h"
-#include "misc/utilities.h"
-#include "tal/callable.h"
-#include "tal/godot_core.h"
-#include "tal/vector2.h"
-#include "tal/vector3.h"
-#include "tile_mesh.h"
-#include "types.h"
+#include "core/general_utility.h"  // for MeshProcessor
+#include "core/mesh.h"             // for SotaMesh
+#include "misc/types.h"            // for Neighbours
+#include "misc/utilities.h"        // for to_point_divis...
+#include "primitives/polygon.h"    // for RegularPolygon
+#include "tal/arrays.h"            // for Vector3Array
+#include "tal/callable.h"          // for Callable
+#include "tal/godot_core.h"        // for print
+#include "tal/noise.h"             // for FastNoiseLite
+#include "tal/reference.h"         // for Ref
+#include "tal/vector2.h"           // for Vector2
+#include "tal/vector3.h"           // for Vector3
+#include "tile_mesh.h"             // for TileMesh
 
 namespace sota {
+class Ridge;
 
 void RidgeMesh::_bind_methods() {}
 

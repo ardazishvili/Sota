@@ -1,12 +1,19 @@
 #pragma once
 
-#include "core/hex_mesh.h"
-#include "misc/types.h"
-#include "tal/camera.h"
-#include "tal/event.h"
-#include "tal/material.h"
-#include "tal/noise.h"
+#include <stdint.h>  // for int32_t
+
+#include "core/hex_mesh.h"   // for HexMesh, HexMeshParams
+#include "core/tile_mesh.h"  // for TileMesh
+#include "misc/types.h"      // for GroupedMeshVertices
+#include "tal/camera.h"      // for Camera3D
+#include "tal/event.h"       // for InputEvent
+#include "tal/material.h"    // for ShaderMaterial
+#include "tal/noise.h"       // for FastNoiseLite
+#include "tal/reference.h"   // for Ref
+#include "tal/vector3.h"     // for Vector3
+
 namespace sota {
+class Hexagon;
 
 struct HoneycombCellMeshParams {
   HexMeshParams hex_mesh_params;

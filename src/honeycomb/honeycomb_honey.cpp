@@ -1,15 +1,21 @@
 #include "honeycomb/honeycomb_honey.h"
 
-#include <memory>
+#include <algorithm>  // for max, min
+#include <memory>     // for make_unique
+#include <vector>     // for vector
 
-#include "core/general_utility.h"
-#include "hex_mesh.h"
-#include "misc/types.h"
-#include "misc/utilities.h"
-#include "primitives/hexagon.h"
-#include "tal/callable.h"
-#include "tal/godot_core.h"
-#include "tal/vector3.h"
+#include "core/general_utility.h"  // for VolumeMeshProc...
+#include "core/hex_mesh.h"         // for HexMesh, HexMe...
+#include "core/mesh.h"             // for Orientation
+#include "misc/types.h"            // for GroupedMeshVer...
+#include "misc/utilities.h"        // for to_point_divis...
+#include "primitives/hexagon.h"    // for Hexagon, make_...
+#include "primitives/polygon.h"    // for RegularPolygon
+#include "tal/callable.h"          // for Callable
+#include "tal/godot_core.h"        // for D_METHOD, ClassDB
+#include "tal/noise.h"             // for FastNoiseLite
+#include "tal/reference.h"         // for Ref
+#include "tal/vector3.h"           // for Vector3
 
 namespace sota {
 
