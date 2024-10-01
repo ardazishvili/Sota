@@ -45,7 +45,7 @@ void PolyhedronRidgeProcessor::configure_cell(Hexagon hex, Biome biome, int& id,
   };
 
   auto* mi = memnew(MeshInstance3D());
-  Ref<RidgeMesh> ridge_mesh = create_hex_mesh(biome, hex, params);
+  Ref<RidgeMesh> ridge_mesh = create_ridge_mesh(biome, hex, params);
   mi->set_mesh(ridge_mesh->inner_mesh());
 
   polyhedron.add_child(mi);
@@ -67,7 +67,7 @@ void PolyhedronRidgeProcessor::configure_cell(Pentagon pentagon, Biome biome, in
   };
 
   auto* mi = memnew(MeshInstance3D());
-  Ref<RidgeMesh> ridge_mesh = create_pentagon_mesh(biome, pentagon, params);
+  Ref<RidgeMesh> ridge_mesh = create_ridge_mesh(biome, pentagon, params);
   mi->set_mesh(ridge_mesh->inner_mesh());
 
   polyhedron.add_child(mi);

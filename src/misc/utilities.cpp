@@ -1,55 +1,14 @@
 #include "utilities.h"
 
 #include "core/hex_mesh.h"
+#include "core/tile_mesh.h"
 #include "core/utils.h"
 #include "misc/types.h"
 #include "primitives/hexagon.h"
 #include "primitives/pentagon.h"
-#include "ridge_impl/hill_mesh.h"
-#include "ridge_impl/mountain_mesh.h"
-#include "ridge_impl/plain_mesh.h"
-#include "ridge_impl/ridge_mesh.h"
-#include "ridge_impl/water_mesh.h"
-#include "tal/godot_core.h"
 #include "tal/reference.h"
-#include "tile_mesh.h"
 
 namespace sota {
-
-Ref<RidgeMesh> create_hex_mesh(Biome biome, Hexagon hex, RidgeHexMeshParams params) {
-  switch (biome) {
-    case Biome::MOUNTAIN:
-      return make_ridge_hex_mesh<MountainMesh>(hex, params);
-    case Biome::PLAIN:
-      return make_ridge_hex_mesh<PlainMesh>(hex, params);
-    case Biome::HILL:
-      return make_ridge_hex_mesh<HillMesh>(hex, params);
-    case Biome::WATER:
-      return make_ridge_hex_mesh<WaterMesh>(hex, params);
-    default:
-      printerr("Unreachable biome");
-  }
-  // Unreachable, prevent "control reached end of non-void funcion" warning
-  return Ref<MountainMesh>();
-}
-
-// TODO unify with above
-Ref<RidgeMesh> create_pentagon_mesh(Biome biome, Pentagon pentagon, RidgePentagonMeshParams params) {
-  switch (biome) {
-    case Biome::MOUNTAIN:
-      return make_ridge_pentagon_mesh<MountainMesh>(pentagon, params);
-    case Biome::PLAIN:
-      return make_ridge_pentagon_mesh<PlainMesh>(pentagon, params);
-    case Biome::HILL:
-      return make_ridge_pentagon_mesh<HillMesh>(pentagon, params);
-    case Biome::WATER:
-      return make_ridge_pentagon_mesh<WaterMesh>(pentagon, params);
-    default:
-      printerr("Unreachable biome");
-  }
-  // Unreachable, prevent "control reached end of non-void funcion" warning
-  return Ref<MountainMesh>();
-}
 
 PointDivisionedPosition to_point_divisioned_position(Vector3 v, float diameter, int divisions) {
   float R = radius(diameter);
