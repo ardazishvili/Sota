@@ -51,8 +51,6 @@ bool RidgeBasedPolyhedron::get_smooth_normals() const { return _smooth_normals; 
 float RidgeBasedPolyhedron::get_compression_factor() const { return _compression_factor; }
 Ref<FastNoiseLite> RidgeBasedPolyhedron::get_noise() const { return _noise; }
 
-void RidgeBasedPolyhedron::set_material_parameters(Ref<ShaderMaterial> mat) {}
-
 void RidgeBasedPolyhedron::calculate_normals() { SmoothShadesProcessor(meshes()).calculate_normals(_smooth_normals); }
 
 std::vector<TileMesh*> RidgeBasedPolyhedron::meshes() {

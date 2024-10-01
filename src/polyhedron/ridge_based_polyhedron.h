@@ -32,8 +32,6 @@ class RidgeBasedPolyhedron : public Polyhedron {
   float _compression_factor{0.1};
   Ref<FastNoiseLite> _noise;
 
-  void set_material_parameters(Ref<ShaderMaterial> mat) override;
-
   static void _bind_methods();
   void calculate_normals() override;
 

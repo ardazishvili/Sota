@@ -30,6 +30,15 @@
 
 namespace sota {
 
+PolyhedronRidgeProcessor::PolyhedronRidgeProcessor() {
+  _ridge_config = RidgeConfig{
+      .variation_min_bound = 0.0,
+      .variation_max_bound = 0.02,
+      .top_ridge_offset = 0.1,
+      .bottom_ridge_offset = -0.075,
+  };
+}
+
 void PolyhedronRidgeProcessor::configure_cell(Hexagon hex, Biome biome, int& id, Ref<ShaderMaterial> mat,
                                               Polyhedron& polyhedron) {
   auto& ridge_polyhedron = dynamic_cast<RidgePolyhedron&>(polyhedron);
@@ -234,13 +243,6 @@ void PolyhedronRidgeProcessor::init(Polyhedron* polyhedron_mesh) {
     return acc + tile_mesh->inner_mesh()->get_R();
   });
   _R_average = all_r / _meshes.size();
-
-  _ridge_config = RidgeConfig{
-      .variation_min_bound = 0.0,
-      .variation_max_bound = 0.02,
-      .top_ridge_offset = _R_average / 3.0f,
-      .bottom_ridge_offset = -_R_average / 4.0f,
-  };
 }
 
 void PolyhedronRidgeProcessor::process(Polyhedron& polyhedron_mesh) {

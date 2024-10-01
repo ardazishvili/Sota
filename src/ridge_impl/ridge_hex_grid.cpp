@@ -150,6 +150,7 @@ void RidgeHexGrid::set_ridge_variation_max_bound(const float p_ridge_variation_m
   _ridge_config.variation_max_bound = p_ridge_variation_max_bound;
   init();
 }
+
 void RidgeHexGrid::set_ridge_top_offset(float p_ridge_top_offset) {
   _ridge_config.top_ridge_offset = p_ridge_top_offset;
   init();
