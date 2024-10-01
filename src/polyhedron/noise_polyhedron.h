@@ -16,6 +16,7 @@ class NoisePolyhedron : public RidgeBasedPolyhedron {
 
  protected:
   static void _bind_methods() {}
+  void set_material_parameters(Ref<ShaderMaterial> mat) override {}
 
   void configure_cell(Hexagon hex, Biome biome, int& id, Ref<ShaderMaterial> mat) override {
     _noise_processor.configure_cell(hex, biome, id, mat, *this);

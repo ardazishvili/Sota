@@ -26,7 +26,7 @@ class RidgePolyhedron;
 
 class PolyhedronRidgeProcessor : public PolyhedronProcessor, public RidgeBased {
  public:
-  PolyhedronRidgeProcessor() = default;
+  PolyhedronRidgeProcessor();
   PolyhedronRidgeProcessor(const PolyhedronRidgeProcessor &other) = delete;
   PolyhedronRidgeProcessor(PolyhedronRidgeProcessor &&other) = default;
   PolyhedronRidgeProcessor &operator=(const PolyhedronRidgeProcessor &other) = delete;
@@ -36,6 +36,11 @@ class PolyhedronRidgeProcessor : public PolyhedronProcessor, public RidgeBased {
   void configure_cell(Pentagon pentagon, Biome biome, int &id, Ref<ShaderMaterial> mat,
                       Polyhedron &polyhedron_mesh) override;
   void process(Polyhedron &polyhedron_mesh) override;
+
+  void set_top_offset(float offset) { _ridge_config.top_ridge_offset = offset; }
+  void set_bottom_offset(float offset) { _ridge_config.bottom_ridge_offset = offset; }
+  float get_top_offset() const { return _ridge_config.top_ridge_offset; }
+  float get_bottom_offset() const { return _ridge_config.bottom_ridge_offset; }
 
  private:
   // TODO fix possibility of zero
