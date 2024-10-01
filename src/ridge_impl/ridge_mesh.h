@@ -14,6 +14,7 @@
 #include "core/pent_mesh.h"        // for PentagonMeshParams, PentMesh
 #include "core/tile_mesh.h"        // for TileMesh
 #include "core/utils.h"
+#include "misc/discretizer.h"
 #include "misc/types.h"           // for Neighbours, GroupedMeshVert...
 #include "primitives/hexagon.h"   // for Hexagon
 #include "primitives/pentagon.h"  // for Pentagon
@@ -49,7 +50,6 @@ class RidgeMesh : public TileMesh {
 
   // getters
   std::vector<TileMesh*> get_neighbours() const;
-  GroupedMeshVertices get_grouped_vertices();
   std::pair<float, float> get_min_max_height() const { return {_min_height, _max_height}; }
 
   // setters
@@ -60,11 +60,9 @@ class RidgeMesh : public TileMesh {
   void set_shift_compress(float y_shift, float y_compress);
 
   // calculation
-  void calculate_corner_points_distances_to_border(std::map<std::pair<int, int>, float>& distance_keeper,
-                                                   int divisions);
+  void calculate_corner_points_distances_to_border(DiscreteVertexToDistance& distance_map, int divisions);
   void calculate_initial_heights();
-  virtual void calculate_final_heights(std::map<std::pair<int, int>, float>& distance_keeper, float diameter,
-                                       int divisions) = 0;
+  virtual void calculate_final_heights(DiscreteVertexToDistance& distance_map, float diameter, int divisions) = 0;
 
   void calculate_normals() { _mesh->calculate_normals(); }
   void update() { _mesh->update(); }
@@ -94,8 +92,7 @@ class RidgeMesh : public TileMesh {
 
   void shift_compress();
   void calculate_ridge_based_heights(std::function<double(double, double, double)> interpolation_func,
-                                     float ridge_offset, std::map<std::pair<int, int>, float>& distance_keeper,
-                                     int divisions);
+                                     float ridge_offset, DiscreteVertexToDistance& distance_map, int divisions);
 
   Ref<FastNoiseLite> _plain_noise;
   Ref<FastNoiseLite> _ridge_noise;

@@ -9,6 +9,7 @@
 #include "polyhedron/polyhedron_mesh_processor.h"  // for PolyhedronProcessor
 #include "tal/material.h"                          // for ShaderMaterial
 #include "tal/reference.h"                         // for Ref
+#include "tal/vector3i.h"
 
 namespace sota {
 class Hexagon;
@@ -26,6 +27,6 @@ class PolyhedronNoiseProcessor : public PolyhedronProcessor {
  private:
   void process_meshes(Polyhedron &polyhedron_mesh, std::vector<Ref<TileMesh>> &meshes);
 
-  std::map<std::pair<int, int>, float> _distance_keeper;
+  DiscreteVertexToDistance _distance_map;
 };
 }  // namespace sota

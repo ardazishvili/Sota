@@ -67,7 +67,7 @@ class RidgeHexGrid : public HexGrid, public RidgeBased {
   bool get_smooth_normals() const;
 
  protected:
-  std::map<std::pair<int, int>, float> _distance_keeper;
+  DiscreteVertexToDistance _distance_map;
 
   static void _bind_methods();
 

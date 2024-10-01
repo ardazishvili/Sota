@@ -187,11 +187,11 @@ void PolyhedronRidgeProcessor::process_meshes() {
   // print_biomes();
 
   for (RidgeGroup& group : _mountain_groups) {
-    group.init_ridges(_distance_keeper, _ridge_config.top_ridge_offset, _polyhedron_mesh->_divisions);
+    group.init_ridges(_distance_map, _ridge_config.top_ridge_offset, _polyhedron_mesh->_divisions);
   }
 
   for (RidgeGroup& group : _water_groups) {
-    group.init_ridges(_distance_keeper, _ridge_config.bottom_ridge_offset, _polyhedron_mesh->_divisions);
+    group.init_ridges(_distance_map, _ridge_config.bottom_ridge_offset, _polyhedron_mesh->_divisions);
   }
 
   // initial heights calculation
@@ -219,7 +219,7 @@ void PolyhedronRidgeProcessor::process_meshes() {
     RidgeMesh* ridge_mesh = dynamic_cast<RidgeMesh*>(mesh.ptr());
 
     float approx_diameter = _meshes[0]->inner_mesh()->get_R() * 2;
-    ridge_mesh->calculate_final_heights(_distance_keeper, approx_diameter, _polyhedron_mesh->_divisions);
+    ridge_mesh->calculate_final_heights(_distance_map, approx_diameter, _polyhedron_mesh->_divisions);
     ridge_mesh->recalculate_all_except_vertices();
     ridge_mesh->update();
   }

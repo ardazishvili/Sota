@@ -16,10 +16,6 @@
 
 namespace sota {
 
-using PointDivisionedPosition = std::pair<int, int>;
-
-PointDivisionedPosition to_point_divisioned_position(Vector3 v, float diameter, int divisions);
-
 bool is_water_mesh(TileMesh* mesh);
 bool is_plain_mesh(TileMesh* mesh);
 bool is_hill_mesh(TileMesh* mesh);

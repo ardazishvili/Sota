@@ -32,7 +32,7 @@ class HoneycombCell : public TileMesh {
   HoneycombCell& operator=(HoneycombCell&& rhs) = delete;
 
   // getters
-  GroupedMeshVertices get_grouped_vertices();
+  int get_id() override { return _hex_mesh->get_id(); }
 
   // setters
   void set_noise(Ref<FastNoiseLite> noise);
@@ -40,7 +40,6 @@ class HoneycombCell : public TileMesh {
 
   void calculate_heights(float bottom_offset);
   HexMesh* inner_mesh() override { return _hex_mesh.ptr(); }
-  int get_id() override { return _hex_mesh->get_id(); }
 
   HoneycombCell(Hexagon hex, HoneycombCellMeshParams params);
 
