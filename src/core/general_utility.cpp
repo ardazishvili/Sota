@@ -163,6 +163,7 @@ Vector3Array VolumeMeshProcessor::shift_compress(Vector3Array vertices, float sh
   }
   return result;
 }
+
 void VolumeMeshProcessor::calculate_initial_heights(Vector3Array& vertices, Ref<FastNoiseLite> noise, float& min_height,
                                                     float& max_height, Vector3 normal) {
   for (auto& v : vertices) {
@@ -178,7 +179,7 @@ void VolumeMeshProcessor::calculate_initial_heights(Vector3Array& vertices, Ref<
 }
 
 void VolumeMeshProcessor::calculate_hill_heights(Vector3Array& vertices, float r, float R, Vector3 center) {
-  auto t = [r, this](float dist_to_center_axis) -> float { return (r - std::min(r, dist_to_center_axis)) / r; };
+  auto t = [r](float dist_to_center_axis) -> float { return (r - std::min(r, dist_to_center_axis)) / r; };
   for (auto& v : vertices) {
     float dist_to_center_axis = center.cross(v - center).length() / center.length();
 

@@ -17,7 +17,8 @@ void vertex() {
 void fragment() {
   float world_vertex_relative_to_r = length((INV_VIEW_MATRIX * vec4(VERTEX, 1.0)).xyz) - polyhedron_R;
   if (world_vertex_relative_to_r < water_height) {
-    ALBEDO = vec3(0.0, 0.0 ,1.0);
+    ALBEDO = vec3(0.0, 0.0, 1.0);
+    //ALBEDO = vec3(0.5, 0.2, 0.3);
   } else if (water_height <= world_vertex_relative_to_r && world_vertex_relative_to_r < plain_height){
 	ALBEDO = mix(shore_color, shore_top_color, (world_vertex_relative_to_r - water_height) / (plain_height - water_height));
   } else if (plain_height <= world_vertex_relative_to_r && world_vertex_relative_to_r < mountain_height) {

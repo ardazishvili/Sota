@@ -2,6 +2,7 @@
 
 #include <vector>  // for vector
 
+#include "misc/types.h"
 #include "polyhedron/hex_polyhedron.h"  // for Polyhedron
 #include "tal/material.h"               // for ShaderMaterial
 #include "tal/noise.h"                  // for FastNoiseLite
@@ -24,6 +25,9 @@ class RidgeBasedPolyhedron : public Polyhedron {
   void set_noise(const Ref<FastNoiseLite> p_noise);
   Ref<FastNoiseLite> get_noise() const;
 
+  void set_smooth_normals(bool p_smooth_normals);
+  bool get_smooth_normals() const;
+
  protected:
   float _compression_factor{0.1};
   Ref<FastNoiseLite> _noise;
@@ -31,10 +35,15 @@ class RidgeBasedPolyhedron : public Polyhedron {
   void set_material_parameters(Ref<ShaderMaterial> mat) override;
 
   static void _bind_methods();
+  void calculate_normals() override;
 
  private:
+  bool _smooth_normals{false};
+
   template <typename T>
   void process_ngons(std::vector<T> ngons, float min_z, float max_z);
+
+  std::vector<TileMesh*> meshes();
 };
 
 }  // namespace sota
