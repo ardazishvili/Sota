@@ -333,11 +333,11 @@ void RidgeHexGrid::meshes_update() {
 }
 
 void RidgeHexGrid::calculate_smooth_normals() {
-  std::vector<GroupedMeshVertices> vertex_groups;
+  std::vector<DiscreteVertexToNormals> vertex_groups;
   for (auto& row : _tiles_layout) {
     for (auto& tile_ptr : row) {
       RidgeMesh* mesh = dynamic_cast<RidgeMesh*>(tile_ptr->mesh().ptr());
-      vertex_groups.push_back(mesh->get_grouped_vertices());
+      vertex_groups.push_back(mesh->get_discrete_vertex_to_normals());
     }
   }
 
@@ -414,7 +414,7 @@ void RidgeHexGrid::assign_neighbours(const GroupOfRidgeMeshes& group) {
 
 void RidgeHexGrid::init_ridges(std::vector<RidgeGroup>& group, float ridge_offset) {
   for (RidgeGroup& group : group) {
-    group.init_ridges(_distance_keeper, ridge_offset, _divisions);
+    group.init_ridges(_distance_map, ridge_offset, _divisions);
   }
 }
 
@@ -468,7 +468,7 @@ void RidgeHexGrid::calculate_final_heights() {
     for (auto& tile_ptr : row) {
       RidgeMesh* mesh = dynamic_cast<RidgeMesh*>(tile_ptr->mesh().ptr());
 
-      mesh->calculate_final_heights(_distance_keeper, _diameter, _divisions);
+      mesh->calculate_final_heights(_distance_map, _diameter, _divisions);
       mesh->calculate_normals();
       mesh->update();
     }

@@ -15,6 +15,7 @@
 #include "ridge_impl/ridge_set.h"
 #include "tal/material.h"   // for ShaderMaterial
 #include "tal/reference.h"  // for Ref
+#include "tal/vector3i.h"
 
 namespace sota {
 
@@ -42,7 +43,7 @@ class PolyhedronRidgeProcessor : public PolyhedronProcessor, public RidgeBased {
 
   std::vector<Ref<TileMesh>> _meshes;
 
-  std::map<std::pair<int, int>, float> _distance_keeper;
+  DiscreteVertexToDistance _distance_map;
 
   // TODO fix possibility of zero
   float _R_average{0};

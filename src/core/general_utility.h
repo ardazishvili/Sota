@@ -10,13 +10,14 @@
 #include <utility>     // for pair
 #include <vector>      // for vector
 
-#include "misc/types.h"  // for GroupedMeshVertices
+#include "misc/discretizer.h"
 #include "primitives/polygon.h"
 #include "ridge_impl/ridge.h"
 #include "tal/arrays.h"     // for Vector3Array
 #include "tal/noise.h"      // for FastNoiseLite
 #include "tal/reference.h"  // for Ref
 #include "tal/vector3.h"    // for Vector3
+#include "tal/vector3i.h"
 
 namespace sota {
 class RegularPolygon;
@@ -32,7 +33,7 @@ class MeshProcessor {
   virtual Vector3Array calculate_ridge_based_heights(
       Vector3Array vertices, const RegularPolygon& base, const std::vector<Ridge*> ridges,
       std::vector<Vector3> neighbours_corner_points, float R, std::set<int> exclude_list, float diameter, int divisions,
-      std::map<std::pair<int, int>, float>& distance_keeper, Ref<FastNoiseLite> ridge_noise, float ridge_offset,
+      DiscreteVertexToDistance& distance_map, Ref<FastNoiseLite> ridge_noise, float ridge_offset,
       std::function<double(double, double, double)> interpolation_func, float& min_height, float& max_height) = 0;
 
  private:
@@ -47,7 +48,7 @@ class FlatMeshProcessor : public MeshProcessor {
   Vector3Array calculate_ridge_based_heights(
       Vector3Array vertices, const RegularPolygon& base, const std::vector<Ridge*> ridges,
       std::vector<Vector3> neighbours_corner_points, float R, std::set<int> exclude_list, float diameter, int divisions,
-      std::map<std::pair<int, int>, float>& distance_keeper, Ref<FastNoiseLite> ridge_noise, float ridge_offset,
+      DiscreteVertexToDistance& distance_map, Ref<FastNoiseLite> ridge_noise, float ridge_offset,
       std::function<double(double, double, double)> interpolation_func, float& min_height, float& max_height) override;
 
  private:
@@ -64,7 +65,7 @@ class VolumeMeshProcessor : public MeshProcessor {
   Vector3Array calculate_ridge_based_heights(
       Vector3Array vertices, const RegularPolygon& base, const std::vector<Ridge*> ridges,
       std::vector<Vector3> neighbours_corner_points, float R, std::set<int> exclude_list, float diameter, int divisions,
-      std::map<std::pair<int, int>, float>& distance_keeper, Ref<FastNoiseLite> ridge_noise, float ridge_offset,
+      DiscreteVertexToDistance& distance_map, Ref<FastNoiseLite> ridge_noise, float ridge_offset,
       std::function<double(double, double, double)> interpolation_func, float& min_height, float& max_height) override;
 
  private:
@@ -73,7 +74,7 @@ class VolumeMeshProcessor : public MeshProcessor {
 
 class GeneralUtility {
  public:
-  static void make_smooth_normals(std::vector<GroupedMeshVertices>& vertex_groups);
+  static void make_smooth_normals(std::vector<DiscreteVertexToNormals>& normal_groups);
   static std::pair<std::vector<std::array<float, 3>>, std::vector<float>> get_border_line_coeffs(
       float R, float r, std::set<int> exclude_list);
 };

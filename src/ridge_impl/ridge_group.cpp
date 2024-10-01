@@ -5,11 +5,12 @@
 
 #include "ridge_impl/ridge_mesh.h"  // for RidgeMesh
 #include "ridge_impl/ridge_set.h"   // for RidgeSet
+#include "vector3i.h"
 
 namespace sota {
 class Ridge;
 
-void RidgeGroup::init_ridges(std::map<std::pair<int, int>, float>& distance_keeper, float offset, int divisions) {
+void RidgeGroup::init_ridges(DiscreteVertexToDistance& distance_map, float offset, int divisions) {
   if (!_ridge_set) {
     return;
   }
@@ -20,7 +21,7 @@ void RidgeGroup::init_ridges(std::map<std::pair<int, int>, float>& distance_keep
   }
 
   assign_ridges();
-  calculate_corner_points_distances_to_border(distance_keeper, divisions);
+  calculate_corner_points_distances_to_border(distance_map, divisions);
 }
 
 const GroupOfRidgeMeshes& RidgeGroup::meshes() { return _meshes; }
@@ -38,10 +39,9 @@ void RidgeGroup::assign_ridges() {
   }
 }
 
-void RidgeGroup::calculate_corner_points_distances_to_border(std::map<std::pair<int, int>, float>& distance_keeper,
-                                                             int divisions) {
+void RidgeGroup::calculate_corner_points_distances_to_border(DiscreteVertexToDistance& distance_map, int divisions) {
   for (auto* m : _meshes) {
-    m->calculate_corner_points_distances_to_border(distance_keeper, divisions);
+    m->calculate_corner_points_distances_to_border(distance_map, divisions);
   }
 }
 }  // namespace sota

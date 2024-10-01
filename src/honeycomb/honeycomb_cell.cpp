@@ -1,8 +1,7 @@
 #include "honeycomb/honeycomb_cell.h"
 
-#include <cmath>  // for abs
-
 #include <algorithm>  // for min
+#include <cmath>      // for abs
 #include <limits>     // for numeric_limits
 #include <utility>    // for tuple_element<...
 #include <vector>     // for vector
@@ -10,6 +9,7 @@
 #include "core/general_utility.h"  // for GeneralUtility
 #include "core/hex_mesh.h"         // for HexMesh
 #include "core/utils.h"            // for cosrp
+#include "misc/discretizer.h"      // for Dicretizer
 #include "misc/types.h"            // for GroupedMeshVer...
 #include "misc/utilities.h"        // for to_point_divis...
 #include "primitives/hexagon.h"    // for Hexagon
@@ -90,21 +90,6 @@ void HoneycombCell::calculate_heights(float bottom_offset) {
     v.y = center.y + cosrp(v.y, approx_end, t(distance_to_border, distance_to_center));
   }
   _hex_mesh->set_vertices(vertices);
-}
-
-// TODO factor out to super-class?
-GroupedMeshVertices HoneycombCell::get_grouped_vertices() {
-  GroupedMeshVertices vertex_groups;
-  auto vertices = _hex_mesh->get_vertices();
-  auto& normals = _hex_mesh->get_normals();
-  int size = vertices.size();
-  for (int i = 0; i < size; ++i) {
-    Vector3 v = vertices[i];
-    Vector3& n = normals[i];
-    auto p = to_point_divisioned_position(v, _hex_mesh->get_R() * 2, _hex_mesh->get_divisions());
-    vertex_groups[p].push_back(&n);
-  }
-  return vertex_groups;
 }
 
 }  // namespace sota

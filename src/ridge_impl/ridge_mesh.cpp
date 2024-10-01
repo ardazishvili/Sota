@@ -6,6 +6,7 @@
 
 #include "core/general_utility.h"  // for MeshProcessor
 #include "core/mesh.h"             // for SotaMesh
+#include "misc/discretizer.h"      // for Dicretizer
 #include "misc/types.h"            // for Neighbours
 #include "misc/utilities.h"        // for to_point_divis...
 #include "primitives/polygon.h"    // for RegularPolygon
@@ -39,12 +40,11 @@ void RidgeMesh::set_ridge_noise(Ref<FastNoiseLite> p_ridge_noise) {
   }
 }
 
-void RidgeMesh::calculate_corner_points_distances_to_border(std::map<std::pair<int, int>, float>& distance_keeper,
-                                                            int divisions) {
+void RidgeMesh::calculate_corner_points_distances_to_border(DiscreteVertexToDistance& distance_map, int divisions) {
   float diameter = _mesh->get_R() * 2;
   // TODO duplicated
   auto divisioned = [diameter, divisions](Vector3 point) {
-    return to_point_divisioned_position(point, diameter, divisions);
+    return VertexToNormalDiscretizer::get_discrete_vertex(point, diameter / (divisions * 2));
   };
 
   std::vector<Vector3> neighbours_corner_points;
@@ -67,12 +67,12 @@ void RidgeMesh::calculate_corner_points_distances_to_border(std::map<std::pair<i
     for (const auto& point : neighbours_corner_points) {
       // TODO length -> distance_to
       distance_to_border = std::min(distance_to_border, (Vector2(v.x, v.z) - Vector2(point.x, point.z)).length() +
-                                                            distance_keeper[divisioned(point)]);
+                                                            distance_map[divisioned(point)]);
     }
-    if (auto it = distance_keeper.find(divisioned(v)); it != distance_keeper.end()) {
+    if (auto it = distance_map.find(divisioned(v)); it != distance_map.end()) {
       distance_to_border = std::min(distance_to_border, it->second);
     }
-    distance_keeper[divisioned(v)] = distance_to_border;
+    distance_map[divisioned(v)] = distance_to_border;
   }
 }
 
@@ -106,7 +106,7 @@ std::set<int> RidgeMesh::get_exclude_list() {
 }
 
 void RidgeMesh::calculate_ridge_based_heights(std::function<double(double, double, double)> interpolation_func,
-                                              float ridge_offset, std::map<std::pair<int, int>, float>& distance_keeper,
+                                              float ridge_offset, DiscreteVertexToDistance& distance_map,
                                               int divisions) {
   float diameter = _mesh->get_R() * 2;
   shift_compress();
@@ -119,17 +119,12 @@ void RidgeMesh::calculate_ridge_based_heights(std::function<double(double, doubl
     }
   }
 
-  // TODO duplicated
-  auto divisioned = [diameter, divisions](Vector3 point) {
-    return to_point_divisioned_position(point, diameter, divisions);
-  };
-
   std::set<int> exclude_list = get_exclude_list();
   auto vertices = _mesh->get_vertices();
 
   vertices = _processor->calculate_ridge_based_heights(
       vertices, _mesh->base(), _ridges, neighbours_corner_points, _mesh->get_R(), exclude_list, diameter, divisions,
-      distance_keeper, _ridge_noise, ridge_offset, interpolation_func, _min_height, _max_height);
+      distance_map, _ridge_noise, ridge_offset, interpolation_func, _min_height, _max_height);
   _mesh->set_vertices(vertices);
 }
 
@@ -143,20 +138,6 @@ void RidgeMesh::calculate_initial_heights() {
   _mesh->set_vertices(vertices);
 
   _mesh->update();
-}
-
-GroupedMeshVertices RidgeMesh::get_grouped_vertices() {
-  GroupedMeshVertices vertex_groups;
-  auto vertices = _mesh->get_vertices();
-  auto& normals = _mesh->get_normals();
-  int size = vertices.size();
-  for (int i = 0; i < size; ++i) {
-    Vector3 v = vertices[i];
-    Vector3& n = normals[i];
-    auto p = to_point_divisioned_position(v, _mesh->get_R() * 2, _mesh->get_divisions());
-    vertex_groups[p].push_back(&n);
-  }
-  return vertex_groups;
 }
 
 std::vector<TileMesh*> RidgeMesh::get_neighbours() const {

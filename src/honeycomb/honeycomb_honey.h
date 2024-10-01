@@ -33,7 +33,6 @@ class HoneycombHoney : public TileMesh {
   HoneycombHoney& operator=(HoneycombHoney&& rhs) = delete;
 
   // getters
-  GroupedMeshVertices get_grouped_vertices();
   std::pair<float, float> get_min_max_height() const { return {_min_y, _max_y}; }
 
   // setters

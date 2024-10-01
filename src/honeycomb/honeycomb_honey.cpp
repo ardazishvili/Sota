@@ -7,6 +7,7 @@
 #include "core/general_utility.h"  // for VolumeMeshProc...
 #include "core/hex_mesh.h"         // for HexMesh, HexMe...
 #include "core/mesh.h"             // for Orientation
+#include "misc/discretizer.h"      // for Dicretizer
 #include "misc/types.h"            // for GroupedMeshVer...
 #include "misc/utilities.h"        // for to_point_divis...
 #include "primitives/hexagon.h"    // for Hexagon, make_...
@@ -109,20 +110,6 @@ void HoneycombHoney::calculate_heights() {
   }
   _hex_mesh->set_vertices(
       _processor->shift_compress(_hex_mesh->get_vertices(), _y_shift, _y_compress, _hex_mesh->base().center().y));
-}
-
-GroupedMeshVertices HoneycombHoney::get_grouped_vertices() {
-  GroupedMeshVertices vertex_groups;
-  auto vertices = _hex_mesh->get_vertices();
-  auto& normals = _hex_mesh->get_normals();
-  int size = vertices.size();
-  for (int i = 0; i < size; ++i) {
-    Vector3 v = vertices[i];
-    Vector3& n = normals[i];
-    auto p = to_point_divisioned_position(v, _hex_mesh->get_R() * 2, _hex_mesh->get_divisions());
-    vertex_groups[p].push_back(&n);
-  }
-  return vertex_groups;
 }
 
 void HoneycombHoney::recalculate_vertices_update(float surplus) {

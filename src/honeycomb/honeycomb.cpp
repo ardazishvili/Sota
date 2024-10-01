@@ -406,18 +406,18 @@ void Honeycomb::meshes_update() {
 }
 
 void Honeycomb::calculate_smooth_normals() {
-  std::vector<GroupedMeshVertices> cells_vertex_groups;
+  std::vector<DiscreteVertexToNormals> cells_vertex_groups;
   for (auto& row : _tiles_layout) {
     for (auto& tile_ptr : row) {
       HoneycombCell* mesh = dynamic_cast<HoneycombCell*>(tile_ptr->mesh().ptr());
-      cells_vertex_groups.push_back(mesh->get_grouped_vertices());
+      cells_vertex_groups.push_back(mesh->get_discrete_vertex_to_normals());
     }
   }
-  std::vector<GroupedMeshVertices> honey_vertex_groups;
+  std::vector<DiscreteVertexToNormals> honey_vertex_groups;
   for (auto& row : _tiles_layout) {
     for (auto& tile_ptr : row) {
       HoneycombTile* tile = dynamic_cast<HoneycombTile*>(tile_ptr);
-      honey_vertex_groups.push_back(tile->honey_mesh()->get_grouped_vertices());
+      honey_vertex_groups.push_back(tile->honey_mesh()->get_discrete_vertex_to_normals());
     }
   }
 

@@ -89,7 +89,7 @@ void PolyhedronNoiseProcessor::process_meshes(Polyhedron& polyhedron, std::vecto
   for (auto& mesh : meshes) {
     PlainMesh* plain_mesh = dynamic_cast<PlainMesh*>(mesh.ptr());
     float approx_diameter = meshes[0]->inner_mesh()->get_R() * 2;
-    plain_mesh->calculate_final_heights(_distance_keeper, approx_diameter, polyhedron._divisions);
+    plain_mesh->calculate_final_heights(_distance_map, approx_diameter, polyhedron._divisions);
     plain_mesh->recalculate_all_except_vertices();
     plain_mesh->update();
   }

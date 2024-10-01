@@ -8,13 +8,12 @@
 #include <vector>
 
 #include "tal/vector3.h"
+#include "tal/vector3i.h"
 
 namespace sota {
 
 class TileMesh;
-
 using Neighbours = std::vector<TileMesh*>;
-using GroupedMeshVertices = std::map<std::pair<int, int>, std::vector<Vector3*>>;
 
 enum class Biome { PLAIN = 0, HILL, MOUNTAIN, WATER };
 

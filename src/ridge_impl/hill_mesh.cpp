@@ -2,15 +2,15 @@
 
 #include <memory>  // for unique_ptr
 
-#include "core/mesh.h"           // for SotaMesh
-#include "general_utility.h"     // for MeshProcessor
+#include "core/general_utility.h"  // for MeshProcessor
+#include "core/mesh.h"             // for SotaMesh
+#include "misc/discretizer.h"
 #include "primitives/polygon.h"  // for RegularPolygon
 #include "tal/vector3.h"         // for Vector3
 
 namespace sota {
 
-void HillMesh::calculate_final_heights(std::map<std::pair<int, int>, float>& distance_keeper, float diameter,
-                                       int divisions) {
+void HillMesh::calculate_final_heights(DiscreteVertexToDistance& distance_map, float diameter, int divisions) {
   shift_compress();
 
   // TODO add piping for inputs/outputs

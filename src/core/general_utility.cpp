@@ -4,6 +4,7 @@
 #include <functional>  // for function
 
 #include "core/utils.h"          // for epsilonEqual
+#include "misc/discretizer.h"    // for Discretizer
 #include "misc/types.h"          // for GroupedMeshVer...
 #include "misc/utilities.h"      // for to_point_divis...
 #include "primitives/polygon.h"  // for RegularPolygon
@@ -16,8 +17,8 @@
 
 namespace sota {
 
-void GeneralUtility::make_smooth_normals(std::vector<GroupedMeshVertices>& vertex_groups) {
-  GroupedMeshVertices all;
+void GeneralUtility::make_smooth_normals(std::vector<DiscreteVertexToNormals>& vertex_groups) {
+  DiscreteVertexToNormals all;
   for (auto& g : vertex_groups) {
     for (auto it = g.begin(); it != g.end(); ++it) {
       all[it->first].insert(all[it->first].end(), it->second.begin(), it->second.end());
@@ -95,10 +96,10 @@ void FlatMeshProcessor::calculate_hill_heights(Vector3Array& vertices, float r, 
 Vector3Array FlatMeshProcessor::calculate_ridge_based_heights(
     Vector3Array vertices, const RegularPolygon& base, const std::vector<Ridge*> ridges,
     std::vector<Vector3> neighbours_corner_points, float R, std::set<int> exclude_list, float diameter, int divisions,
-    std::map<std::pair<int, int>, float>& distance_keeper, Ref<FastNoiseLite> ridge_noise, float ridge_offset,
+    DiscreteVertexToDistance& distance_map, Ref<FastNoiseLite> ridge_noise, float ridge_offset,
     std::function<double(double, double, double)> interpolation_func, float& min_height, float& max_height) {
   auto divisioned = [diameter, divisions](Vector3 point) {
-    return to_point_divisioned_position(point, diameter, divisions);
+    return VertexToNormalDiscretizer::get_discrete_vertex(point, diameter / (divisions * 2));
   };
   Vector3Array result;
   for (int i = 0; i < vertices.size(); ++i) {
@@ -116,7 +117,7 @@ Vector3Array FlatMeshProcessor::calculate_ridge_based_heights(
     float distance_to_border = calculator.calc(Vector3(v.x, 0, v.z));
     for (const auto& point : neighbours_corner_points) {
       distance_to_border = std::min(distance_to_border, Vector2(v.x, v.z).distance_to(Vector2(point.x, point.z)) +
-                                                            distance_keeper[divisioned(point)]);
+                                                            distance_map[divisioned(point)]);
     }
     auto closestRidgePoint = [ridge_points](Vector2 p) -> Vector3 {
       auto it = std::min_element(ridge_points.begin(), ridge_points.end(), [p](Vector3 lhs, Vector3 rhs) {
@@ -189,10 +190,10 @@ void VolumeMeshProcessor::calculate_hill_heights(Vector3Array& vertices, float r
 Vector3Array VolumeMeshProcessor::calculate_ridge_based_heights(
     Vector3Array vertices, const RegularPolygon& base, const std::vector<Ridge*> ridges,
     std::vector<Vector3> neighbours_corner_points, float R, std::set<int> exclude_list, float diameter, int divisions,
-    std::map<std::pair<int, int>, float>& distance_keeper, Ref<FastNoiseLite> ridge_noise, float ridge_offset,
+    DiscreteVertexToDistance& distance_map, Ref<FastNoiseLite> ridge_noise, float ridge_offset,
     std::function<double(double, double, double)> interpolation_func, float& min_height, float& max_height) {
   auto divisioned = [diameter, divisions](Vector3 point) {
-    return to_point_divisioned_position(point, diameter, divisions);
+    return VertexToNormalDiscretizer::get_discrete_vertex(point, diameter / (divisions * 2));
   };
   Vector3Array result;
   for (int i = 0; i < vertices.size(); ++i) {
@@ -210,7 +211,7 @@ Vector3Array VolumeMeshProcessor::calculate_ridge_based_heights(
     float distance_to_border = calculator.calc(v);
     for (const auto& point : neighbours_corner_points) {
       distance_to_border =
-          std::min(distance_to_border, (v - point.normalized()).length() + distance_keeper[divisioned(point)]);
+          std::min(distance_to_border, (v - point.normalized()).length() + distance_map[divisioned(point)]);
     }
     auto closestRidgePoint = [ridge_points](Vector3 p) -> Vector3 {
       auto it = std::min_element(ridge_points.begin(), ridge_points.end(),
