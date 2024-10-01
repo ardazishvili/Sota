@@ -20,7 +20,7 @@
 #include "misc/cube_coordinates.h"     // for CubeCoordinates
 #include "misc/tile.h"                 // for BiomeTile, Tile
 #include "misc/types.h"                // for Biome, GroupedMeshV...
-#include "misc/utilities.h"            // for create_hex_mesh
+#include "misc/utilities.h"            // for create_ridge_mesh
 #include "primitives/hexagon.h"        // for make_hexagon_at_pos...
 #include "ridge_impl/ridge_config.h"   // for RidgeConfig
 #include "ridge_impl/ridge_group.h"    // for RidgeGroup, GroupOf...
@@ -300,7 +300,7 @@ void RidgeHexGrid::init_hexmesh() {
           .ridge_noise = _ridge_noise,
       };
 
-      Ref<RidgeMesh> m = create_hex_mesh(biome, hex, params);
+      Ref<RidgeMesh> m = create_ridge_mesh(biome, hex, params);
       _tiles_layout.back().push_back(
           make_non_ref<BiomeTile>(m, this, biome, OffsetCoordinates{.row = val.x, .col = val.z}));
     }
