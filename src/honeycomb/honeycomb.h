@@ -95,9 +95,6 @@ class Honeycomb : public HexGrid {
 
   void calculate_cells();
   void calculate_normals() override;
-  void calculate_flat_normals();
-  void calculate_smooth_normals();
-  void meshes_update();
 
   enum class SortingOrder { INCREASING, DECREASING };
 
@@ -109,6 +106,8 @@ class Honeycomb : public HexGrid {
       std::sort(container.rbegin(), container.rend());
     }
   }
+
+  std::pair<std::vector<TileMesh*>, std::vector<TileMesh*>> meshes();
 
   Array get_cells_by_order(SortingOrder order, std::function<bool(HoneycombHoney*)> pred) const;
 };

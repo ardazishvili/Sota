@@ -14,25 +14,26 @@
 #include "core/hexagonal_utility.h"    // for HexagonalUtility
 #include "core/mesh.h"                 // for SotaMesh
 #include "core/rectangular_utility.h"  // for RectangularUtility
-#include "core/tile_mesh.h"            // for TileMesh
-#include "core/utils.h"                // for is_odd, pointy_top_...
-#include "misc/biome_calculator.h"     // for BiomeCalculator
-#include "misc/cube_coordinates.h"     // for CubeCoordinates
-#include "misc/tile.h"                 // for BiomeTile, Tile
-#include "misc/types.h"                // for Biome, GroupedMeshV...
-#include "misc/utilities.h"            // for create_ridge_mesh
-#include "primitives/hexagon.h"        // for make_hexagon_at_pos...
-#include "ridge_impl/ridge_config.h"   // for RidgeConfig
-#include "ridge_impl/ridge_group.h"    // for RidgeGroup, GroupOf...
-#include "ridge_impl/ridge_mesh.h"     // for RidgeMesh, RidgeHex...
-#include "ridge_impl/ridge_set.h"      // for RidgeSet
-#include "tal/callable.h"              // for Callable
-#include "tal/godot_core.h"            // for D_METHOD, ClassDB
-#include "tal/material.h"              // for ShaderMaterial
-#include "tal/noise.h"                 // for FastNoiseLite
-#include "tal/texture.h"               // for Texture
-#include "tal/vector3.h"               // for Vector3
-#include "tal/vector3i.h"              // for Vector3i
+#include "core/smooth_shades_processor.h"
+#include "core/tile_mesh.h"           // for TileMesh
+#include "core/utils.h"               // for is_odd, pointy_top_...
+#include "misc/biome_calculator.h"    // for BiomeCalculator
+#include "misc/cube_coordinates.h"    // for CubeCoordinates
+#include "misc/tile.h"                // for BiomeTile, Tile
+#include "misc/types.h"               // for Biome, GroupedMeshV...
+#include "misc/utilities.h"           // for create_ridge_mesh
+#include "primitives/hexagon.h"       // for make_hexagon_at_pos...
+#include "ridge_impl/ridge_config.h"  // for RidgeConfig
+#include "ridge_impl/ridge_group.h"   // for RidgeGroup, GroupOf...
+#include "ridge_impl/ridge_mesh.h"    // for RidgeMesh, RidgeHex...
+#include "ridge_impl/ridge_set.h"     // for RidgeSet
+#include "tal/callable.h"             // for Callable
+#include "tal/godot_core.h"           // for D_METHOD, ClassDB
+#include "tal/material.h"             // for ShaderMaterial
+#include "tal/noise.h"                // for FastNoiseLite
+#include "tal/texture.h"              // for Texture
+#include "tal/vector3.h"              // for Vector3
+#include "tal/vector3i.h"             // for Vector3i
 
 namespace sota {
 
@@ -307,42 +308,19 @@ void RidgeHexGrid::init_hexmesh() {
   }
 }
 
-void RidgeHexGrid::calculate_normals() {
-  if (_smooth_normals) {
-    calculate_smooth_normals();
-  } else {
-    calculate_flat_normals();
-  }
-  meshes_update();
-}
+std::vector<TileMesh*> RidgeHexGrid::meshes() {
+  std::vector<TileMesh*> res;
 
-void RidgeHexGrid::calculate_flat_normals() {
   for (auto& row : _tiles_layout) {
     for (auto& tile_ptr : row) {
-      tile_ptr->mesh()->inner_mesh()->calculate_normals();
-    }
-  }
-}
-
-void RidgeHexGrid::meshes_update() {
-  for (auto& row : _tiles_layout) {
-    for (auto& tile_ptr : row) {
-      tile_ptr->mesh()->inner_mesh()->update();
-    }
-  }
-}
-
-void RidgeHexGrid::calculate_smooth_normals() {
-  std::vector<DiscreteVertexToNormals> vertex_groups;
-  for (auto& row : _tiles_layout) {
-    for (auto& tile_ptr : row) {
-      RidgeMesh* mesh = dynamic_cast<RidgeMesh*>(tile_ptr->mesh().ptr());
-      vertex_groups.push_back(mesh->get_discrete_vertex_to_normals());
+      res.push_back(tile_ptr->mesh().ptr());
     }
   }
 
-  GeneralUtility::make_smooth_normals(vertex_groups);
+  return res;
 }
+
+void RidgeHexGrid::calculate_normals() { SmoothShadesProcessor(meshes()).calculate_normals(_smooth_normals); }
 
 void RidgeHexGrid::init_biomes() {
   _mountain_groups.clear();

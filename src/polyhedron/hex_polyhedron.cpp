@@ -271,6 +271,7 @@ void Polyhedron::init() {
   process_ngons(pentagons, min_z, max_z);
 
   process_cells();
+  calculate_normals();
 }
 
 }  // namespace sota

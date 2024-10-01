@@ -9,13 +9,14 @@
 #include <utility>        // for pair
 #include <vector>         // for vector
 
-#include "core/general_utility.h"       // for GeneralUtility
-#include "core/godot_utils.h"           // for clean_children
-#include "core/hex_grid.h"              // for TilesLayout
-#include "core/hex_mesh.h"              // for HexMesh, HexMeshParams
-#include "core/hexagonal_utility.h"     // for HexagonalUtility
-#include "core/mesh.h"                  // for SotaMesh
-#include "core/rectangular_utility.h"   // for RectangularUtility
+#include "core/general_utility.h"      // for GeneralUtility
+#include "core/godot_utils.h"          // for clean_children
+#include "core/hex_grid.h"             // for TilesLayout
+#include "core/hex_mesh.h"             // for HexMesh, HexMeshParams
+#include "core/hexagonal_utility.h"    // for HexagonalUtility
+#include "core/mesh.h"                 // for SotaMesh
+#include "core/rectangular_utility.h"  // for RectangularUtility
+#include "core/smooth_shades_processor.h"
 #include "core/tile_mesh.h"             // for TileMesh
 #include "core/utils.h"                 // for pointy_top_x_offset
 #include "honeycomb/honeycomb_cell.h"   // for HoneycombCell, Hone...
@@ -376,53 +377,21 @@ void Honeycomb::calculate_cells() {
   }
 }
 
+std::pair<std::vector<TileMesh*>, std::vector<TileMesh*>> Honeycomb::meshes() {
+  std::pair<std::vector<TileMesh*>, std::vector<TileMesh*>> res;
+  for (auto& row : _tiles_layout) {
+    for (auto& tile_ptr : row) {
+      res.first.push_back(tile_ptr->mesh().ptr());
+      res.second.push_back(dynamic_cast<HoneycombTile*>(tile_ptr)->honey_mesh().ptr());
+    }
+  }
+  return res;
+}
+
 void Honeycomb::calculate_normals() {
-  if (_smooth_normals) {
-    calculate_smooth_normals();
-  } else {
-    calculate_flat_normals();
-  }
-  meshes_update();
-}
-
-void Honeycomb::calculate_flat_normals() {
-  for (auto& row : _tiles_layout) {
-    for (auto& tile_ptr : row) {
-      tile_ptr->mesh()->inner_mesh()->calculate_normals();
-
-      HoneycombTile* tile = dynamic_cast<HoneycombTile*>(tile_ptr);
-      tile->honey_mesh()->inner_mesh()->calculate_normals();
-    }
-  }
-}
-
-void Honeycomb::meshes_update() {
-  for (auto& row : _tiles_layout) {
-    for (auto& tile_ptr : row) {
-      tile_ptr->mesh()->inner_mesh()->update();
-      dynamic_cast<HoneycombTile*>(tile_ptr)->honey_mesh()->inner_mesh()->update();
-    }
-  }
-}
-
-void Honeycomb::calculate_smooth_normals() {
-  std::vector<DiscreteVertexToNormals> cells_vertex_groups;
-  for (auto& row : _tiles_layout) {
-    for (auto& tile_ptr : row) {
-      HoneycombCell* mesh = dynamic_cast<HoneycombCell*>(tile_ptr->mesh().ptr());
-      cells_vertex_groups.push_back(mesh->get_discrete_vertex_to_normals());
-    }
-  }
-  std::vector<DiscreteVertexToNormals> honey_vertex_groups;
-  for (auto& row : _tiles_layout) {
-    for (auto& tile_ptr : row) {
-      HoneycombTile* tile = dynamic_cast<HoneycombTile*>(tile_ptr);
-      honey_vertex_groups.push_back(tile->honey_mesh()->get_discrete_vertex_to_normals());
-    }
-  }
-
-  GeneralUtility::make_smooth_normals(cells_vertex_groups);
-  GeneralUtility::make_smooth_normals(honey_vertex_groups);
+  auto [cell_meshes, honey_meshes] = meshes();
+  SmoothShadesProcessor(cell_meshes).calculate_normals(_smooth_normals);
+  SmoothShadesProcessor(honey_meshes).calculate_normals(_smooth_normals);
 }
 
 void Honeycomb::prepare_heights_calculation() {

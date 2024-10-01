@@ -71,6 +71,7 @@ environment = SubResource("Environment_3pfmk")
 transform = Transform3D(-0.492469, 0, 0.87033, 0, 1, 0, -0.87033, 0, -0.492469, 3.37515, 2.69147, -2.22673)
 
 [node name="RidgePolyhedronMesh" type="RidgePolyhedron" parent="."]
+_smooth_normals = true
 compression_factor = 0.215
 noise = SubResource("FastNoiseLite_v8gcm")
 patch_resolution = 5

@@ -98,9 +98,8 @@ class RidgeHexGrid : public HexGrid, public RidgeBased {
 
   void assign_cube_coordinates_map();
   void calculate_normals() override;
-  void calculate_smooth_normals();
-  void calculate_flat_normals();
-  void meshes_update();
+
+  std::vector<TileMesh*> meshes();
 };
 
 class RectRidgeHexGrid : public RidgeHexGrid {

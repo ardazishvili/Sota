@@ -68,6 +68,8 @@ class Polyhedron : public Node3D {
   Ref<Shader> _shader;
   Ref<FastNoiseLite> _biomes_noise;
   std::unordered_map<Biome, Ref<Texture>> _texture;
+  std::vector<Ref<TileMesh>> _hexagon_meshes;
+  std::vector<Ref<TileMesh>> _pentagon_meshes;
 
   static void _bind_methods();
 
@@ -75,6 +77,7 @@ class Polyhedron : public Node3D {
   virtual void configure_cell(Pentagon hex, Biome biome, int& id, Ref<ShaderMaterial> mat) = 0;
   virtual void process_cells() = 0;
   virtual void set_material_parameters(Ref<ShaderMaterial> mat) = 0;
+  virtual void calculate_normals() = 0;
   void init();
 
   template <typename T>
@@ -87,9 +90,6 @@ class Polyhedron : public Node3D {
 
   int _divisions{1};
   int _patch_resolution{1};
-
-  std::vector<Ref<TileMesh>> _hexagon_meshes;
-  std::vector<Ref<TileMesh>> _pentagon_meshes;
 
   std::pair<std::vector<Hexagon>, std::vector<Pentagon>> calculate_shapes() const;
 

@@ -39,6 +39,8 @@ class PrismPolyhedron : public Polyhedron {
  protected:
   static void _bind_methods();
   void set_material_parameters(Ref<ShaderMaterial> mat) override;
+  void calculate_normals() override { /* no need for this for prisms at the moment*/
+  }
 
   void configure_cell(Hexagon hex, Biome biome, int &id, Ref<ShaderMaterial> mat) override {
     _prism_processor.configure_cell(hex, biome, id, mat, *this);

@@ -1,5 +1,12 @@
 #include "polyhedron/ridge_based_polyhedron.h"
 
+#include <algorithm>
+#include <iterator>
+#include <vector>
+
+#include "core/smooth_shades_processor.h"
+#include "core/tile_mesh.h"
+#include "misc/discretizer.h"
 #include "tal/callable.h"    // for Callable
 #include "tal/godot_core.h"  // for D_METHOD, ClassDB
 #include "tal/material.h"    // for ShaderMaterial
@@ -8,6 +15,10 @@
 namespace sota {
 
 void RidgeBasedPolyhedron::_bind_methods() {
+  ClassDB::bind_method(D_METHOD("get_smooth_normals"), &RidgeBasedPolyhedron::get_smooth_normals);
+  ClassDB::bind_method(D_METHOD("set_smooth_normals", "p_smooth_normals"), &RidgeBasedPolyhedron::set_smooth_normals);
+  ADD_PROPERTY(PropertyInfo(Variant::BOOL, "_smooth_normals"), "set_smooth_normals", "get_smooth_normals");
+
   ClassDB::bind_method(D_METHOD("get_compression_factor"), &RidgeBasedPolyhedron::get_compression_factor);
   ClassDB::bind_method(D_METHOD("set_compression_factor", "p_compression_factor"),
                        &RidgeBasedPolyhedron::set_compression_factor);
@@ -16,6 +27,11 @@ void RidgeBasedPolyhedron::_bind_methods() {
   ClassDB::bind_method(D_METHOD("get_noise"), &RidgeBasedPolyhedron::get_noise);
   ClassDB::bind_method(D_METHOD("set_noise", "p_noise"), &RidgeBasedPolyhedron::set_noise);
   ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "noise", PROPERTY_HINT_RESOURCE_TYPE, "Noise"), "set_noise", "get_noise");
+}
+
+void RidgeBasedPolyhedron::set_smooth_normals(const bool p_smooth_normals) {
+  _smooth_normals = p_smooth_normals;
+  calculate_normals();
 }
 
 void RidgeBasedPolyhedron::set_compression_factor(const float p_compression_factor) {
@@ -31,9 +47,21 @@ void RidgeBasedPolyhedron::set_noise(const Ref<FastNoiseLite> p_noise) {
   }
 }
 
+bool RidgeBasedPolyhedron::get_smooth_normals() const { return _smooth_normals; }
 float RidgeBasedPolyhedron::get_compression_factor() const { return _compression_factor; }
 Ref<FastNoiseLite> RidgeBasedPolyhedron::get_noise() const { return _noise; }
 
 void RidgeBasedPolyhedron::set_material_parameters(Ref<ShaderMaterial> mat) {}
+
+void RidgeBasedPolyhedron::calculate_normals() { SmoothShadesProcessor(meshes()).calculate_normals(_smooth_normals); }
+
+std::vector<TileMesh*> RidgeBasedPolyhedron::meshes() {
+  std::vector<TileMesh*> res;
+  std::transform(_hexagon_meshes.begin(), _hexagon_meshes.end(), std::back_inserter(res),
+                 [](const Ref<TileMesh> mesh) { return mesh.ptr(); });
+  std::transform(_pentagon_meshes.begin(), _pentagon_meshes.end(), std::back_inserter(res),
+                 [](const Ref<TileMesh> mesh) { return mesh.ptr(); });
+  return res;
+}
 
 }  // namespace sota
