@@ -3,7 +3,7 @@
 namespace sota {
 
 DiscreteVertexToNormals TileMesh::get_discrete_vertex_to_normals() {
-  auto d = VertexToNormalDiscretizer(inner_mesh()->get_r() / (inner_mesh()->get_divisions() * 2));
+  auto d = VertexToNormalDiscretizer(0.0001);
   d.discretize(inner_mesh()->get_vertices(), inner_mesh()->get_normals());
   return d.get();
 }
