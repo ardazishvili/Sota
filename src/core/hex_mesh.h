@@ -86,7 +86,7 @@ class SimpleMesh : public TileMesh {
  public:
   SimpleMesh() = default;  // required by godot
   int get_id() override;
-  HexMesh* inner_mesh() override { return _hex_mesh.ptr(); }
+  HexMesh* inner_mesh() const override { return _hex_mesh.ptr(); }
   SimpleMesh(Hexagon hex, HexMeshParams params);
 
  protected:

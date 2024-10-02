@@ -66,7 +66,8 @@ void HoneycombCell::set_selection_material(Ref<ShaderMaterial> p_selection_mater
 }
 
 void HoneycombCell::calculate_heights(float bottom_offset) {
-  auto [coeffs, coeffs_precalc] = GeneralUtility::get_border_line_coeffs(_hex_mesh->get_R(), _hex_mesh->get_r(), {});
+  auto [coeffs, coeffs_precalc] =
+      PointToLineDistance_EquationBased::get_border_line_coeffs(_hex_mesh->get_R(), _hex_mesh->get_r(), {});
 
   auto center = _hex_mesh->base().center();
 

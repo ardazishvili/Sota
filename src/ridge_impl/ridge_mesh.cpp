@@ -59,8 +59,7 @@ void RidgeMesh::calculate_corner_points_distances_to_border(DiscreteVertexToDist
   auto corner_points = _mesh->base().points();
   auto center = _mesh->base().center();
 
-  std::set<int> exclude_list = get_exclude_list();
-  PointToLineDistance_VectorMultBased calculator(exclude_list, corner_points);
+  PointToLineDistance_VectorMultBased calculator(get_exclude_border_set(), corner_points);
   float distance_to_border;
   for (auto& v : corner_points) {
     distance_to_border = calculator.calc(v);
@@ -84,7 +83,7 @@ void RidgeMesh::shift_compress() {
   _mesh->set_vertices(_processor->shift_compress(_mesh->get_vertices(), _y_shift, _y_compress, center.y));
 }
 
-std::set<int> RidgeMesh::get_exclude_list() {
+std::set<int> RidgeMesh::get_exclude_border_set() const {
   std::set<int> result;
   std::vector<Vector3> corner_points = _mesh->base().points();
   int size = corner_points.size();
@@ -118,13 +117,12 @@ void RidgeMesh::calculate_ridge_based_heights(std::function<double(double, doubl
     }
   }
 
-  std::set<int> exclude_list = get_exclude_list();
   auto vertices = _mesh->get_vertices();
 
   float diameter = _mesh->get_R() * 2;
   vertices = _processor->calculate_ridge_based_heights(
-      vertices, _mesh->base(), _ridges, neighbours_corner_points, _mesh->get_R(), exclude_list, diameter, divisions,
-      distance_map, _ridge_noise, ridge_offset, interpolation_func, _min_height, _max_height);
+      vertices, _mesh->base(), _ridges, neighbours_corner_points, _mesh->get_R(), get_exclude_border_set(), diameter,
+      divisions, distance_map, _ridge_noise, ridge_offset, interpolation_func, _min_height, _max_height);
 
   _mesh->set_vertices(vertices);
 }

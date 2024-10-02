@@ -39,7 +39,7 @@ class HoneycombCell : public TileMesh {
   void set_selection_material(Ref<ShaderMaterial> p_selection_material);
 
   void calculate_heights(float bottom_offset);
-  HexMesh* inner_mesh() override { return _hex_mesh.ptr(); }
+  HexMesh* inner_mesh() const override { return _hex_mesh.ptr(); }
 
   HoneycombCell(Hexagon hex, HoneycombCellMeshParams params);
 

@@ -42,7 +42,7 @@ class PrismPentTile : public TileMesh {
  public:
   PrismPentTile() = default;  // required by godot
   int get_id() override { return _prism_pent_mesh->get_id(); }
-  PentMesh* inner_mesh() override { return _prism_pent_mesh.ptr(); }
+  PentMesh* inner_mesh() const override { return _prism_pent_mesh.ptr(); }
   PrismPentTile(Pentagon pentagon, PrismPentMeshParams params)
       : _prism_pent_mesh(Ref<PrismPentMesh>(memnew(PrismPentMesh(pentagon, params)))) {
     _prism_pent_mesh->init();
