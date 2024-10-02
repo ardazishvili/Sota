@@ -10,10 +10,11 @@
 #include <unordered_set>  // for unordered_set
 #include <vector>         // for vector, vector<>::i...
 
-#include "core/hex_mesh.h"                // for HexMeshParams
-#include "core/mesh.h"                    // for Orientation, Orient...
-#include "core/pent_mesh.h"               // for PentagonMeshParams
-#include "core/tile_mesh.h"               // for TileMesh
+#include "core/hex_mesh.h"   // for HexMeshParams
+#include "core/mesh.h"       // for Orientation, Orient...
+#include "core/pent_mesh.h"  // for PentagonMeshParams
+#include "core/tile_mesh.h"  // for TileMesh
+#include "misc/discretizer.h"
 #include "misc/types.h"                   // for Biome, ClipOptions
 #include "misc/utilities.h"               // for get_biome, create_h...
 #include "polyhedron/hex_polyhedron.h"    // for Polyhedron
@@ -39,8 +40,8 @@ PolyhedronRidgeProcessor::PolyhedronRidgeProcessor() {
   };
 }
 
-void PolyhedronRidgeProcessor::configure_cell(Hexagon hex, Biome biome, int& id, Ref<ShaderMaterial> mat,
-                                              Polyhedron& polyhedron) {
+void PolyhedronRidgeProcessor::configure_hexagon(PolygonWrapper& wrapper, Biome biome, int& id, Ref<ShaderMaterial> mat,
+                                                 Polyhedron& polyhedron) {
   auto& ridge_polyhedron = dynamic_cast<RidgePolyhedron&>(polyhedron);
   RidgeHexMeshParams params{
       .hex_mesh_params = HexMeshParams{.id = id,
@@ -54,16 +55,17 @@ void PolyhedronRidgeProcessor::configure_cell(Hexagon hex, Biome biome, int& id,
   };
 
   auto* mi = memnew(MeshInstance3D());
+  auto& hex = *dynamic_cast<Hexagon*>(wrapper.polygon());
   Ref<RidgeMesh> ridge_mesh = create_ridge_mesh(biome, hex, params);
   mi->set_mesh(ridge_mesh->inner_mesh());
 
   polyhedron.add_child(mi);
-  polyhedron._hexagon_meshes.push_back(ridge_mesh);
+  wrapper.set_mesh(ridge_mesh);
   ++id;
 }
 
-void PolyhedronRidgeProcessor::configure_cell(Pentagon pentagon, Biome biome, int& id, Ref<ShaderMaterial> mat,
-                                              Polyhedron& polyhedron) {
+void PolyhedronRidgeProcessor::configure_pentagon(PolygonWrapper& wrapper, Biome biome, int& id,
+                                                  Ref<ShaderMaterial> mat, Polyhedron& polyhedron) {
   auto& ridge_polyhedron = dynamic_cast<RidgePolyhedron&>(polyhedron);
   RidgePentagonMeshParams params{
       .pentagon_mesh_params = PentagonMeshParams{.id = id,
@@ -76,47 +78,51 @@ void PolyhedronRidgeProcessor::configure_cell(Pentagon pentagon, Biome biome, in
   };
 
   auto* mi = memnew(MeshInstance3D());
+  auto& pentagon = *dynamic_cast<Pentagon*>(wrapper.polygon());
   Ref<RidgeMesh> ridge_mesh = create_ridge_mesh(biome, pentagon, params);
   mi->set_mesh(ridge_mesh->inner_mesh());
 
   polyhedron.add_child(mi);
-  polyhedron._pentagon_meshes.push_back(ridge_mesh);
+  wrapper.set_mesh(ridge_mesh);
   ++id;
 }
 
 void PolyhedronRidgeProcessor::set_neighbours() {
-  // Accumulation of neighbours
-  std::map<RidgeMesh*, std::vector<TileMesh*>> mesh_to_neighbours;
-  float R_approx = _meshes[0].ptr()->inner_mesh()->get_R();
-  for (Ref<TileMesh>& tile_mesh : _meshes) {
-    RidgeMesh* ridge_mesh = dynamic_cast<RidgeMesh*>(tile_mesh.ptr());
-    for (Ref<TileMesh>& candidate_tile_mesh : _meshes) {
-      if (candidate_tile_mesh == tile_mesh) {
+  int pentagon_cnt = 0;
+  for (auto& p : _polyhedron_mesh->_neighbours_map) {
+    int cur_id = p.first;
+    std::set<int> neighbours_ids = p.second;
+    auto cur_it = std::find_if(_meshes_wrapped.begin(), _meshes_wrapped.end(),
+                               [cur_id](auto* wrapper) { return wrapper->id() == cur_id; });
+
+    if (cur_it == _meshes_wrapped.end()) {
+      printerr("Can't find PolygonWrapper object");
+      continue;
+    }
+    PolygonWrapper* cur_wrapper = *cur_it;
+    RidgeMesh* ridge_mesh = dynamic_cast<RidgeMesh*>(cur_wrapper->mesh().ptr());
+    Neighbours neighbours_meshes;
+    for (auto n_id : neighbours_ids) {
+      auto n_it = std::find_if(_meshes_wrapped.begin(), _meshes_wrapped.end(),
+                               [n_id](auto* wrapper) { return wrapper->id() == n_id; });
+
+      if (n_it == _meshes_wrapped.end()) {
+        printerr("Can't find PolygonWrapper object");
         continue;
       }
-      TileMesh* candidate_ridge_mesh = dynamic_cast<TileMesh*>(candidate_tile_mesh.ptr());
-      if (ridge_mesh->inner_mesh()->get_center().distance_to(candidate_ridge_mesh->inner_mesh()->get_center()) <
-          2.5 * R_approx) {
-        mesh_to_neighbours[ridge_mesh].push_back(candidate_ridge_mesh);
-      }
+      neighbours_meshes.push_back((*n_it)->mesh().ptr());
     }
-  }
 
-  // Assigning of neighbours
-  int pentagon_cnt = 0;
-  for (std::pair<RidgeMesh*, std::vector<TileMesh*>> p : mesh_to_neighbours) {
-    auto ridge_mesh = p.first;
-    auto neighbours = p.second;
-    if (neighbours.size() == 5) {
+    if (neighbours_meshes.size() == 5) {
       ++pentagon_cnt;
-    } else if (neighbours.size() != 6) {
-      printerr("Number of neighbours in RidgePolyhedron cell is not 5 or 6");
+    } else if (neighbours_meshes.size() != 6) {
+      printerr("Number of neighbours in PolyhedronRidgeProcessor is not 5 or 6");
     }
 
-    ridge_mesh->set_neighbours(mesh_to_neighbours[ridge_mesh]);
+    ridge_mesh->set_neighbours(neighbours_meshes);
   }
   if (pentagon_cnt != 12) {
-    printerr("Number of pentagons in RidgePolyhedron is not 12");
+    printerr("Number of pentagons in PolyhedronRidgeProcessor is not 12");
   }
 }
 
@@ -146,18 +152,18 @@ void PolyhedronRidgeProcessor::init_biomes() {
   _plain_groups.clear();
   _hill_groups.clear();
   std::unordered_set<TileMesh*> visited;
-  for (Ref<TileMesh>& tile_mesh : _meshes) {
-    if (visited.contains(tile_mesh.ptr())) {
+  for (PolygonWrapper* wrapper : _meshes_wrapped) {
+    if (visited.contains(wrapper->mesh().ptr())) {
       continue;
     }
     GroupOfRidgeMeshes cur_group;
-    auto opt_biome = get_biome(tile_mesh.ptr());
+    auto opt_biome = get_biome(wrapper->mesh().ptr());
     if (!opt_biome) {
       print("Unknown biome, return");
       return;
     }
     Biome biome = opt_biome.value();
-    dfs(tile_mesh.ptr(), cur_group, visited, biome);
+    dfs(wrapper->mesh().ptr(), cur_group, visited, biome);
     if (biome == Biome::PLAIN) {
       _plain_groups.emplace_back(cur_group);
     } else if (biome == Biome::HILL) {
@@ -206,8 +212,8 @@ void PolyhedronRidgeProcessor::process_meshes() {
   // initial heights calculation
   float global_min_y = std::numeric_limits<float>::max();
   float global_max_y = std::numeric_limits<float>::min();
-  for (Ref<TileMesh>& mesh : _meshes) {
-    RidgeMesh* ridge_mesh = dynamic_cast<RidgeMesh*>(mesh.ptr());
+  for (PolygonWrapper* wrapper : _meshes_wrapped) {
+    RidgeMesh* ridge_mesh = dynamic_cast<RidgeMesh*>(wrapper->mesh().ptr());
     ridge_mesh->calculate_initial_heights();
     ridge_mesh->calculate_normals();
     ridge_mesh->update();
@@ -218,31 +224,34 @@ void PolyhedronRidgeProcessor::process_meshes() {
 
   float amplitude = global_max_y - global_min_y;
   float compress = _polyhedron_mesh->_compression_factor / amplitude;
-  for (auto& mesh : _meshes) {
-    RidgeMesh* ridge_mesh = dynamic_cast<RidgeMesh*>(mesh.ptr());
+  for (PolygonWrapper* wrapper : _meshes_wrapped) {
+    RidgeMesh* ridge_mesh = dynamic_cast<RidgeMesh*>(wrapper->mesh().ptr());
     ridge_mesh->set_shift_compress(-global_min_y, compress);
   }
 
   // final heights calculation
-  for (auto& mesh : _meshes) {
-    RidgeMesh* ridge_mesh = dynamic_cast<RidgeMesh*>(mesh.ptr());
+  for (PolygonWrapper* wrapper : _meshes_wrapped) {
+    RidgeMesh* ridge_mesh = dynamic_cast<RidgeMesh*>(wrapper->mesh().ptr());
 
-    float approx_diameter = _meshes[0]->inner_mesh()->get_R() * 2;
+    float approx_diameter = _meshes_wrapped[0]->mesh()->inner_mesh()->get_R() * 2;
     ridge_mesh->calculate_final_heights(_distance_map, approx_diameter, _polyhedron_mesh->_divisions);
     ridge_mesh->recalculate_all_except_vertices();
     ridge_mesh->update();
   }
 }
 
-void PolyhedronRidgeProcessor::init(Polyhedron* polyhedron_mesh) {
-  _polyhedron_mesh = dynamic_cast<RidgePolyhedron*>(polyhedron_mesh);
-  _meshes = _polyhedron_mesh->_hexagon_meshes;
-  _meshes.insert(_meshes.end(), _polyhedron_mesh->_pentagon_meshes.begin(), _polyhedron_mesh->_pentagon_meshes.end());
+void PolyhedronRidgeProcessor::init(Polyhedron* polyhedron) {
+  _meshes_wrapped.clear();
+  _polyhedron_mesh = dynamic_cast<RidgePolyhedron*>(polyhedron);
+  std::transform(polyhedron->_hexagons.begin(), polyhedron->_hexagons.end(), std::back_inserter(_meshes_wrapped),
+                 [](PolygonWrapper& wrapper) { return &wrapper; });
+  std::transform(polyhedron->_pentagons.begin(), polyhedron->_pentagons.end(), std::back_inserter(_meshes_wrapped),
+                 [](PolygonWrapper& wrapper) { return &wrapper; });
 
-  float all_r = std::accumulate(_meshes.begin(), _meshes.end(), 0.0f, [](float acc, Ref<TileMesh>& tile_mesh) {
-    return acc + tile_mesh->inner_mesh()->get_R();
-  });
-  _R_average = all_r / _meshes.size();
+  float all_r =
+      std::accumulate(_meshes_wrapped.begin(), _meshes_wrapped.end(), 0.0f,
+                      [](float acc, PolygonWrapper* wrapper) { return acc + wrapper->mesh()->inner_mesh()->get_R(); });
+  _R_average = all_r / _meshes_wrapped.size();
 }
 
 void PolyhedronRidgeProcessor::process(Polyhedron& polyhedron_mesh) {

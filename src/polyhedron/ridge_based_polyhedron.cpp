@@ -7,6 +7,7 @@
 #include "core/smooth_shades_processor.h"
 #include "core/tile_mesh.h"
 #include "misc/discretizer.h"
+#include "polyhedron_mesh_processor.h"
 #include "tal/callable.h"    // for Callable
 #include "tal/godot_core.h"  // for D_METHOD, ClassDB
 #include "tal/material.h"    // for ShaderMaterial
@@ -55,10 +56,10 @@ void RidgeBasedPolyhedron::calculate_normals() { SmoothShadesProcessor(meshes())
 
 std::vector<TileMesh*> RidgeBasedPolyhedron::meshes() {
   std::vector<TileMesh*> res;
-  std::transform(_hexagon_meshes.begin(), _hexagon_meshes.end(), std::back_inserter(res),
-                 [](const Ref<TileMesh> mesh) { return mesh.ptr(); });
-  std::transform(_pentagon_meshes.begin(), _pentagon_meshes.end(), std::back_inserter(res),
-                 [](const Ref<TileMesh> mesh) { return mesh.ptr(); });
+  std::transform(_hexagons.begin(), _hexagons.end(), std::back_inserter(res),
+                 [](PolygonWrapper& wrapper) { return wrapper.mesh().ptr(); });
+  std::transform(_pentagons.begin(), _pentagons.end(), std::back_inserter(res),
+                 [](PolygonWrapper& wrapper) { return wrapper.mesh().ptr(); });
   return res;
 }
 

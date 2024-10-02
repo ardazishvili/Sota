@@ -108,7 +108,6 @@ std::set<int> RidgeMesh::get_exclude_list() {
 void RidgeMesh::calculate_ridge_based_heights(std::function<double(double, double, double)> interpolation_func,
                                               float ridge_offset, DiscreteVertexToDistance& distance_map,
                                               int divisions) {
-  float diameter = _mesh->get_R() * 2;
   shift_compress();
 
   std::vector<Vector3> neighbours_corner_points;
@@ -122,9 +121,11 @@ void RidgeMesh::calculate_ridge_based_heights(std::function<double(double, doubl
   std::set<int> exclude_list = get_exclude_list();
   auto vertices = _mesh->get_vertices();
 
+  float diameter = _mesh->get_R() * 2;
   vertices = _processor->calculate_ridge_based_heights(
       vertices, _mesh->base(), _ridges, neighbours_corner_points, _mesh->get_R(), exclude_list, diameter, divisions,
       distance_map, _ridge_noise, ridge_offset, interpolation_func, _min_height, _max_height);
+
   _mesh->set_vertices(vertices);
 }
 

@@ -2,12 +2,15 @@
 
 #include <map>  // for map
 #include <memory>
+#include <optional>
 #include <unordered_map>  // for unordered_map
 #include <utility>        // for pair
 #include <vector>         // for vector
 
 #include "core/tile_mesh.h"  // for TileMesh
-#include "misc/types.h"      // for Biome
+#include "discretizer.h"
+#include "misc/types.h"  // for Biome
+#include "polygon.h"
 #include "polyhedron/polyhedron_mesh_processor.h"
 #include "polyhedron/polyhedron_noise_processor.h"
 #include "polyhedron/polyhedron_prism_processor.h"
@@ -28,6 +31,29 @@
 namespace sota {
 class Hexagon;
 class Pentagon;
+
+class PolygonWrapper {
+ public:
+  explicit PolygonWrapper(std::unique_ptr<RegularPolygon> polygon) : _id(CNT++), _polygon(std::move(polygon)) {}
+  PolygonWrapper(const PolygonWrapper& other) = delete;
+  PolygonWrapper(PolygonWrapper&& other) = default;
+  PolygonWrapper& operator=(const PolygonWrapper& other) = delete;
+  PolygonWrapper& operator=(PolygonWrapper&& other) = default;
+
+  // getters
+  RegularPolygon* polygon() { return _polygon.get(); }
+  Ref<TileMesh> mesh() { return _mesh; }
+  int id() const { return _id; }
+
+  // setters
+  void set_mesh(Ref<TileMesh> mesh) { _mesh = mesh; }
+
+ private:
+  static int CNT;
+  int _id;
+  std::unique_ptr<RegularPolygon> _polygon;
+  Ref<TileMesh> _mesh;
+};
 
 class Polyhedron : public Node3D {
   GDCLASS(Polyhedron, Node3D)
@@ -68,20 +94,21 @@ class Polyhedron : public Node3D {
   Ref<Shader> _shader;
   Ref<FastNoiseLite> _biomes_noise;
   std::unordered_map<Biome, Ref<Texture>> _texture;
-  std::vector<Ref<TileMesh>> _hexagon_meshes;
-  std::vector<Ref<TileMesh>> _pentagon_meshes;
+
+  std::vector<PolygonWrapper> _hexagons;
+  std::vector<PolygonWrapper> _pentagons;
 
   static void _bind_methods();
 
-  virtual void configure_cell(Hexagon hex, Biome biome, int& id, Ref<ShaderMaterial> mat) = 0;
-  virtual void configure_cell(Pentagon hex, Biome biome, int& id, Ref<ShaderMaterial> mat) = 0;
+  virtual void configure_hexagon(PolygonWrapper& wrapper, Biome biome, int& id, Ref<ShaderMaterial> mat) = 0;
+  virtual void configure_pentagon(PolygonWrapper& wrapper, Biome biome, int& id, Ref<ShaderMaterial> mat) = 0;
   virtual void process_cells() = 0;
   virtual void set_material_parameters(Ref<ShaderMaterial> mat) = 0;
   virtual void calculate_normals() = 0;
   void init();
 
   template <typename T>
-  void process_ngons(std::vector<T> ngons, float min_z, float max_z);
+  void process_ngons(std::vector<PolygonWrapper>& ngons, float min_z, float max_z);
 
  private:
   friend class PolyhedronRidgeProcessor;
@@ -90,12 +117,14 @@ class Polyhedron : public Node3D {
 
   int _divisions{1};
   int _patch_resolution{1};
+  mutable std::map<int, std::set<int>> _neighbours_map;
 
-  std::pair<std::vector<Hexagon>, std::vector<Pentagon>> calculate_shapes() const;
+  std::pair<std::vector<PolygonWrapper>, std::vector<PolygonWrapper>> calculate_shapes() const;
 
   template <typename TGON>
-  void insert_to_polygons(Vector3 start_point, float diameter, float R, float r, int i, int j,
-                          Vector3Array icosahedron_points, Vector3i triangle, std::map<Vector3i, TGON>& polygons) const;
+  std::optional<PolygonWrapper*> insert_to_polygons(Vector3 start_point, float diameter, float R, float r, int i, int j,
+                                                    Vector3Array icosahedron_points, Vector3i triangle,
+                                                    std::map<Vector3i, PolygonWrapper>& polygons) const;
 
   void clear();
 };

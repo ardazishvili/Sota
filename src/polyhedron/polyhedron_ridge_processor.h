@@ -32,9 +32,10 @@ class PolyhedronRidgeProcessor : public PolyhedronProcessor, public RidgeBased {
   PolyhedronRidgeProcessor &operator=(const PolyhedronRidgeProcessor &other) = delete;
   PolyhedronRidgeProcessor &operator=(PolyhedronRidgeProcessor &&other) = default;
 
-  void configure_cell(Hexagon hex, Biome biome, int &id, Ref<ShaderMaterial> mat, Polyhedron &polyhedron_mesh) override;
-  void configure_cell(Pentagon pentagon, Biome biome, int &id, Ref<ShaderMaterial> mat,
-                      Polyhedron &polyhedron_mesh) override;
+  void configure_hexagon(PolygonWrapper &wrapper, Biome biome, int &id, Ref<ShaderMaterial> mat,
+                         Polyhedron &polyhedron_mesh) override;
+  void configure_pentagon(PolygonWrapper &wrapper, Biome biome, int &id, Ref<ShaderMaterial> mat,
+                          Polyhedron &polyhedron_mesh) override;
   void process(Polyhedron &polyhedron_mesh) override;
 
   void set_top_offset(float offset) { _ridge_config.top_ridge_offset = offset; }
@@ -46,7 +47,7 @@ class PolyhedronRidgeProcessor : public PolyhedronProcessor, public RidgeBased {
   // TODO fix possibility of zero
   RidgePolyhedron *_polyhedron_mesh;
 
-  std::vector<Ref<TileMesh>> _meshes;
+  std::vector<PolygonWrapper *> _meshes_wrapped;
 
   DiscreteVertexToDistance _distance_map;
 

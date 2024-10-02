@@ -20,8 +20,8 @@
 
 namespace sota {
 
-void PolyhedronPrismProcessor::configure_cell(Hexagon hex, Biome biome, int& id, Ref<ShaderMaterial> mat,
-                                              Polyhedron& polyhedron) {
+void PolyhedronPrismProcessor::configure_hexagon(PolygonWrapper& wrapper, Biome biome, int& id, Ref<ShaderMaterial> mat,
+                                                 Polyhedron& polyhedron) {
   auto& prism_polyhedron = dynamic_cast<PrismPolyhedron&>(polyhedron);
   PrismHexMeshParams params{.hex_mesh_params = HexMeshParams{.id = id,
                                                              .material = mat,
@@ -32,16 +32,17 @@ void PolyhedronPrismProcessor::configure_cell(Hexagon hex, Biome biome, int& id,
                             .height = prism_polyhedron._prism_heights[biome]};
 
   auto* mi = memnew(MeshInstance3D());
+  auto& hex = *dynamic_cast<Hexagon*>(wrapper.polygon());
   Ref<PrismHexTile> prism_tile = Ref<PrismHexTile>(memnew(PrismHexTile(hex, params)));
   mi->set_mesh(prism_tile->inner_mesh());
 
   polyhedron.add_child(mi);
-  polyhedron._hexagon_meshes.push_back(prism_tile);
+  wrapper.set_mesh(prism_tile);
   ++id;
 }
 
-void PolyhedronPrismProcessor::configure_cell(Pentagon pentagon, Biome biome, int& id, Ref<ShaderMaterial> mat,
-                                              Polyhedron& polyhedron) {
+void PolyhedronPrismProcessor::configure_pentagon(PolygonWrapper& wrapper, Biome biome, int& id,
+                                                  Ref<ShaderMaterial> mat, Polyhedron& polyhedron) {
   auto& prism_polyhedron = dynamic_cast<PrismPolyhedron&>(polyhedron);
   PrismPentMeshParams params{.pent_mesh_params = PentagonMeshParams{.id = id,
                                                                     .divisions = polyhedron._divisions,
@@ -51,11 +52,12 @@ void PolyhedronPrismProcessor::configure_cell(Pentagon pentagon, Biome biome, in
                              .height = prism_polyhedron._prism_heights[biome]};
 
   auto* mi = memnew(MeshInstance3D());
+  auto& pentagon = *dynamic_cast<Pentagon*>(wrapper.polygon());
   Ref<PrismPentTile> prism_tile = Ref<PrismPentTile>(memnew(PrismPentTile(pentagon, params)));
   mi->set_mesh(prism_tile->inner_mesh());
 
   polyhedron.add_child(mi);
-  polyhedron._pentagon_meshes.push_back(prism_tile);
+  wrapper.set_mesh(prism_tile);
   ++id;
 }
 
