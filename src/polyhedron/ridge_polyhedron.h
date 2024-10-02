@@ -11,7 +11,7 @@ class RidgePolyhedron : public RidgeBasedPolyhedron {
   GDCLASS(RidgePolyhedron, RidgeBasedPolyhedron)
  public:
  protected:
-  RidgePolyhedron() = default;
+  RidgePolyhedron() : _ridge_processor(*this) {}
   RidgePolyhedron(const RidgePolyhedron& other) = delete;
   RidgePolyhedron(RidgePolyhedron&& other) = delete;
   // copying operator= defined inside GDCLASS
