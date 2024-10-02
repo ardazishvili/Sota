@@ -12,9 +12,10 @@ class Polyhedron;
 
 class PolyhedronPrismProcessor : public PolyhedronProcessor {
  public:
-  void configure_cell(Hexagon hex, Biome biome, int &id, Ref<ShaderMaterial> mat, Polyhedron &polyhedron_mesh) override;
-  void configure_cell(Pentagon pentagon, Biome biome, int &id, Ref<ShaderMaterial> mat,
-                      Polyhedron &polyhedron_mesh) override;
+  void configure_hexagon(PolygonWrapper &wrapper, Biome biome, int &id, Ref<ShaderMaterial> mat,
+                         Polyhedron &polyhedron_mesh) override;
+  void configure_pentagon(PolygonWrapper &wrapper, Biome biome, int &id, Ref<ShaderMaterial> mat,
+                          Polyhedron &polyhedron_mesh) override;
   void process(Polyhedron &polyhedron_mesh) override;
 };
 

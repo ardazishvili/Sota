@@ -1,9 +1,11 @@
 #pragma once
 
+#include "polyhedron/polyhedron_noise_processor.h"
 #include "polyhedron/ridge_based_polyhedron.h"
-#include "polyhedron_noise_processor.h"
 
 namespace sota {
+
+class PolygonWrapper;
 
 class NoisePolyhedron : public RidgeBasedPolyhedron {
   GDCLASS(NoisePolyhedron, RidgeBasedPolyhedron)
@@ -18,11 +20,11 @@ class NoisePolyhedron : public RidgeBasedPolyhedron {
   static void _bind_methods() {}
   void set_material_parameters(Ref<ShaderMaterial> mat) override {}
 
-  void configure_cell(Hexagon hex, Biome biome, int& id, Ref<ShaderMaterial> mat) override {
-    _noise_processor.configure_cell(hex, biome, id, mat, *this);
+  void configure_hexagon(PolygonWrapper& wrapper, Biome biome, int& id, Ref<ShaderMaterial> mat) override {
+    _noise_processor.configure_hexagon(wrapper, biome, id, mat, *this);
   }
-  void configure_cell(Pentagon pentagon, Biome biome, int& id, Ref<ShaderMaterial> mat) override {
-    _noise_processor.configure_cell(pentagon, biome, id, mat, *this);
+  void configure_pentagon(PolygonWrapper& wrapper, Biome biome, int& id, Ref<ShaderMaterial> mat) override {
+    _noise_processor.configure_pentagon(wrapper, biome, id, mat, *this);
   }
 
   void process_cells() override { _noise_processor.process(*this); }

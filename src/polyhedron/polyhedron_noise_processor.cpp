@@ -17,8 +17,8 @@
 
 namespace sota {
 
-void PolyhedronNoiseProcessor::configure_cell(Hexagon hex, Biome biome, int& id, Ref<ShaderMaterial> mat,
-                                              Polyhedron& polyhedron) {
+void PolyhedronNoiseProcessor::configure_hexagon(PolygonWrapper& wrapper, Biome biome, int& id, Ref<ShaderMaterial> mat,
+                                                 Polyhedron& polyhedron) {
   auto noise_polyhedron = dynamic_cast<NoisePolyhedron*>(&polyhedron);
   RidgeHexMeshParams params{
       .hex_mesh_params = HexMeshParams{.id = id,
@@ -32,16 +32,17 @@ void PolyhedronNoiseProcessor::configure_cell(Hexagon hex, Biome biome, int& id,
   };
 
   auto* mi = memnew(MeshInstance3D());
+  auto& hex = *dynamic_cast<Hexagon*>(wrapper.polygon());
   Ref<PlainMesh> plain_mesh = make_ridge_hex_mesh<PlainMesh>(hex, params);
   mi->set_mesh(plain_mesh->inner_mesh());
 
   polyhedron.add_child(mi);
-  polyhedron._hexagon_meshes.push_back(plain_mesh);
+  wrapper.set_mesh(plain_mesh);
   ++id;
 }
 
-void PolyhedronNoiseProcessor::configure_cell(Pentagon pentagon, Biome biome, int& id, Ref<ShaderMaterial> mat,
-                                              Polyhedron& polyhedron) {
+void PolyhedronNoiseProcessor::configure_pentagon(PolygonWrapper& wrapper, Biome biome, int& id,
+                                                  Ref<ShaderMaterial> mat, Polyhedron& polyhedron) {
   auto noise_polyhedron = dynamic_cast<NoisePolyhedron*>(&polyhedron);
   RidgePentagonMeshParams params{
       .pentagon_mesh_params = PentagonMeshParams{.id = id,
@@ -54,11 +55,12 @@ void PolyhedronNoiseProcessor::configure_cell(Pentagon pentagon, Biome biome, in
   };
 
   auto* mi = memnew(MeshInstance3D());
+  auto& pentagon = *dynamic_cast<Pentagon*>(wrapper.polygon());
   Ref<PlainMesh> plain_mesh = make_ridge_pentagon_mesh<PlainMesh>(pentagon, params);
   mi->set_mesh(plain_mesh->inner_mesh());
 
   polyhedron.add_child(mi);
-  polyhedron._pentagon_meshes.push_back(plain_mesh);
+  wrapper.set_mesh(plain_mesh);
   ++id;
 }
 
@@ -96,8 +98,12 @@ void PolyhedronNoiseProcessor::process_meshes(Polyhedron& polyhedron, std::vecto
 }
 
 void PolyhedronNoiseProcessor::process(Polyhedron& polyhedron) {
-  auto all_meshes = polyhedron._hexagon_meshes;
-  all_meshes.insert(all_meshes.end(), polyhedron._pentagon_meshes.begin(), polyhedron._pentagon_meshes.end());
+  std::vector<Ref<TileMesh>> all_meshes;
+
+  std::transform(polyhedron._hexagons.begin(), polyhedron._hexagons.end(), std::back_inserter(all_meshes),
+                 [](PolygonWrapper& wrapper) { return wrapper.mesh(); });
+  std::transform(polyhedron._pentagons.begin(), polyhedron._pentagons.end(), std::back_inserter(all_meshes),
+                 [](PolygonWrapper& wrapper) { return wrapper.mesh(); });
 
   process_meshes(polyhedron, all_meshes);
 }
