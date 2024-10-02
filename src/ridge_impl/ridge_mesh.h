@@ -69,7 +69,7 @@ class RidgeMesh : public TileMesh {
   void recalculate_all_except_vertices() { _mesh->recalculate_all_except_vertices(); }
   void init() { _mesh->init(); }
   Vector3 get_center() { return _mesh->get_center(); }
-  SotaMesh* inner_mesh() override { return _mesh.ptr(); }
+  SotaMesh* inner_mesh() const override { return _mesh.ptr(); }
 
   int get_id() override { return _mesh->get_id(); }
 
@@ -114,8 +114,7 @@ class RidgeMesh : public TileMesh {
   template <typename T>
   friend Ref<RidgeMesh> make_ridge_hex_mesh(Hexagon hex, RidgeHexMeshParams params);
 
-  // TODO make const. inner_mesh have to be const?
-  std::set<int> get_exclude_list();
+  std::set<int> get_exclude_border_set() const;
 };
 
 template <typename T>

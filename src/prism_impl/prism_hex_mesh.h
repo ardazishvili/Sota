@@ -43,7 +43,7 @@ class PrismHexTile : public TileMesh {
   PrismHexTile() = default;  // required by godot
 
   int get_id() override { return _prism_hex_mesh->get_id(); }
-  HexMesh* inner_mesh() override { return _prism_hex_mesh.ptr(); }
+  HexMesh* inner_mesh() const override { return _prism_hex_mesh.ptr(); }
   PrismHexTile(Hexagon hex, PrismHexMeshParams params)
       : _prism_hex_mesh(Ref<PrismHexMesh>(memnew(PrismHexMesh(hex, params)))) {
     _prism_hex_mesh->init();

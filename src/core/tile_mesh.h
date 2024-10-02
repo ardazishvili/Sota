@@ -14,7 +14,7 @@ class TileMesh : public RefCounted {
 
  public:
   virtual int get_id() = 0;
-  virtual SotaMesh* inner_mesh() = 0;
+  virtual SotaMesh* inner_mesh() const = 0;
 
   DiscreteVertexToNormals get_discrete_vertex_to_normals();
 

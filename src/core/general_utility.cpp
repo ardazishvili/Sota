@@ -42,14 +42,14 @@ void GeneralUtility::make_smooth_normals(std::vector<DiscreteVertexToNormals>& v
   }
 }
 
-std::pair<std::vector<std::array<float, 3>>, std::vector<float>> GeneralUtility::get_border_line_coeffs(
-    float R, float r, std::set<int> exclude_list) {
-  auto get_coeffs = [R, r, exclude_list]() -> std::vector<std::array<float, 3>> {
+std::pair<std::vector<std::array<float, 3>>, std::vector<float>>
+PointToLineDistance_EquationBased::get_border_line_coeffs(float R, float r, std::set<int> exclude_border_set) {
+  auto get_coeffs = [R, r, exclude_border_set]() -> std::vector<std::array<float, 3>> {
     std::array<std::array<float, 3>, 6> all = HexBorderLineParams(R, r).get_coeffs();
 
     std::vector<std::array<float, 3>> _coeffs;
     for (int i = 0; i < 6; ++i) {
-      if (!exclude_list.empty() && exclude_list.contains(i)) {
+      if (!exclude_border_set.empty() && exclude_border_set.contains(i)) {
         continue;
       }
       _coeffs.push_back(all[i]);
@@ -97,8 +97,8 @@ void FlatMeshProcessor::calculate_hill_heights(Vector3Array& vertices, float r, 
 
 Vector3Array FlatMeshProcessor::calculate_ridge_based_heights(
     Vector3Array vertices, const RegularPolygon& base, const std::vector<Ridge*> ridges,
-    std::vector<Vector3> neighbours_corner_points, float R, std::set<int> exclude_list, float diameter, int divisions,
-    DiscreteVertexToDistance& distance_map, Ref<FastNoiseLite> ridge_noise, float ridge_offset,
+    std::vector<Vector3> neighbours_corner_points, float R, std::set<int> exclude_border_set, float diameter,
+    int divisions, DiscreteVertexToDistance& distance_map, Ref<FastNoiseLite> ridge_noise, float ridge_offset,
     std::function<double(double, double, double)> interpolation_func, float& min_height, float& max_height) {
   auto divisioned = [diameter, divisions](Vector3 point) {
     return VertexToNormalDiscretizer::get_discrete_vertex(point, diameter / (divisions * 2));
@@ -115,7 +115,7 @@ Vector3Array FlatMeshProcessor::calculate_ridge_based_heights(
       }
     }
 
-    PointToLineDistance_VectorMultBased calculator(exclude_list, base.points());
+    PointToLineDistance_VectorMultBased calculator(exclude_border_set, base.points());
     float distance_to_border = calculator.calc(Vector3(v.x, 0, v.z));
     for (const auto& point : neighbours_corner_points) {
       distance_to_border = std::min(distance_to_border, Vector2(v.x, v.z).distance_to(Vector2(point.x, point.z)) +
@@ -192,8 +192,8 @@ void VolumeMeshProcessor::calculate_hill_heights(Vector3Array& vertices, float r
 
 Vector3Array VolumeMeshProcessor::calculate_ridge_based_heights(
     Vector3Array vertices, const RegularPolygon& base, const std::vector<Ridge*> ridges,
-    std::vector<Vector3> neighbours_corner_points, float R, std::set<int> exclude_list, float diameter, int divisions,
-    DiscreteVertexToDistance& distance_map, Ref<FastNoiseLite> ridge_noise, float ridge_offset,
+    std::vector<Vector3> neighbours_corner_points, float R, std::set<int> exclude_border_set, float diameter,
+    int divisions, DiscreteVertexToDistance& distance_map, Ref<FastNoiseLite> ridge_noise, float ridge_offset,
     std::function<double(double, double, double)> interpolation_func, float& min_height, float& max_height) {
   auto divisioned = [diameter, divisions](Vector3 point) {
     return VertexToNormalDiscretizer::get_discrete_vertex(point, diameter / (divisions * 2));
@@ -211,7 +211,7 @@ Vector3Array VolumeMeshProcessor::calculate_ridge_based_heights(
       }
     }
 
-    PointToLineDistance_VectorMultBased calculator(exclude_list, base.points());
+    PointToLineDistance_VectorMultBased calculator(exclude_border_set, base.points());
     float distance_to_border = calculator.calc(v);
     for (const auto& point : neighbours_corner_points) {
       distance_to_border =

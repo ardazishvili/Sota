@@ -57,7 +57,7 @@ class HoneycombHoney : public TileMesh {
   bool is_full() const;
   bool is_empty() const;
 
-  HexMesh* inner_mesh() override { return _hex_mesh.ptr(); }
+  HexMesh* inner_mesh() const override { return _hex_mesh.ptr(); }
   int get_id() override { return _hex_mesh->get_id(); }
 
   HoneycombHoney(Hexagon hex, HoneycombHoneyMeshParams params);
