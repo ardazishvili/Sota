@@ -2,6 +2,7 @@
 
 #include <cmath>       // for lerp
 #include <functional>  // for function
+#include <optional>
 
 #include "core/utils.h"          // for epsilonEqual
 #include "misc/discretizer.h"    // for Discretizer
@@ -10,10 +11,11 @@
 #include "primitives/polygon.h"  // for RegularPolygon
 #include "ridge_impl/ridge.h"    // for Ridge
 #include "tal/arrays.h"          // for Vector3Array
-#include "tal/noise.h"           // for FastNoiseLite
-#include "tal/reference.h"       // for Ref
-#include "tal/vector2.h"         // for Vector2
-#include "tal/vector3.h"         // for Vector3
+#include "tal/godot_core.h"
+#include "tal/noise.h"      // for FastNoiseLite
+#include "tal/reference.h"  // for Ref
+#include "tal/vector2.h"    // for Vector2
+#include "tal/vector3.h"    // for Vector3
 
 namespace sota {
 
@@ -202,7 +204,8 @@ Vector3Array VolumeMeshProcessor::calculate_ridge_based_heights(
     auto center = base.center();
     std::vector<Vector3> ridge_points;
     for (const Ridge* ridge : ridges) {
-      if (ridge->start().distance_to(center) < 2 * R || ridge->end().distance_to(center) < 2 * R) {
+      if (ridge->start().distance_to(center) < 2 * ridge_offset ||
+          ridge->end().distance_to(center) < 2 * ridge_offset) {
         auto p = ridge->get_points();
         ridge_points.insert(ridge_points.end(), p.begin(), p.end());
       }
@@ -214,14 +217,18 @@ Vector3Array VolumeMeshProcessor::calculate_ridge_based_heights(
       distance_to_border =
           std::min(distance_to_border, (v - point.normalized()).length() + distance_map[divisioned(point)]);
     }
-    auto closestRidgePoint = [ridge_points](Vector3 p) -> Vector3 {
+    auto closestRidgePoint = [ridge_points](Vector3 p) -> std::optional<Vector3> {
       auto it = std::min_element(ridge_points.begin(), ridge_points.end(),
                                  [p](Vector3 lhs, Vector3 rhs) { return p.distance_to(lhs) < p.distance_to(rhs); });
-      return it != ridge_points.end() ? *it
-                                      : Vector3{std::numeric_limits<float>::max(), std::numeric_limits<float>::max(),
-                                                std::numeric_limits<float>::max()};
+      return it != ridge_points.end() ? *it : std::optional<Vector3>();
     };
-    Vector3 crp = closestRidgePoint(v);
+    std::optional<Vector3> crp_opt = closestRidgePoint(v);
+    if (!crp_opt) {
+      printerr("Can't find closest ridge point, yield initial point");
+      result.push_back(v);
+      continue;
+    }
+    Vector3 crp = crp_opt.value();
 
     float distance_to_ridge_projection = v.cross(crp).length() / crp.length();
     Vector3 approx_end = crp;
