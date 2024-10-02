@@ -26,11 +26,11 @@ class RidgePolyhedron;
 
 class PolyhedronRidgeProcessor : public PolyhedronProcessor, public RidgeBased {
  public:
-  PolyhedronRidgeProcessor();
+  PolyhedronRidgeProcessor(RidgePolyhedron &ridge_polyhedron);
   PolyhedronRidgeProcessor(const PolyhedronRidgeProcessor &other) = delete;
   PolyhedronRidgeProcessor(PolyhedronRidgeProcessor &&other) = default;
   PolyhedronRidgeProcessor &operator=(const PolyhedronRidgeProcessor &other) = delete;
-  PolyhedronRidgeProcessor &operator=(PolyhedronRidgeProcessor &&other) = default;
+  PolyhedronRidgeProcessor &operator=(PolyhedronRidgeProcessor &&other) = delete;
 
   void configure_hexagon(PolygonWrapper &wrapper, Biome biome, int &id, Ref<ShaderMaterial> mat,
                          Polyhedron &polyhedron_mesh) override;
@@ -44,17 +44,13 @@ class PolyhedronRidgeProcessor : public PolyhedronProcessor, public RidgeBased {
   float get_bottom_offset() const { return _ridge_config.bottom_ridge_offset; }
 
  private:
-  // TODO fix possibility of zero
-  RidgePolyhedron *_polyhedron_mesh;
+  RidgePolyhedron &_ridge_polyhedron;
 
   std::vector<PolygonWrapper *> _meshes_wrapped;
 
   DiscreteVertexToDistance _distance_map;
 
-  // TODO fix possibility of zero
-  float _R_average{0};
-
-  void init(Polyhedron *polyhedron_mesh);
+  void init();
 
   void process_meshes();
   void set_neighbours();

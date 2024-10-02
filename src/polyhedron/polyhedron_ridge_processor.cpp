@@ -31,7 +31,8 @@
 
 namespace sota {
 
-PolyhedronRidgeProcessor::PolyhedronRidgeProcessor() {
+PolyhedronRidgeProcessor::PolyhedronRidgeProcessor(RidgePolyhedron& ridge_polyhedron)
+    : _ridge_polyhedron(ridge_polyhedron) {
   _ridge_config = RidgeConfig{
       .variation_min_bound = 0.0,
       .variation_max_bound = 0.02,
@@ -89,7 +90,7 @@ void PolyhedronRidgeProcessor::configure_pentagon(PolygonWrapper& wrapper, Biome
 
 void PolyhedronRidgeProcessor::set_neighbours() {
   int pentagon_cnt = 0;
-  for (auto& p : _polyhedron_mesh->_neighbours_map) {
+  for (auto& p : _ridge_polyhedron._neighbours_map) {
     int cur_id = p.first;
     std::set<int> neighbours_ids = p.second;
     auto cur_it = std::find_if(_meshes_wrapped.begin(), _meshes_wrapped.end(),
@@ -202,11 +203,11 @@ void PolyhedronRidgeProcessor::process_meshes() {
   // print_biomes();
 
   for (RidgeGroup& group : _mountain_groups) {
-    group.init_ridges(_distance_map, _ridge_config.top_ridge_offset, _polyhedron_mesh->_divisions);
+    group.init_ridges(_distance_map, _ridge_config.top_ridge_offset, _ridge_polyhedron._divisions);
   }
 
   for (RidgeGroup& group : _water_groups) {
-    group.init_ridges(_distance_map, _ridge_config.bottom_ridge_offset, _polyhedron_mesh->_divisions);
+    group.init_ridges(_distance_map, _ridge_config.bottom_ridge_offset, _ridge_polyhedron._divisions);
   }
 
   // initial heights calculation
@@ -223,7 +224,7 @@ void PolyhedronRidgeProcessor::process_meshes() {
   }
 
   float amplitude = global_max_y - global_min_y;
-  float compress = _polyhedron_mesh->_compression_factor / amplitude;
+  float compress = _ridge_polyhedron._compression_factor / amplitude;
   for (PolygonWrapper* wrapper : _meshes_wrapped) {
     RidgeMesh* ridge_mesh = dynamic_cast<RidgeMesh*>(wrapper->mesh().ptr());
     ridge_mesh->set_shift_compress(-global_min_y, compress);
@@ -234,28 +235,22 @@ void PolyhedronRidgeProcessor::process_meshes() {
     RidgeMesh* ridge_mesh = dynamic_cast<RidgeMesh*>(wrapper->mesh().ptr());
 
     float approx_diameter = _meshes_wrapped[0]->mesh()->inner_mesh()->get_R() * 2;
-    ridge_mesh->calculate_final_heights(_distance_map, approx_diameter, _polyhedron_mesh->_divisions);
+    ridge_mesh->calculate_final_heights(_distance_map, approx_diameter, _ridge_polyhedron._divisions);
     ridge_mesh->recalculate_all_except_vertices();
     ridge_mesh->update();
   }
 }
 
-void PolyhedronRidgeProcessor::init(Polyhedron* polyhedron) {
+void PolyhedronRidgeProcessor::init() {
   _meshes_wrapped.clear();
-  _polyhedron_mesh = dynamic_cast<RidgePolyhedron*>(polyhedron);
-  std::transform(polyhedron->_hexagons.begin(), polyhedron->_hexagons.end(), std::back_inserter(_meshes_wrapped),
-                 [](PolygonWrapper& wrapper) { return &wrapper; });
-  std::transform(polyhedron->_pentagons.begin(), polyhedron->_pentagons.end(), std::back_inserter(_meshes_wrapped),
-                 [](PolygonWrapper& wrapper) { return &wrapper; });
-
-  float all_r =
-      std::accumulate(_meshes_wrapped.begin(), _meshes_wrapped.end(), 0.0f,
-                      [](float acc, PolygonWrapper* wrapper) { return acc + wrapper->mesh()->inner_mesh()->get_R(); });
-  _R_average = all_r / _meshes_wrapped.size();
+  std::transform(_ridge_polyhedron._hexagons.begin(), _ridge_polyhedron._hexagons.end(),
+                 std::back_inserter(_meshes_wrapped), [](PolygonWrapper& wrapper) { return &wrapper; });
+  std::transform(_ridge_polyhedron._pentagons.begin(), _ridge_polyhedron._pentagons.end(),
+                 std::back_inserter(_meshes_wrapped), [](PolygonWrapper& wrapper) { return &wrapper; });
 }
 
 void PolyhedronRidgeProcessor::process(Polyhedron& polyhedron_mesh) {
-  init(&polyhedron_mesh);
+  init();
 
   process_meshes();
 }
