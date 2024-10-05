@@ -232,10 +232,13 @@ Vector3Array VolumeMeshProcessor::calculate_ridge_based_heights(
 
     float distance_to_ridge_projection = v.cross(crp).length() / crp.length();
     Vector3 approx_end = crp;
-    auto t = [](float to_border, float to_projection) { return to_border / (to_border + to_projection); };
+    auto t = [](float to_border, float to_projection) -> float { return to_border / (to_border + to_projection); };
     Vector3 direction = v.normalized() * (crp.length() - v.length() > 0 ? 1 : -1);
     float length = (approx_end - v).length();
     auto t_result = t(distance_to_border, distance_to_ridge_projection);
+
+    float n = ridge_noise.ptr() ? std::abs(ridge_noise->get_noise_3dv(vertices[i])) : 0;
+    t_result -= std::lerp(0.0f, n, t_result);
 
     // TODO add noise
     result.push_back(vertices[i] + t_result * direction * length);

@@ -27,7 +27,7 @@ void PolyhedronNoiseProcessor::configure_hexagon(PolygonWrapper& wrapper, Biome 
                                        .clip_options = ClipOptions{},
                                        .tesselation_mode = TesselationMode::Recursive,
                                        .orientation = Orientation::Polyhedron},
-      .plain_noise = noise_polyhedron->_noise,
+      .plain_noise = noise_polyhedron->_plain_noise,
       .ridge_noise = nullptr,
   };
 
@@ -50,7 +50,7 @@ void PolyhedronNoiseProcessor::configure_pentagon(PolygonWrapper& wrapper, Biome
                                                  .material = mat,
                                                  .tesselation_mode = TesselationMode::Recursive,
                                                  .orientation = Orientation::Polyhedron},
-      .plain_noise = noise_polyhedron->_noise,
+      .plain_noise = noise_polyhedron->_plain_noise,
       .ridge_noise = nullptr,
   };
 
