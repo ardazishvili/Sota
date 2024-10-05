@@ -25,9 +25,15 @@ void RidgeBasedPolyhedron::_bind_methods() {
                        &RidgeBasedPolyhedron::set_compression_factor);
   ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "compression_factor"), "set_compression_factor", "get_compression_factor");
 
-  ClassDB::bind_method(D_METHOD("get_noise"), &RidgeBasedPolyhedron::get_noise);
-  ClassDB::bind_method(D_METHOD("set_noise", "p_noise"), &RidgeBasedPolyhedron::set_noise);
-  ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "noise", PROPERTY_HINT_RESOURCE_TYPE, "Noise"), "set_noise", "get_noise");
+  ClassDB::bind_method(D_METHOD("get_plain_noise"), &RidgeBasedPolyhedron::get_plain_noise);
+  ClassDB::bind_method(D_METHOD("set_plain_noise", "p_noise"), &RidgeBasedPolyhedron::set_plain_noise);
+  ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "plain_noise", PROPERTY_HINT_RESOURCE_TYPE, "Noise"), "set_plain_noise",
+               "get_plain_noise");
+
+  ClassDB::bind_method(D_METHOD("get_ridge_noise"), &RidgeBasedPolyhedron::get_ridge_noise);
+  ClassDB::bind_method(D_METHOD("set_ridge_noise", "p_noise"), &RidgeBasedPolyhedron::set_ridge_noise);
+  ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "ridge_noise", PROPERTY_HINT_RESOURCE_TYPE, "Noise"), "set_ridge_noise",
+               "get_ridge_noise");
 }
 
 void RidgeBasedPolyhedron::set_smooth_normals(const bool p_smooth_normals) {
@@ -40,17 +46,26 @@ void RidgeBasedPolyhedron::set_compression_factor(const float p_compression_fact
   init();
 }
 
-void RidgeBasedPolyhedron::set_noise(const Ref<FastNoiseLite> p_noise) {
-  _noise = p_noise;
-  if (_noise.ptr()) {
-    _noise->connect("changed", Callable(this, "init"));
+void RidgeBasedPolyhedron::set_plain_noise(const Ref<FastNoiseLite> p_noise) {
+  _plain_noise = p_noise;
+  if (_plain_noise.ptr()) {
+    _plain_noise->connect("changed", Callable(this, "init"));
+    init();
+  }
+}
+
+void RidgeBasedPolyhedron::set_ridge_noise(const Ref<FastNoiseLite> p_noise) {
+  _ridge_noise = p_noise;
+  if (_ridge_noise.ptr()) {
+    _ridge_noise->connect("changed", Callable(this, "init"));
     init();
   }
 }
 
 bool RidgeBasedPolyhedron::get_smooth_normals() const { return _smooth_normals; }
 float RidgeBasedPolyhedron::get_compression_factor() const { return _compression_factor; }
-Ref<FastNoiseLite> RidgeBasedPolyhedron::get_noise() const { return _noise; }
+Ref<FastNoiseLite> RidgeBasedPolyhedron::get_plain_noise() const { return _plain_noise; }
+Ref<FastNoiseLite> RidgeBasedPolyhedron::get_ridge_noise() const { return _ridge_noise; }
 
 void RidgeBasedPolyhedron::calculate_normals() { SmoothShadesProcessor(meshes()).calculate_normals(_smooth_normals); }
 

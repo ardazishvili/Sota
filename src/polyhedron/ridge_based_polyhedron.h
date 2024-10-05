@@ -22,15 +22,19 @@ class RidgeBasedPolyhedron : public Polyhedron {
   void set_compression_factor(const float p_compression_factor);
   float get_compression_factor() const;
 
-  void set_noise(const Ref<FastNoiseLite> p_noise);
-  Ref<FastNoiseLite> get_noise() const;
+  void set_plain_noise(const Ref<FastNoiseLite> p_noise);
+  Ref<FastNoiseLite> get_plain_noise() const;
+
+  void set_ridge_noise(const Ref<FastNoiseLite> p_noise);
+  Ref<FastNoiseLite> get_ridge_noise() const;
 
   void set_smooth_normals(bool p_smooth_normals);
   bool get_smooth_normals() const;
 
  protected:
   float _compression_factor{0.1};
-  Ref<FastNoiseLite> _noise;
+  Ref<FastNoiseLite> _plain_noise;
+  Ref<FastNoiseLite> _ridge_noise;
 
   static void _bind_methods();
   void calculate_normals() override;

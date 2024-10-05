@@ -57,7 +57,6 @@ void RidgeMesh::calculate_corner_points_distances_to_border(DiscreteVertexToDist
   }
 
   auto corner_points = _mesh->base().points();
-  auto center = _mesh->base().center();
 
   PointToLineDistance_VectorMultBased calculator(get_exclude_border_set(), corner_points);
   float distance_to_border;

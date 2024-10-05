@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://bdxn6fvhokycx"]
+[gd_scene load_steps=17 format=3 uid="uid://bdxn6fvhokycx"]
 
 [ext_resource type="Shader" path="res://demo_polyhedron/shaders/polyhedron_biome.gdshader" id="1_cvwy6"]
 [ext_resource type="Texture2D" uid="uid://do00yjl6ipe16" path="res://demo_terrain/textures/water.png" id="2_psly8"]
@@ -19,9 +19,13 @@ sky = SubResource("Sky_d3euk")
 tonemap_mode = 2
 glow_enabled = true
 
-[sub_resource type="FastNoiseLite" id="FastNoiseLite_v8gcm"]
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_ehatv"]
 noise_type = 3
 frequency = 0.9713
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_retjv"]
+noise_type = 3
+frequency = 1.0
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_olqtu"]
 noise_type = 3
@@ -73,7 +77,8 @@ transform = Transform3D(-0.492469, 0, 0.87033, 0, 1, 0, -0.87033, 0, -0.492469, 
 [node name="RidgePolyhedronMesh" type="RidgePolyhedron" parent="."]
 _smooth_normals = true
 compression_factor = 0.215
-noise = SubResource("FastNoiseLite_v8gcm")
+plain_noise = SubResource("FastNoiseLite_ehatv")
+ridge_noise = SubResource("FastNoiseLite_retjv")
 patch_resolution = 5
 divisions = 3
 shader = ExtResource("1_cvwy6")
