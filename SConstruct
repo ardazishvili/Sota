@@ -8,6 +8,12 @@ env = SConscript("godot-cpp/SConstruct")
 env.Append(CXXFLAGS=["-std=c++20", "-g"])
 env.Append(CPPDEFINES=["SOTA_GDEXTENSION"])
 
+cppdefines = []
+for key, value in ARGLIST:
+    if key == 'define':
+        cppdefines.append(value)
+env.Append(CPPDEFINES=cppdefines)
+
 # Add source files.
 env.Append(CPPPATH=["."])
 env.Append(CPPPATH=["src"])

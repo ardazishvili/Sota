@@ -61,7 +61,7 @@ void PolyhedronRidgeProcessor::configure_hexagon(PolygonWrapper& wrapper, Biome 
   mi->set_mesh(ridge_mesh->inner_mesh());
 
   polyhedron.add_child(mi);
-  wrapper.set_mesh(ridge_mesh);
+  wrapper.set_mesh(ridge_mesh, &polyhedron);
   ++id;
 }
 
@@ -84,7 +84,7 @@ void PolyhedronRidgeProcessor::configure_pentagon(PolygonWrapper& wrapper, Biome
   mi->set_mesh(ridge_mesh->inner_mesh());
 
   polyhedron.add_child(mi);
-  wrapper.set_mesh(ridge_mesh);
+  wrapper.set_mesh(ridge_mesh, &polyhedron);
   ++id;
 }
 
