@@ -9,6 +9,7 @@
 
 #include "core/tile_mesh.h"  // for TileMesh
 #include "discretizer.h"
+#include "misc/dynamic_wrapper.h"
 #include "misc/types.h"  // for Biome
 #include "polygon.h"
 #include "polyhedron/polyhedron_mesh_processor.h"
@@ -17,7 +18,8 @@
 #include "polyhedron/polyhedron_ridge_processor.h"
 #include "primitives/hexagon.h"
 #include "primitives/pentagon.h"
-#include "tal/arrays.h"    // for Vector3Array
+#include "tal/arrays.h"  // for Vector3Array
+#include "tal/engine.h"
 #include "tal/material.h"  // for ShaderMaterial
 #include "tal/mesh.h"
 #include "tal/node.h"       // for Node3D
@@ -32,27 +34,34 @@ namespace sota {
 class Hexagon;
 class Pentagon;
 
-class PolygonWrapper {
+class PolygonWrapper : public Node3D {
  public:
   explicit PolygonWrapper(std::unique_ptr<RegularPolygon> polygon) : _id(CNT++), _polygon(std::move(polygon)) {}
+  ~PolygonWrapper() = default;
   PolygonWrapper(const PolygonWrapper& other) = delete;
   PolygonWrapper(PolygonWrapper&& other) = default;
   PolygonWrapper& operator=(const PolygonWrapper& other) = delete;
-  PolygonWrapper& operator=(PolygonWrapper&& other) = default;
+  PolygonWrapper& operator=(PolygonWrapper&& other) = delete;
 
   // getters
   RegularPolygon* polygon() { return _polygon.get(); }
-  Ref<TileMesh> mesh() { return _mesh; }
+  Ref<TileMesh> mesh() { return _tile_mesh; }
   int id() const { return _id; }
 
   // setters
-  void set_mesh(Ref<TileMesh> mesh) { _mesh = mesh; }
+  void set_mesh(Ref<TileMesh> tile_mesh, Node3D* parent) {
+    parent->add_child(this);
+    _tile_mesh = tile_mesh;
+    _mesh_instance_wrapper = memnew(DynamicWrapper(_tile_mesh->inner_mesh(), this));
+  }
 
  private:
   static int CNT;
   int _id;
   std::unique_ptr<RegularPolygon> _polygon;
-  Ref<TileMesh> _mesh;
+
+  Ref<TileMesh> _tile_mesh;
+  DynamicWrapper* _mesh_instance_wrapper;
 };
 
 class Polyhedron : public Node3D {
@@ -95,8 +104,8 @@ class Polyhedron : public Node3D {
   Ref<FastNoiseLite> _biomes_noise;
   std::unordered_map<Biome, Ref<Texture>> _texture;
 
-  std::vector<PolygonWrapper> _hexagons;
-  std::vector<PolygonWrapper> _pentagons;
+  std::vector<PolygonWrapper*> _hexagons;
+  std::vector<PolygonWrapper*> _pentagons;
 
   static void _bind_methods();
 
@@ -108,7 +117,7 @@ class Polyhedron : public Node3D {
   void init();
 
   template <typename T>
-  void process_ngons(std::vector<PolygonWrapper>& ngons, float min_z, float max_z);
+  void process_ngons(std::vector<PolygonWrapper*>& ngons, float min_z, float max_z);
 
  private:
   friend class PolyhedronRidgeProcessor;
@@ -119,12 +128,12 @@ class Polyhedron : public Node3D {
   int _patch_resolution{1};
   mutable std::map<int, std::set<int>> _neighbours_map;
 
-  std::pair<std::vector<PolygonWrapper>, std::vector<PolygonWrapper>> calculate_shapes() const;
+  std::pair<std::vector<PolygonWrapper*>, std::vector<PolygonWrapper*>> calculate_shapes() const;
 
   template <typename TGON>
   std::optional<PolygonWrapper*> insert_to_polygons(Vector3 start_point, float diameter, float R, float r, int i, int j,
                                                     Vector3Array icosahedron_points, Vector3i triangle,
-                                                    std::map<Vector3i, PolygonWrapper>& polygons) const;
+                                                    std::map<Vector3i, PolygonWrapper*>& polygons) const;
 
   void clear();
 };

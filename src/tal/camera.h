@@ -1,4 +1,3 @@
-
 #pragma once
 
 #ifdef SOTA_GDEXTENSION

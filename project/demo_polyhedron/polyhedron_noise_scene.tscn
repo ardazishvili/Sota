@@ -1,6 +1,6 @@
 [gd_scene load_steps=12 format=3 uid="uid://r54herf7ach2"]
 
-[ext_resource type="FastNoiseLite" uid="uid://hpxe5e8u2ccb" path="res://demo_polyhedron/polyhedron_noise_scene__noise.tres" id="1_17pyv"]
+[ext_resource type="FastNoiseLite" uid="uid://hpxe5e8u2ccb" path="res://demo_polyhedron/resources/polyhedron_noise_scene__noise.tres" id="1_17pyv"]
 [ext_resource type="Shader" path="res://demo_polyhedron/shaders/polyhedron_color.gdshader" id="1_d15u1"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_qjkvq"]
