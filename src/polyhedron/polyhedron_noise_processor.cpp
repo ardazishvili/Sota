@@ -37,7 +37,7 @@ void PolyhedronNoiseProcessor::configure_hexagon(PolygonWrapper& wrapper, Biome 
   mi->set_mesh(plain_mesh->inner_mesh());
 
   polyhedron.add_child(mi);
-  wrapper.set_mesh(plain_mesh);
+  wrapper.set_mesh(plain_mesh, &polyhedron);
   ++id;
 }
 
@@ -60,7 +60,7 @@ void PolyhedronNoiseProcessor::configure_pentagon(PolygonWrapper& wrapper, Biome
   mi->set_mesh(plain_mesh->inner_mesh());
 
   polyhedron.add_child(mi);
-  wrapper.set_mesh(plain_mesh);
+  wrapper.set_mesh(plain_mesh, &polyhedron);
   ++id;
 }
 

@@ -9,6 +9,7 @@
 
 #include "core/tile_mesh.h"  // for TileMesh
 #include "discretizer.h"
+#include "godot_cpp/core/memory.hpp"
 #include "misc/types.h"  // for Biome
 #include "polygon.h"
 #include "polyhedron/polyhedron_mesh_processor.h"
@@ -17,7 +18,8 @@
 #include "polyhedron/polyhedron_ridge_processor.h"
 #include "primitives/hexagon.h"
 #include "primitives/pentagon.h"
-#include "tal/arrays.h"    // for Vector3Array
+#include "tal/arrays.h"  // for Vector3Array
+#include "tal/engine.h"
 #include "tal/material.h"  // for ShaderMaterial
 #include "tal/mesh.h"
 #include "tal/node.h"       // for Node3D
@@ -38,21 +40,50 @@ class PolygonWrapper {
   PolygonWrapper(const PolygonWrapper& other) = delete;
   PolygonWrapper(PolygonWrapper&& other) = default;
   PolygonWrapper& operator=(const PolygonWrapper& other) = delete;
-  PolygonWrapper& operator=(PolygonWrapper&& other) = default;
+  PolygonWrapper& operator=(PolygonWrapper&& other) = delete;
 
   // getters
   RegularPolygon* polygon() { return _polygon.get(); }
-  Ref<TileMesh> mesh() { return _mesh; }
+  Ref<TileMesh> mesh() { return _tile_mesh; }
   int id() const { return _id; }
 
   // setters
-  void set_mesh(Ref<TileMesh> mesh) { _mesh = mesh; }
+  void set_mesh(Ref<TileMesh> tile_mesh, Node3D* parent) {
+    _tile_mesh = tile_mesh;
+
+    _mesh_instance = memnew(MeshInstance3D());
+    _sphere_shaped3d = Ref<SphereShape3D>(memnew(SphereShape3D()));
+    _collision_shape3d = memnew(CollisionShape3D());
+    _static_body = memnew(StaticBody3D());
+
+    _sphere_shaped3d->set_radius(_tile_mesh->inner_mesh()->get_R() * 2);
+    _collision_shape3d->set_shape(_sphere_shaped3d);
+    _mesh_instance->set_mesh(tile_mesh->inner_mesh());
+
+    parent->add_child(_mesh_instance);
+    _mesh_instance->add_child(_static_body);
+    _static_body->add_child(_collision_shape3d);
+
+#ifdef SOTA_ENGINE
+    Node* root_scene = EditorInterface::get_singleton()->get_edited_scene_root();
+    _mesh_instance->set_owner(root_scene);
+    // _static_body->set_owner(root_scene);
+    // _collision_shape3d->set_owner(root_scene);
+    // std::cout << "setting owner" << std::endl;
+#endif
+  }
 
  private:
   static int CNT;
   int _id;
   std::unique_ptr<RegularPolygon> _polygon;
-  Ref<TileMesh> _mesh;
+
+  Ref<SphereShape3D> _sphere_shaped3d{nullptr};
+  CollisionShape3D* _collision_shape3d{nullptr};
+  StaticBody3D* _static_body{nullptr};
+  MeshInstance3D* _mesh_instance{nullptr};
+
+  Ref<TileMesh> _tile_mesh;
 };
 
 class Polyhedron : public Node3D {

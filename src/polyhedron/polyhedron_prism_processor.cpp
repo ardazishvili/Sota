@@ -31,13 +31,11 @@ void PolyhedronPrismProcessor::configure_hexagon(PolygonWrapper& wrapper, Biome 
                                                              .orientation = Orientation::Polyhedron},
                             .height = prism_polyhedron._prism_heights[biome]};
 
-  auto* mi = memnew(MeshInstance3D());
   auto& hex = *dynamic_cast<Hexagon*>(wrapper.polygon());
   Ref<PrismHexTile> prism_tile = Ref<PrismHexTile>(memnew(PrismHexTile(hex, params)));
-  mi->set_mesh(prism_tile->inner_mesh());
 
-  polyhedron.add_child(mi);
-  wrapper.set_mesh(prism_tile);
+  wrapper.set_mesh(prism_tile, &polyhedron);
+  // polyhedron.add_child(&wrapper);
   ++id;
 }
 
@@ -51,13 +49,11 @@ void PolyhedronPrismProcessor::configure_pentagon(PolygonWrapper& wrapper, Biome
                                                                     .orientation = Orientation::Polyhedron},
                              .height = prism_polyhedron._prism_heights[biome]};
 
-  auto* mi = memnew(MeshInstance3D());
   auto& pentagon = *dynamic_cast<Pentagon*>(wrapper.polygon());
   Ref<PrismPentTile> prism_tile = Ref<PrismPentTile>(memnew(PrismPentTile(pentagon, params)));
-  mi->set_mesh(prism_tile->inner_mesh());
 
-  polyhedron.add_child(mi);
-  wrapper.set_mesh(prism_tile);
+  wrapper.set_mesh(prism_tile, &polyhedron);
+  // polyhedron.add_child(&wrapper);
   ++id;
 }
 
