@@ -72,9 +72,9 @@ void RidgeBasedPolyhedron::calculate_normals() { SmoothShadesProcessor(meshes())
 std::vector<TileMesh*> RidgeBasedPolyhedron::meshes() {
   std::vector<TileMesh*> res;
   std::transform(_hexagons.begin(), _hexagons.end(), std::back_inserter(res),
-                 [](PolygonWrapper& wrapper) { return wrapper.mesh().ptr(); });
+                 [](PolygonWrapper* wrapper) { return wrapper->mesh().ptr(); });
   std::transform(_pentagons.begin(), _pentagons.end(), std::back_inserter(res),
-                 [](PolygonWrapper& wrapper) { return wrapper.mesh().ptr(); });
+                 [](PolygonWrapper* wrapper) { return wrapper->mesh().ptr(); });
   return res;
 }
 

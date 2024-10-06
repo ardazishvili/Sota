@@ -31,13 +31,10 @@ void PolyhedronNoiseProcessor::configure_hexagon(PolygonWrapper& wrapper, Biome 
       .ridge_noise = nullptr,
   };
 
-  auto* mi = memnew(MeshInstance3D());
   auto& hex = *dynamic_cast<Hexagon*>(wrapper.polygon());
   Ref<PlainMesh> plain_mesh = make_ridge_hex_mesh<PlainMesh>(hex, params);
-  mi->set_mesh(plain_mesh->inner_mesh());
 
-  polyhedron.add_child(mi);
-  wrapper.set_mesh(plain_mesh);
+  wrapper.set_mesh(plain_mesh, &polyhedron);
   ++id;
 }
 
@@ -54,13 +51,10 @@ void PolyhedronNoiseProcessor::configure_pentagon(PolygonWrapper& wrapper, Biome
       .ridge_noise = nullptr,
   };
 
-  auto* mi = memnew(MeshInstance3D());
   auto& pentagon = *dynamic_cast<Pentagon*>(wrapper.polygon());
   Ref<PlainMesh> plain_mesh = make_ridge_pentagon_mesh<PlainMesh>(pentagon, params);
-  mi->set_mesh(plain_mesh->inner_mesh());
 
-  polyhedron.add_child(mi);
-  wrapper.set_mesh(plain_mesh);
+  wrapper.set_mesh(plain_mesh, &polyhedron);
   ++id;
 }
 
@@ -101,9 +95,9 @@ void PolyhedronNoiseProcessor::process(Polyhedron& polyhedron) {
   std::vector<Ref<TileMesh>> all_meshes;
 
   std::transform(polyhedron._hexagons.begin(), polyhedron._hexagons.end(), std::back_inserter(all_meshes),
-                 [](PolygonWrapper& wrapper) { return wrapper.mesh(); });
+                 [](PolygonWrapper* wrapper) { return wrapper->mesh(); });
   std::transform(polyhedron._pentagons.begin(), polyhedron._pentagons.end(), std::back_inserter(all_meshes),
-                 [](PolygonWrapper& wrapper) { return wrapper.mesh(); });
+                 [](PolygonWrapper* wrapper) { return wrapper->mesh(); });
 
   process_meshes(polyhedron, all_meshes);
 }
