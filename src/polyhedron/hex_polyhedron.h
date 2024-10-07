@@ -10,6 +10,7 @@
 #include "core/tile_mesh.h"  // for TileMesh
 #include "discretizer.h"
 #include "godot_cpp/core/memory.hpp"
+#include "misc/mesh_instance_wrapper.h"
 #include "misc/types.h"  // for Biome
 #include "polygon.h"
 #include "polyhedron/polyhedron_mesh_processor.h"
@@ -50,27 +51,7 @@ class PolygonWrapper {
   // setters
   void set_mesh(Ref<TileMesh> tile_mesh, Node3D* parent) {
     _tile_mesh = tile_mesh;
-
-    _mesh_instance = memnew(MeshInstance3D());
-    _sphere_shaped3d = Ref<SphereShape3D>(memnew(SphereShape3D()));
-    _collision_shape3d = memnew(CollisionShape3D());
-    _static_body = memnew(StaticBody3D());
-
-    _sphere_shaped3d->set_radius(_tile_mesh->inner_mesh()->get_R() * 2);
-    _collision_shape3d->set_shape(_sphere_shaped3d);
-    _mesh_instance->set_mesh(tile_mesh->inner_mesh());
-
-    parent->add_child(_mesh_instance);
-    _mesh_instance->add_child(_static_body);
-    _static_body->add_child(_collision_shape3d);
-
-#ifdef SOTA_ENGINE
-    Node* root_scene = EditorInterface::get_singleton()->get_edited_scene_root();
-    _mesh_instance->set_owner(root_scene);
-    // _static_body->set_owner(root_scene);
-    // _collision_shape3d->set_owner(root_scene);
-    // std::cout << "setting owner" << std::endl;
-#endif
+    _mesh_instance_wrapper = memnew(MeshInstanceWrapper(_tile_mesh->inner_mesh(), parent));
   }
 
  private:
@@ -84,6 +65,7 @@ class PolygonWrapper {
   MeshInstance3D* _mesh_instance{nullptr};
 
   Ref<TileMesh> _tile_mesh;
+  MeshInstanceWrapper* _mesh_instance_wrapper;
 };
 
 class Polyhedron : public Node3D {

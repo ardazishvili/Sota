@@ -7,6 +7,7 @@
 #include "honeycomb/honeycomb.h"
 #include "honeycomb/honeycomb_cell.h"
 #include "honeycomb/honeycomb_honey.h"
+#include "misc/mesh_instance_wrapper.h"
 #include "polyhedron/hex_polyhedron.h"
 #include "polyhedron/noise_polyhedron.h"
 #include "polyhedron/prism_polyhedron.h"
@@ -70,6 +71,9 @@ void initialize_Sota_module(ModuleInitializationLevel p_level) {
   GDREGISTER_CLASS(sota::PrismPolyhedron);
   GDREGISTER_CLASS(sota::NoisePolyhedron);
   GDREGISTER_CLASS(sota::RidgePolyhedron);
+
+  // other
+  GDREGISTER_ABSTRACT_CLASS(sota::MeshInstanceWrapper);
 }
 
 void uninitialize_Sota_module(ModuleInitializationLevel p_level) {
