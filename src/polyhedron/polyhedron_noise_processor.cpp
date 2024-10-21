@@ -101,9 +101,9 @@ void PolyhedronNoiseProcessor::process(Polyhedron& polyhedron) {
   std::vector<Ref<TileMesh>> all_meshes;
 
   std::transform(polyhedron._hexagons.begin(), polyhedron._hexagons.end(), std::back_inserter(all_meshes),
-                 [](PolygonWrapper& wrapper) { return wrapper.mesh(); });
+                 [](PolygonWrapper* wrapper) { return wrapper->mesh(); });
   std::transform(polyhedron._pentagons.begin(), polyhedron._pentagons.end(), std::back_inserter(all_meshes),
-                 [](PolygonWrapper& wrapper) { return wrapper.mesh(); });
+                 [](PolygonWrapper* wrapper) { return wrapper->mesh(); });
 
   process_meshes(polyhedron, all_meshes);
 }

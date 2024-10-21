@@ -244,9 +244,9 @@ void PolyhedronRidgeProcessor::process_meshes() {
 void PolyhedronRidgeProcessor::init() {
   _meshes_wrapped.clear();
   std::transform(_ridge_polyhedron._hexagons.begin(), _ridge_polyhedron._hexagons.end(),
-                 std::back_inserter(_meshes_wrapped), [](PolygonWrapper& wrapper) { return &wrapper; });
+                 std::back_inserter(_meshes_wrapped), [](PolygonWrapper* wrapper) { return wrapper; });
   std::transform(_ridge_polyhedron._pentagons.begin(), _ridge_polyhedron._pentagons.end(),
-                 std::back_inserter(_meshes_wrapped), [](PolygonWrapper& wrapper) { return &wrapper; });
+                 std::back_inserter(_meshes_wrapped), [](PolygonWrapper* wrapper) { return wrapper; });
 }
 
 void PolyhedronRidgeProcessor::process(Polyhedron& polyhedron_mesh) {

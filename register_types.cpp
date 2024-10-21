@@ -73,7 +73,7 @@ void initialize_Sota_module(ModuleInitializationLevel p_level) {
   GDREGISTER_CLASS(sota::RidgePolyhedron);
 
   // other
-  GDREGISTER_ABSTRACT_CLASS(sota::MeshInstanceWrapper);
+  GDREGISTER_CLASS(sota::MeshInstanceWrapper);
 }
 
 void uninitialize_Sota_module(ModuleInitializationLevel p_level) {
