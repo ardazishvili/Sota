@@ -16,6 +16,11 @@ namespace sota {
 class PrismPolyhedron : public Polyhedron {
   GDCLASS(PrismPolyhedron, Polyhedron)
  public:
+  PrismPolyhedron(const PrismPolyhedron& other) = delete;
+  PrismPolyhedron(PrismPolyhedron&& other) = delete;
+  // copying operator= defined inside GDCLASS
+  PrismPolyhedron& operator=(PrismPolyhedron&& other) = delete;
+
   PrismPolyhedron() : Polyhedron() {
     _prism_heights[Biome::WATER] = 0.0;
     _prism_heights[Biome::PLAIN] = 0.02;

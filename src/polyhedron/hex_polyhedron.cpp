@@ -14,6 +14,7 @@
 #include "core/utils.h"        // for map2d_to_3d, ico_in...
 #include "cube_coordinates.h"
 #include "discretizer.h"
+#include "godot_cpp/core/memory.hpp"
 #include "misc/biome_calculator.h"  // for BiomeCalculator
 #include "misc/types.h"             // for Biome, Biome::HILL
 #include "polygon.h"
@@ -103,8 +104,8 @@ void Polyhedron::set_biomes_noise(const Ref<FastNoiseLite> p_biomes_noise) {
   _biomes_noise = p_biomes_noise;
   if (_biomes_noise.ptr()) {
     _biomes_noise->connect("changed", Callable(this, "init"));
-    init();
   }
+  init();
 }
 
 // TODO: textures code copypasted from RidgeHexGridMap
@@ -141,7 +142,7 @@ template <typename TGON>
 std::optional<PolygonWrapper*> Polyhedron::insert_to_polygons(Vector3 start_point, float diameter, float R, float r,
                                                               int i, int j, Vector3Array icosahedron_points,
                                                               Vector3i triangle,
-                                                              std::map<Vector3i, PolygonWrapper>& polygons) const {
+                                                              std::map<Vector3i, PolygonWrapper*>& polygons) const {
   float key_step = r / 3.0;
   auto f1 = [](float x) -> float { return sqrt(3) * x + sqrt(3) / 2; };
   auto f2 = [](float x) -> float { return -sqrt(3) * x + sqrt(3) / 2; };
@@ -163,10 +164,10 @@ std::optional<PolygonWrapper*> Polyhedron::insert_to_polygons(Vector3 start_poin
 
   if (polygons.find(key) == polygons.end()) {
     polygons.insert(
-        std::make_pair(key, PolygonWrapper(std::make_unique<TGON>(mapped_center, mapped_center.normalized()))));
+        std::make_pair(key, memnew(PolygonWrapper(std::make_unique<TGON>(mapped_center, mapped_center.normalized())))));
   }
-  PolygonWrapper& wrapper = polygons.find(key)->second;
-  RegularPolygon* polygon = wrapper.polygon();
+  PolygonWrapper* wrapper = polygons.find(key)->second;
+  RegularPolygon* polygon = wrapper->polygon();
   for (float angle = -PI / 6, k = 0; k < 6; k++, angle += PI / 3) {
     Vector3 point(center.x + cos(angle) * R, 0, center.z + sin(angle) * R);
     if (!out_of_triangle(point.x, point.z)) {
@@ -174,10 +175,10 @@ std::optional<PolygonWrapper*> Polyhedron::insert_to_polygons(Vector3 start_poin
                                      icosahedron_points[triangle.y], icosahedron_points[triangle.z]));
     }
   }
-  return &wrapper;
+  return wrapper;
 }
 
-std::pair<std::vector<PolygonWrapper>, std::vector<PolygonWrapper>> Polyhedron::calculate_shapes() const {
+std::pair<std::vector<PolygonWrapper*>, std::vector<PolygonWrapper*>> Polyhedron::calculate_shapes() const {
   float r = (1.0 / 2) / (_patch_resolution + 1);
   float R = r * 2 / sqrt(3);
   float diameter = 2 * R;
@@ -191,8 +192,8 @@ std::pair<std::vector<PolygonWrapper>, std::vector<PolygonWrapper>> Polyhedron::
             (j == 0 || j == (_patch_resolution + 1)));  // first and last points of first row are centers of pentagon
   };
 
-  std::map<Vector3i, PolygonWrapper> hexagon_map;
-  std::map<Vector3i, PolygonWrapper> pentagon_map;
+  std::map<Vector3i, PolygonWrapper*> hexagon_map;
+  std::map<Vector3i, PolygonWrapper*> pentagon_map;
   std::map<CubeCoordinates, PolygonWrapper*> cube_to_discrete_vertex;
   for (int t = 0; t < 20; ++t) {
     cube_to_discrete_vertex.clear();
@@ -234,40 +235,40 @@ std::pair<std::vector<PolygonWrapper>, std::vector<PolygonWrapper>> Polyhedron::
     printerr("Condition 'pentagon count == 12' is not true");
   }
 
-  std::vector<PolygonWrapper> hexagons_wrapped;
+  std::vector<PolygonWrapper*> hexagons_wrapped;
   for (auto it = hexagon_map.begin(); it != hexagon_map.end(); ++it) {
-    PolygonWrapper& wrapper = it->second;
-    wrapper.polygon()->check();
-    wrapper.polygon()->sort_points();
-    hexagons_wrapped.push_back(std::move(wrapper));
+    PolygonWrapper* wrapper = it->second;
+    wrapper->polygon()->check();
+    wrapper->polygon()->sort_points();
+    hexagons_wrapped.push_back(wrapper);
   }
 
-  std::vector<PolygonWrapper> pentagons_wrapped;
+  std::vector<PolygonWrapper*> pentagons_wrapped;
   for (auto it = pentagon_map.begin(); it != pentagon_map.end(); ++it) {
-    PolygonWrapper& wrapper = it->second;
-    wrapper.polygon()->check();
-    wrapper.polygon()->sort_points();
-    pentagons_wrapped.push_back(std::move(wrapper));
+    PolygonWrapper* wrapper = it->second;
+    wrapper->polygon()->check();
+    wrapper->polygon()->sort_points();
+    pentagons_wrapped.push_back(wrapper);
   }
 
-  return std::make_pair(std::move(hexagons_wrapped), std::move(pentagons_wrapped));
+  return std::make_pair(hexagons_wrapped, pentagons_wrapped);
 }
 
 void Polyhedron::clear() {
+  clean_children(*this);
+
   _hexagons.clear();
   _pentagons.clear();
   _neighbours_map.clear();
-
-  clean_children(*this);
 }
 
 template <typename T>
-void Polyhedron::process_ngons(std::vector<PolygonWrapper>& ngons, float min_z, float max_z) {
+void Polyhedron::process_ngons(std::vector<PolygonWrapper*>& ngons, float min_z, float max_z) {
   int id = 0;
   std::unordered_map<int, float> altitudes;
-  for (PolygonWrapper& ngon : ngons) {
+  for (PolygonWrapper* ngon : ngons) {
     if (_biomes_noise.ptr()) {
-      altitudes[id] = _biomes_noise->get_noise_3dv(ngon.polygon()->center());
+      altitudes[id] = _biomes_noise->get_noise_3dv(ngon->polygon()->center());
     } else {
       altitudes[id] = 0;
     }
@@ -281,7 +282,7 @@ void Polyhedron::process_ngons(std::vector<PolygonWrapper>& ngons, float min_z, 
 
   id = 0;
   BiomeCalculator biome_calculator;
-  for (PolygonWrapper& ngon : ngons) {
+  for (PolygonWrapper* ngon : ngons) {
     Biome biome = biome_calculator.calculate_biome(min_z, max_z, altitudes[id]);
 
     Ref<ShaderMaterial> mat;
@@ -300,9 +301,9 @@ void Polyhedron::process_ngons(std::vector<PolygonWrapper>& ngons, float min_z, 
     set_material_parameters(mat);
 
     if constexpr (std::is_same_v<T, Hexagon>) {
-      configure_hexagon(ngon, biome, id, mat);
+      configure_hexagon(*ngon, biome, id, mat);
     } else {
-      configure_pentagon(ngon, biome, id, mat);
+      configure_pentagon(*ngon, biome, id, mat);
     }
   }
 }
@@ -310,9 +311,9 @@ void Polyhedron::process_ngons(std::vector<PolygonWrapper>& ngons, float min_z, 
 void Polyhedron::init() {
   clear();
 
-  std::pair<std::vector<PolygonWrapper>, std::vector<PolygonWrapper>> shapes = std::move(calculate_shapes());
-  _hexagons = std::move(shapes.first);
-  _pentagons = std::move(shapes.second);
+  std::pair<std::vector<PolygonWrapper*>, std::vector<PolygonWrapper*>> shapes = std::move(calculate_shapes());
+  _hexagons = shapes.first;
+  _pentagons = shapes.second;
 
   float min_z = std::numeric_limits<float>::max();
   float max_z = std::numeric_limits<float>::min();

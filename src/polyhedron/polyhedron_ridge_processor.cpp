@@ -61,7 +61,7 @@ void PolyhedronRidgeProcessor::configure_hexagon(PolygonWrapper& wrapper, Biome 
   mi->set_mesh(ridge_mesh->inner_mesh());
 
   polyhedron.add_child(mi);
-  wrapper.set_mesh(ridge_mesh);
+  wrapper.set_mesh(ridge_mesh, &polyhedron);
   ++id;
 }
 
@@ -84,7 +84,7 @@ void PolyhedronRidgeProcessor::configure_pentagon(PolygonWrapper& wrapper, Biome
   mi->set_mesh(ridge_mesh->inner_mesh());
 
   polyhedron.add_child(mi);
-  wrapper.set_mesh(ridge_mesh);
+  wrapper.set_mesh(ridge_mesh, &polyhedron);
   ++id;
 }
 
@@ -244,9 +244,9 @@ void PolyhedronRidgeProcessor::process_meshes() {
 void PolyhedronRidgeProcessor::init() {
   _meshes_wrapped.clear();
   std::transform(_ridge_polyhedron._hexagons.begin(), _ridge_polyhedron._hexagons.end(),
-                 std::back_inserter(_meshes_wrapped), [](PolygonWrapper& wrapper) { return &wrapper; });
+                 std::back_inserter(_meshes_wrapped), [](PolygonWrapper* wrapper) { return wrapper; });
   std::transform(_ridge_polyhedron._pentagons.begin(), _ridge_polyhedron._pentagons.end(),
-                 std::back_inserter(_meshes_wrapped), [](PolygonWrapper& wrapper) { return &wrapper; });
+                 std::back_inserter(_meshes_wrapped), [](PolygonWrapper* wrapper) { return wrapper; });
 }
 
 void PolyhedronRidgeProcessor::process(Polyhedron& polyhedron_mesh) {

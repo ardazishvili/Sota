@@ -37,7 +37,7 @@ void PolyhedronNoiseProcessor::configure_hexagon(PolygonWrapper& wrapper, Biome 
   mi->set_mesh(plain_mesh->inner_mesh());
 
   polyhedron.add_child(mi);
-  wrapper.set_mesh(plain_mesh);
+  wrapper.set_mesh(plain_mesh, &polyhedron);
   ++id;
 }
 
@@ -60,7 +60,7 @@ void PolyhedronNoiseProcessor::configure_pentagon(PolygonWrapper& wrapper, Biome
   mi->set_mesh(plain_mesh->inner_mesh());
 
   polyhedron.add_child(mi);
-  wrapper.set_mesh(plain_mesh);
+  wrapper.set_mesh(plain_mesh, &polyhedron);
   ++id;
 }
 
@@ -101,9 +101,9 @@ void PolyhedronNoiseProcessor::process(Polyhedron& polyhedron) {
   std::vector<Ref<TileMesh>> all_meshes;
 
   std::transform(polyhedron._hexagons.begin(), polyhedron._hexagons.end(), std::back_inserter(all_meshes),
-                 [](PolygonWrapper& wrapper) { return wrapper.mesh(); });
+                 [](PolygonWrapper* wrapper) { return wrapper->mesh(); });
   std::transform(polyhedron._pentagons.begin(), polyhedron._pentagons.end(), std::back_inserter(all_meshes),
-                 [](PolygonWrapper& wrapper) { return wrapper.mesh(); });
+                 [](PolygonWrapper* wrapper) { return wrapper->mesh(); });
 
   process_meshes(polyhedron, all_meshes);
 }

@@ -1,22 +1,29 @@
-[gd_scene load_steps=7 format=3 uid="uid://rpx4ec8rasko"]
+[gd_scene load_steps=4 format=3 uid="uid://rpx4ec8rasko"]
 
-[ext_resource type="Shader" path="res://demo_polyhedron/shaders/polyhedron.gdshader" id="1_08kja"]
-[ext_resource type="Texture2D" uid="uid://bvxlp0glm71l" path="res://demo_polyhedron/textures/water.png" id="2_vju66"]
-[ext_resource type="Texture2D" uid="uid://0bxhi1aa1xfw" path="res://demo_polyhedron/textures/plain.png" id="3_f5o7l"]
-[ext_resource type="Texture2D" uid="uid://olwh45ciau2a" path="res://demo_polyhedron/textures/hill.png" id="4_a0ty3"]
-[ext_resource type="Texture2D" uid="uid://cgkvja8dj8r3" path="res://demo_polyhedron/textures/mountain.png" id="5_m10w4"]
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_yn6fb"]
+sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+ground_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
 
-[sub_resource type="FastNoiseLite" id="FastNoiseLite_sn14i"]
-noise_type = 3
-frequency = 0.7
+[sub_resource type="Sky" id="Sky_e76ax"]
+sky_material = SubResource("ProceduralSkyMaterial_yn6fb")
+
+[sub_resource type="Environment" id="Environment_kltmw"]
+background_mode = 2
+sky = SubResource("Sky_e76ax")
+tonemap_mode = 2
+glow_enabled = true
 
 [node name="Node3D" type="Node3D"]
 
-[node name="PolyhedronMesh" type="PrismPolyhedron" parent="."]
-patch_resolution = 5
-shader = ExtResource("1_08kja")
-noise_biomes = SubResource("FastNoiseLite_sn14i")
-texture_water = ExtResource("2_vju66")
-texture_plain = ExtResource("3_f5o7l")
-texture_hill = ExtResource("4_a0ty3")
-texture_mountain = ExtResource("5_m10w4")
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_kltmw")
+
+[node name="Camera3D" type="Camera3D" parent="WorldEnvironment"]
+transform = Transform3D(0.00904356, -0.496641, 0.867909, 0.00517469, 0.867956, 0.496614, -0.999946, -3.63191e-10, 0.0104194, 3.54614, 2.11861, 0.139779)
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.866024, -0.433016, 0.250001, 0, 0.499998, 0.866026, -0.500003, 0.749999, -0.43301, 1.08642, 4.13625, -3.53697)
+shadow_enabled = true
+
+[node name="PrismPolyhedron" type="PrismPolyhedron" parent="."]
+patch_resolution = 2
