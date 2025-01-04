@@ -17,22 +17,23 @@ See Getting Started section in left sidebar
    :maxdepth: 1
    :caption: Getting Started
 
-   content/getting_started/introduction
+   content/getting_started/introduction.md
    content/getting_started/build.md
-   content/getting_started/structures
-   content/getting_started/api_usage_example
+   content/getting_started/modules.md
+   content/getting_started/api_usage_example.md
 
 .. toctree::
    :maxdepth: 1
    :caption: Design notes
 
-   content/design_notes/terrain
+   content/design_notes/terrain.md
+   content/design_notes/tesselation_type.md
 
 .. toctree::
    :maxdepth: 1
    :caption: Architecture
 
-   content/arch/tal
+   content/arch/tal.md
 
 .. toctree::
    :maxdepth: 2
