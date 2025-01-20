@@ -1,5 +1,6 @@
 [gd_scene load_steps=12 format=3 uid="uid://r54herf7ach2"]
 
+[ext_resource type="FastNoiseLite" uid="uid://hpxe5e8u2ccb" path="res://demo_polyhedron/polyhedron_noise_scene__noise.tres" id="1_17pyv"]
 [ext_resource type="Shader" path="res://demo_polyhedron/shaders/polyhedron_color.gdshader" id="1_d15u1"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_qjkvq"]
@@ -14,10 +15,6 @@ background_mode = 2
 sky = SubResource("Sky_d3euk")
 tonemap_mode = 2
 glow_enabled = true
-
-[sub_resource type="FastNoiseLite" id="FastNoiseLite_v8gcm"]
-noise_type = 3
-frequency = 0.8716
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_olqtu"]
 noise_type = 3
@@ -68,12 +65,12 @@ transform = Transform3D(-0.492469, 0, 0.87033, 0, 1, 0, -0.87033, 0, -0.492469, 
 
 [node name="NoisePolyhedronMesh" type="NoisePolyhedron" parent="."]
 _smooth_normals = true
-compression_factor = 0.225
-noise = SubResource("FastNoiseLite_v8gcm")
+compression_factor = 0.24
+plain_noise = ExtResource("1_17pyv")
 patch_resolution = 10
+divisions = 4
 shader = ExtResource("1_d15u1")
 noise_biomes = SubResource("FastNoiseLite_olqtu")
 
 [node name="water_sphere" type="MeshInstance3D" parent="."]
-visible = false
 mesh = SubResource("SphereMesh_ybalp")

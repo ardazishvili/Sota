@@ -6,7 +6,7 @@ uniform float mountain_height = 0.13;
 
 const vec3 shore_color = vec3(251, 251, 255) / 255.0;
 const vec3 shore_top_color = vec3(131, 142, 131) / 255.0;
-const vec3 mountain_color = vec3(29, 32, 31) / 255.0;
+const vec3 mountain_color = vec3(29, 32, 0) / 255.0;
 
 const float polyhedron_R = 1.0; // hardcode
 
