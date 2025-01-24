@@ -1,10 +1,11 @@
-[gd_scene load_steps=10 format=3 uid="uid://rpx4ec8rasko"]
+[gd_scene load_steps=11 format=3 uid="uid://rpx4ec8rasko"]
 
 [ext_resource type="Shader" path="res://demo_polyhedron/shaders/polyhedron.gdshader" id="1_08kja"]
 [ext_resource type="Texture2D" uid="uid://bvxlp0glm71l" path="res://demo_polyhedron/textures/water.png" id="2_vju66"]
 [ext_resource type="Texture2D" uid="uid://0bxhi1aa1xfw" path="res://demo_polyhedron/textures/plain.png" id="3_f5o7l"]
 [ext_resource type="Texture2D" uid="uid://olwh45ciau2a" path="res://demo_polyhedron/textures/hill.png" id="4_a0ty3"]
 [ext_resource type="Texture2D" uid="uid://cgkvja8dj8r3" path="res://demo_polyhedron/textures/mountain.png" id="5_m10w4"]
+[ext_resource type="Script" path="res://demo_polyhedron/polyhedron_mesh.gd" id="6_uk1pc"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_qo1t7"]
 sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
@@ -40,6 +41,7 @@ texture_water = ExtResource("2_vju66")
 texture_plain = ExtResource("3_f5o7l")
 texture_hill = ExtResource("4_a0ty3")
 texture_mountain = ExtResource("5_m10w4")
+script = ExtResource("6_uk1pc")
 
 [node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.807712, 0.589577, 0, -0.589577, 0.807712, 0, 2.45866, 3.10374)
+transform = Transform3D(1, 0, 0, 0, 0.807712, 0.589577, 0, -0.589577, 0.807712, 0, 1.85662, 2.414)

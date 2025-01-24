@@ -1,10 +1,11 @@
-[gd_scene load_steps=17 format=3 uid="uid://bdxn6fvhokycx"]
+[gd_scene load_steps=18 format=3 uid="uid://bdxn6fvhokycx"]
 
 [ext_resource type="Shader" path="res://demo_polyhedron/shaders/polyhedron_biome.gdshader" id="1_cvwy6"]
 [ext_resource type="Texture2D" uid="uid://do00yjl6ipe16" path="res://demo_terrain/textures/water.png" id="2_psly8"]
 [ext_resource type="Texture2D" uid="uid://480r6dmk61dl" path="res://demo_terrain/textures/grass0.png" id="3_1r3in"]
 [ext_resource type="Texture2D" uid="uid://cdx7ceoux78g0" path="res://demo_terrain/textures/yellow_grass.png" id="3_du0fe"]
 [ext_resource type="Texture2D" uid="uid://ba6285rpeyj4l" path="res://demo_terrain/textures/snow.png" id="4_admok"]
+[ext_resource type="Script" path="res://demo_polyhedron/ridge_polyhedron_mesh.gd" id="6_n245r"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_qjkvq"]
 sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
@@ -74,6 +75,9 @@ environment = SubResource("Environment_3pfmk")
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="WorldEnvironment"]
 transform = Transform3D(-0.492469, 0, 0.87033, 0, 1, 0, -0.87033, 0, -0.492469, 3.37515, 2.69147, -2.22673)
 
+[node name="Camera3D" type="Camera3D" parent="WorldEnvironment"]
+transform = Transform3D(-1, -4.8379e-08, 7.28163e-08, 0, 0.832921, 0.553392, -8.74228e-08, 0.553392, -0.832921, 0, 1.374, -2.414)
+
 [node name="RidgePolyhedronMesh" type="RidgePolyhedron" parent="."]
 _smooth_normals = true
 compression_factor = 0.215
@@ -87,6 +91,7 @@ texture_water = ExtResource("2_psly8")
 texture_plain = ExtResource("3_du0fe")
 texture_hill = ExtResource("3_1r3in")
 texture_mountain = ExtResource("4_admok")
+script = ExtResource("6_n245r")
 
 [node name="water_sphere" type="MeshInstance3D" parent="."]
 mesh = SubResource("SphereMesh_ybalp")

@@ -1,9 +1,20 @@
 Ridge-based terrain
 ==============
 
-## Main entities 
+## Features
 
-### Neighbours, ridges and borders
+1. Different types of tiles: plain, hill, water, mountain. Easy to add new type.
+2. Adjustable number of rows/columns of terrain.
+3. Adjustable boundaries: top of mountains, bottom of water, hill level.
+4. Adjustable curvature of mountains.
+5. Adjustable tessellation level of hexagons.
+6. Possible to clip first/last row/column to make terrain rectangular
+7. Separate noises to make:
+   - Different configuration of terrain types.
+   - Shapes of mountain/water tiles
+   - Shapes of hill/plain tiles
+
+## Neighbours, ridges and borders
 
 Each hexagon may have up to 6 neighbours. It doesn't matter for some types, e.g. "plain" and "hill", and does matter for other, i.e. "moutain" and "water". Ridges are calculated based on neighbours and their configuration
 

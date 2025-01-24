@@ -27,6 +27,7 @@ See Getting Started section in left sidebar
    :caption: Design notes
 
    content/design_notes/terrain.md
+   content/design_notes/honeycomb.md
    content/design_notes/tesselation_type.md
    content/design_notes/module_vs_gdextension.md
 
