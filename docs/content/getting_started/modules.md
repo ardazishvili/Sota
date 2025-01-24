@@ -34,6 +34,10 @@ There are 2 types polyhedron. Each type contain 12 pentagons.
 
     ![ridge_based_polyhedron](/pics/ridge_polyhedron_object.png)
 
+* Noise-based. Uses ridge-based terrain. Only plain tiles are used.
+
+    ![noise_based_polyhedron](/pics/noise_polyhedron_object.png)
+
 * Prism-based. Uses prism-based terrain.
 
     ![prism_based_polyhedron](/pics/prism_polyhedron_object.png)

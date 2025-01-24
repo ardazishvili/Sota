@@ -1,7 +1,8 @@
-[gd_scene load_steps=12 format=3 uid="uid://r54herf7ach2"]
+[gd_scene load_steps=13 format=3 uid="uid://r54herf7ach2"]
 
 [ext_resource type="FastNoiseLite" uid="uid://hpxe5e8u2ccb" path="res://demo_polyhedron/resources/polyhedron_noise_scene__noise.tres" id="1_17pyv"]
 [ext_resource type="Shader" path="res://demo_polyhedron/shaders/polyhedron_color.gdshader" id="1_d15u1"]
+[ext_resource type="Script" path="res://demo_polyhedron/noise_polyhedron_mesh.gd" id="3_1e8su"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_qjkvq"]
 sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
@@ -63,6 +64,9 @@ environment = SubResource("Environment_3pfmk")
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="WorldEnvironment"]
 transform = Transform3D(-0.492469, 0, 0.87033, 0, 1, 0, -0.87033, 0, -0.492469, 3.37515, 2.69147, -2.22673)
 
+[node name="Camera3D" type="Camera3D" parent="WorldEnvironment"]
+transform = Transform3D(-1, 0, -8.74228e-08, -4.37114e-08, 0.866025, 0.5, 7.57103e-08, 0.5, -0.866025, 0, 1.37414, -2.4145)
+
 [node name="NoisePolyhedronMesh" type="NoisePolyhedron" parent="."]
 _smooth_normals = true
 compression_factor = 0.24
@@ -71,6 +75,7 @@ patch_resolution = 10
 divisions = 4
 shader = ExtResource("1_d15u1")
 noise_biomes = SubResource("FastNoiseLite_olqtu")
+script = ExtResource("3_1e8su")
 
 [node name="water_sphere" type="MeshInstance3D" parent="."]
 mesh = SubResource("SphereMesh_ybalp")
