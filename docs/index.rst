@@ -28,12 +28,19 @@ See Getting Started section in left sidebar
 
    content/design_notes/terrain.md
    content/design_notes/tesselation_type.md
+   content/design_notes/module_vs_gdextension.md
 
 .. toctree::
    :maxdepth: 1
    :caption: Architecture
 
    content/arch/tal.md
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Known issues & limitations
+
+   content/known_issues/sota_module.md
 
 .. toctree::
    :maxdepth: 2
