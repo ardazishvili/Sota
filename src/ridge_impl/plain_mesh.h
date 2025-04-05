@@ -11,6 +11,7 @@
 namespace sota {
 
 class PlainMesh : public RidgeMesh {
+  GDCLASS(PlainMesh, RidgeMesh)
  public:
   PlainMesh(Hexagon hex, RidgeHexMeshParams params) : RidgeMesh(hex, params) {}
   PlainMesh(Pentagon pentagon, RidgePentagonMeshParams params) : RidgeMesh(pentagon, params) {}
