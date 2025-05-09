@@ -10,6 +10,7 @@ class BiomeCalculator {
  public:
   BiomeCalculator();
   Biome calculate_biome(float min_z, float max_z, float cur_z) const;
+  std::vector<std::vector<Biome>> calculate_biomes(float min_z, float max_z, std::vector<std::vector<float>> altitudes);
 
  private:
   std::unordered_map<Biome, float> _BIOMES_HEIGHT_BOUND;

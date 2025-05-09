@@ -107,7 +107,7 @@ void Honeycomb::init() {
   if (_col_row_layout.empty()) {
     return;
   }
-  init_hexmesh();
+  make_tiles();
 
   calculate_cells();
 
@@ -277,7 +277,7 @@ bool Honeycomb::all_cells_empty() const {
   return true;
 }
 
-void Honeycomb::init_hexmesh() {
+void Honeycomb::make_tiles() {
   std::unordered_map<int, Vector3> cells_offsets;
   std::unordered_map<int, Vector2> honey_offsets;
   for (auto row : _col_row_layout) {

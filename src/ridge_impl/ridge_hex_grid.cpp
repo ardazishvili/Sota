@@ -1,9 +1,10 @@
 #include "ridge_hex_grid.h"
 
-#include <algorithm>      // for find, max, min
-#include <functional>     // for reference_wrapper
-#include <limits>         // for numeric_limits
-#include <memory>         // for make_unique, alloca...
+#include <algorithm>   // for find, max, min
+#include <functional>  // for reference_wrapper
+#include <limits>      // for numeric_limits
+#include <memory>      // for make_unique, alloca...
+#include <numeric>
 #include <unordered_map>  // for unordered_map, unor...
 
 #include "algo/dsu.h"                  // for DSU
@@ -27,13 +28,14 @@
 #include "ridge_impl/ridge_group.h"   // for RidgeGroup, GroupOf...
 #include "ridge_impl/ridge_mesh.h"    // for RidgeMesh, RidgeHex...
 #include "ridge_impl/ridge_set.h"     // for RidgeSet
-#include "tal/callable.h"             // for Callable
-#include "tal/godot_core.h"           // for D_METHOD, ClassDB
-#include "tal/material.h"             // for ShaderMaterial
-#include "tal/noise.h"                // for FastNoiseLite
-#include "tal/texture.h"              // for Texture
-#include "tal/vector3.h"              // for Vector3
-#include "tal/vector3i.h"             // for Vector3i
+#include "ridge_impl/terraformer.h"
+#include "tal/callable.h"    // for Callable
+#include "tal/godot_core.h"  // for D_METHOD, ClassDB
+#include "tal/material.h"    // for ShaderMaterial
+#include "tal/noise.h"       // for FastNoiseLite
+#include "tal/texture.h"     // for Texture
+#include "tal/vector3.h"     // for Vector3
+#include "tal/vector3i.h"    // for Vector3i
 
 namespace sota {
 
@@ -49,8 +51,15 @@ void RidgeHexGrid::init() {
   if (_col_row_layout.empty()) {
     return;
   }
-  init_hexmesh();
 
+  calculate_offsets();
+
+  make_tiles();
+
+  calculate_geometry();
+}
+
+void RidgeHexGrid::calculate_geometry() {
   assign_cube_coordinates_map();
   init_biomes();
 
@@ -62,6 +71,8 @@ void RidgeHexGrid::init() {
 }
 
 void RidgeHexGrid::_bind_methods() {
+  ClassDB::bind_method(D_METHOD("set_terraformer", "p_terraformer"), &RidgeHexGrid::set_terraformer);
+
   ClassDB::bind_method(D_METHOD("get_smooth_normals"), &RidgeHexGrid::get_smooth_normals);
   ClassDB::bind_method(D_METHOD("set_smooth_normals", "p_smooth_normals"), &RidgeHexGrid::set_smooth_normals);
   ADD_PROPERTY(PropertyInfo(Variant::BOOL, "_smooth_normals"), "set_smooth_normals", "get_smooth_normals");
@@ -134,6 +145,13 @@ void RidgeHexGrid::_bind_methods() {
   ClassDB::bind_method(D_METHOD("set_mountain_texture", "p_texture"), &RidgeHexGrid::set_mountain_texture);
   ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "texture_mountain", PROPERTY_HINT_RESOURCE_TYPE, "Texture"),
                "set_mountain_texture", "get_mountain_texture");
+}
+
+void RidgeHexGrid::set_terraformer(const Ref<Terraformer> p_terraformer) {
+  p_terraformer->set_ridge_hex_grid(this);
+  p_terraformer->set_tiles(&_tiles_layout);
+
+  _tile_processors.push_back(p_terraformer);
 }
 
 void RidgeHexGrid::set_smooth_normals(const bool p_smooth_normals) {
@@ -230,81 +248,102 @@ Ref<Texture> RidgeHexGrid::get_hill_texture() const { return _texture.find(Biome
 Ref<Texture> RidgeHexGrid::get_water_texture() const { return _texture.find(Biome::WATER)->second; }
 Ref<Texture> RidgeHexGrid::get_mountain_texture() const { return _texture.find(Biome::MOUNTAIN)->second; }
 
-void RidgeHexGrid::init_hexmesh() {
-  std::unordered_map<int, Vector3> offsets;
+void RidgeHexGrid::calculate_offsets() {
   for (auto row : _col_row_layout) {
     for (auto val : row) {
       auto x_offset = val.z * pointy_top_x_offset(_diameter);
       x_offset += is_odd(val.x) ? pointy_top_x_offset(_diameter) / 2 : 0;
 
       auto z_offset = val.x * pointy_top_y_offset(_diameter);
-      offsets[calculate_id(val.x, val.z)] = Vector3(x_offset, 0, z_offset);
+      _offsets[calculate_id(val.x, val.z)] = Vector3(x_offset, 0, z_offset);
     }
   }
+}
 
-  std::unordered_map<int, float> altitudes;
+std::vector<std::vector<Biome>> RidgeHexGrid::calculate_biomes() {
+  std::vector<std::vector<float>> altitudes;
   for (auto row : _col_row_layout) {
+    altitudes.push_back({});
     for (auto val : row) {
       int id = calculate_id(val.x, val.z);
-      Vector3 o = offsets[id];
+      Vector3 o = _offsets[id];
       if (_biomes_noise.ptr()) {
-        altitudes[id] = _biomes_noise->get_noise_2d(o.x, o.z);
+        altitudes.back().push_back(_biomes_noise->get_noise_2d(o.x, o.z));
       } else {
-        altitudes[id] = 0;
+        altitudes.back().push_back(0.0f);
       }
     }
   }
 
   float min_z = std::numeric_limits<float>::max();
   float max_z = std::numeric_limits<float>::min();
-  for (auto [id, a] : altitudes) {
-    min_z = std::min(min_z, a);
-    max_z = std::max(max_z, a);
+
+  int row_num = _col_row_layout.size();
+
+  for (int row = 0; row < row_num; ++row) {
+    int col_num = _col_row_layout[row].size();
+    for (int col = 0; col < col_num; ++col) {
+      min_z = std::min(min_z, altitudes[row][col]);
+      max_z = std::max(max_z, altitudes[row][col]);
+    }
   }
 
+  return BiomeCalculator().calculate_biomes(min_z, max_z, altitudes);
+}
+
+BiomeTile* RidgeHexGrid::make_biome_tile(Biome biome, int row, int col) {
+  Vector3i val = _col_row_layout[row][col];
+  int id = calculate_id(val.x, val.z);
+
+  Ref<ShaderMaterial> mat;
+  mat.instantiate();
+  if (_shader.ptr()) {
+    mat->set_shader(_shader);
+  }
+  if (_texture[biome].ptr()) {
+    mat->set_shader_parameter("water_texture", _texture[Biome::WATER].ptr());
+    mat->set_shader_parameter("plain_texture", _texture[Biome::PLAIN].ptr());
+    mat->set_shader_parameter("hill_texture", _texture[Biome::HILL].ptr());
+    mat->set_shader_parameter("mountain_texture", _texture[Biome::MOUNTAIN].ptr());
+
+    mat->set_shader_parameter("top_offset", _ridge_config.top_ridge_offset);
+    mat->set_shader_parameter("bottom_offset", _ridge_config.bottom_ridge_offset);
+    mat->set_shader_parameter("hill_level_ratio", _biomes_hill_level_ratio);
+  }
+
+  Hexagon hex = make_hexagon_at_position(_offsets[id], _diameter);
+
+  ClipOptions clip_options = get_clip_options(val.x, val.z);
+  RidgeHexMeshParams params{
+      .hex_mesh_params = HexMeshParams{.id = id,
+                                       .diameter = _diameter,
+                                       .frame_state = _frame_state,
+                                       .frame_offset = _frame_offset,
+                                       .material = mat,
+                                       .divisions = _divisions,
+                                       .clip_options = clip_options},
+      .plain_noise = _plain_noise,
+      .ridge_noise = _ridge_noise,
+  };
+
+  Ref<RidgeMesh> m = create_ridge_mesh(biome, hex, params);
+  return make_non_ref<BiomeTile>(m, this, biome, OffsetCoordinates{.row = val.x, .col = val.z}, row, col);
+}
+
+void RidgeHexGrid::make_tiles() {
   _tiles_layout.clear();
   clean_children(*this);
-  BiomeCalculator biome_calculator;
-  for (auto row : _col_row_layout) {
+
+  std::vector<std::vector<Biome>> biomes = calculate_biomes();
+
+  int row_num = _col_row_layout.size();
+  for (int row = 0; row < row_num; ++row) {
+    int col_num = _col_row_layout[row].size();
     _tiles_layout.push_back({});
-    for (auto val : row) {
-      int id = calculate_id(val.x, val.z);
-      Biome biome = biome_calculator.calculate_biome(min_z, max_z, altitudes[id]);
+    for (int col = 0; col < col_num; ++col) {
+      Biome biome = biomes[row][col];
 
-      Ref<ShaderMaterial> mat;
-      mat.instantiate();
-      if (_shader.ptr()) {
-        mat->set_shader(_shader);
-      }
-      if (_texture[biome].ptr()) {
-        mat->set_shader_parameter("water_texture", _texture[Biome::WATER].ptr());
-        mat->set_shader_parameter("plain_texture", _texture[Biome::PLAIN].ptr());
-        mat->set_shader_parameter("hill_texture", _texture[Biome::HILL].ptr());
-        mat->set_shader_parameter("mountain_texture", _texture[Biome::MOUNTAIN].ptr());
-
-        mat->set_shader_parameter("top_offset", _ridge_config.top_ridge_offset);
-        mat->set_shader_parameter("bottom_offset", _ridge_config.bottom_ridge_offset);
-        mat->set_shader_parameter("hill_level_ratio", _biomes_hill_level_ratio);
-      }
-
-      Hexagon hex = make_hexagon_at_position(offsets[id], _diameter);
-
-      ClipOptions clip_options = get_clip_options(val.x, val.z);
-      RidgeHexMeshParams params{
-          .hex_mesh_params = HexMeshParams{.id = id,
-                                           .diameter = _diameter,
-                                           .frame_state = _frame_state,
-                                           .frame_offset = _frame_offset,
-                                           .material = mat,
-                                           .divisions = _divisions,
-                                           .clip_options = clip_options},
-          .plain_noise = _plain_noise,
-          .ridge_noise = _ridge_noise,
-      };
-
-      Ref<RidgeMesh> m = create_ridge_mesh(biome, hex, params);
-      _tiles_layout.back().push_back(
-          make_non_ref<BiomeTile>(m, this, biome, OffsetCoordinates{.row = val.x, .col = val.z}));
+      _tiles_layout.back().push_back(make_biome_tile(biome, row, col));
     }
   }
 }
@@ -467,6 +506,8 @@ void RectRidgeHexGrid::_bind_methods() {
   ClassDB::bind_method(D_METHOD("get_clipped_option"), &RectRidgeHexGrid::get_clipped_option);
   ClassDB::bind_method(D_METHOD("set_clipped_option", "p_clipped_option"), &RectRidgeHexGrid::set_clipped_option);
   ADD_PROPERTY(PropertyInfo(Variant::BOOL, "_clipped"), "set_clipped_option", "get_clipped_option");
+
+  ClassDB::bind_method(D_METHOD("set_biomes"), &RectRidgeHexGrid::set_biomes);
 }
 
 void RectRidgeHexGrid::set_height(const int p_height) {
@@ -538,11 +579,52 @@ ClipOptions RectRidgeHexGrid::get_clip_options(int row, int col) const {
           .down = row == 0};
 }
 
+void RectRidgeHexGrid::set_biomes(godot::String str, int row_num, int col_num) {
+  int n = str.length();
+  if (n != (row_num * col_num)) {
+    print("Wrong number of biomes in set_biomes method ");
+    return;
+  }
+  for (int i = 0; i < n; ++i) {
+    char c = str[i];
+    if (c != 'P' && c != 'H' && c != 'M' && c != 'W') {
+      print("Unknown type of terrain in set_biomes method");
+    }
+  }
+
+  _tiles_layout.clear();
+  clean_children(*this);
+  _tiles_layout = std::vector<std::vector<Tile*>>(row_num, std::vector<Tile*>(col_num, nullptr));
+  for (int i = 0; i < n; ++i) {
+    int row = i / row_num;
+    int col = i % col_num;
+    char c = str[i];
+    switch (c) {
+      case 'P':
+        _tiles_layout[row][col] = make_biome_tile(Biome::PLAIN, row, col);
+        break;
+      case 'H':
+        _tiles_layout[row][col] = make_biome_tile(Biome::HILL, row, col);
+        break;
+      case 'M':
+        _tiles_layout[row][col] = make_biome_tile(Biome::MOUNTAIN, row, col);
+        break;
+      case 'W':
+        _tiles_layout[row][col] = make_biome_tile(Biome::WATER, row, col);
+        break;
+    }
+  }
+
+  calculate_geometry();
+}
+
 // HexagonalRidgeHexGrid definitions
 void HexagonalRidgeHexGrid::_bind_methods() {
   ClassDB::bind_method(D_METHOD("get_size"), &HexagonalRidgeHexGrid::get_size);
   ClassDB::bind_method(D_METHOD("set_size", "p_size"), &HexagonalRidgeHexGrid::set_size);
   ADD_PROPERTY(PropertyInfo(Variant::INT, "_size"), "set_size", "get_size");
+
+  ClassDB::bind_method(D_METHOD("set_biomes"), &HexagonalRidgeHexGrid::set_biomes);
 }
 
 void HexagonalRidgeHexGrid::set_size(const int p_size) {
@@ -594,6 +676,50 @@ BiomeGroups HexagonalRidgeHexGrid::collect_biome_groups(Biome b) {
 
 ClipOptions HexagonalRidgeHexGrid::get_clip_options(int row, int col) const {
   return {.left = false, .right = false, .up = false, .down = false};
+}
+
+void HexagonalRidgeHexGrid::set_biomes(godot::String str, int size) {
+  int n = std::accumulate(_tiles_layout.begin(), _tiles_layout.end(), 0,
+                          [](int acc, const std::vector<Tile*>& row_of_tiles) { return acc + row_of_tiles.size(); });
+  if (n != str.length()) {
+    print("Wrong number of biomes in set_biomes method ");
+    return;
+  }
+  for (int i = 0; i < n; ++i) {
+    char c = str[i];
+    if (c != 'P' && c != 'H' && c != 'M' && c != 'W') {
+      print("Unknown type of terrain in set_biomes method");
+    }
+  }
+
+  int str_index = 0;
+  for (std::vector<Tile*>& row_of_tiles : _tiles_layout) {
+    for (Tile* tile : row_of_tiles) {
+      auto* biome_tile = dynamic_cast<BiomeTile*>(tile);
+      int row = biome_tile->row();
+      int col = biome_tile->col();
+      _tiles_layout[row][col]->destroy();
+
+      char c = str[str_index];
+      switch (c) {
+        case 'P':
+          _tiles_layout[row][col] = make_biome_tile(Biome::PLAIN, row, col);
+          break;
+        case 'H':
+          _tiles_layout[row][col] = make_biome_tile(Biome::HILL, row, col);
+          break;
+        case 'M':
+          _tiles_layout[row][col] = make_biome_tile(Biome::MOUNTAIN, row, col);
+          break;
+        case 'W':
+          _tiles_layout[row][col] = make_biome_tile(Biome::WATER, row, col);
+          break;
+      }
+      ++str_index;
+    }
+  }
+
+  calculate_geometry();
 }
 
 }  // namespace sota
