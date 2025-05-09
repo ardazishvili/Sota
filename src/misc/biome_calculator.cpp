@@ -1,5 +1,7 @@
 #include "biome_calculator.h"
 
+#include <vector>
+
 #include "tal/godot_core.h"
 
 namespace sota {
@@ -31,6 +33,25 @@ Biome BiomeCalculator::calculate_biome(float min_z, float max_z, float cur_z) co
     printerr("Non reachable: unknown biome");
   }
   return Biome::WATER;  // unreachable
+}
+
+std::vector<std::vector<Biome>> BiomeCalculator::calculate_biomes(float min_z, float max_z,
+                                                                  std::vector<std::vector<float>> altitudes) {
+  _BIOMES_HEIGHT_BOUND = {{Biome::WATER, _water_threshold},
+                          {Biome::PLAIN, _plain_threshold},
+                          {Biome::HILL, _hill_threshold},
+                          {Biome::MOUNTAIN, 1.0f}};
+  std::vector<std::vector<Biome>> biomes;
+  BiomeCalculator calc;
+  int row_num = altitudes.size();
+  for (int row = 0; row < row_num; ++row) {
+    biomes.push_back({});
+    int col_num = altitudes[row].size();
+    for (int col = 0; col < col_num; ++col) {
+      biomes.back().push_back(calc.calculate_biome(min_z, max_z, altitudes[row][col]));
+    }
+  }
+  return biomes;
 }
 
 }  // namespace sota

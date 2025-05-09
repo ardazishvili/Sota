@@ -54,7 +54,7 @@ void HexGrid::_bind_methods() {
 
 void HexGrid::init() {
   init_col_row_layout();
-  init_hexmesh();
+  make_tiles();
 
   calculate_normals();
 }
@@ -89,7 +89,7 @@ Ref<Shader> HexGrid::get_shader() const { return _shader; }
 bool HexGrid::get_frame_state() const { return _frame_state; }
 float HexGrid::get_frame_offset() const { return _frame_offset; }
 
-void HexGrid::init_hexmesh() {
+void HexGrid::make_tiles() {
   clean_children(*this);
   _tiles_layout.clear();
 

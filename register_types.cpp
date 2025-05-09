@@ -4,6 +4,7 @@
 #include "core/hex_mesh.h"
 #include "core/mesh.h"
 #include "core/pent_mesh.h"
+#include "godot_cpp/core/class_db.hpp"
 #include "honeycomb/honeycomb.h"
 #include "honeycomb/honeycomb_cell.h"
 #include "honeycomb/honeycomb_honey.h"
@@ -17,7 +18,9 @@
 #include "ridge_based_polyhedron.h"
 #include "ridge_impl/ridge_hex_grid.h"
 #include "ridge_impl/ridge_mesh.h"
+#include "ridge_impl/terraformer.h"
 #include "src/tal/godot_core.h"
+#include "tile.h"
 
 /**
  * @brief register classes used in editor
@@ -74,6 +77,11 @@ void initialize_Sota_module(ModuleInitializationLevel p_level) {
 
   // other
   GDREGISTER_CLASS(sota::DynamicWrapper);
+  GDREGISTER_CLASS(sota::Tile);
+  GDREGISTER_CLASS(sota::BiomeTile);
+
+  GDREGISTER_ABSTRACT_CLASS(sota::MatrixProcessor);
+  GDREGISTER_CLASS(sota::Terraformer);
 }
 
 void uninitialize_Sota_module(ModuleInitializationLevel p_level) {
