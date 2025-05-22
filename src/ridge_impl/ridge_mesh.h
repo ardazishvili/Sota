@@ -71,6 +71,8 @@ class RidgeMesh : public TileMesh {
   Vector3 get_center() { return _mesh->get_center(); }
   SotaMesh* inner_mesh() const override { return _mesh.ptr(); }
 
+  void remove_neighbour(RidgeMesh* neighbour) { std::erase(_neighbours, neighbour); }
+
   int get_id() override { return _mesh->get_id(); }
 
  protected:

@@ -160,13 +160,13 @@ void PolyhedronRidgeProcessor::init_biomes() {
     Biome biome = opt_biome.value();
     dfs(wrapper->mesh().ptr(), cur_group, visited, biome);
     if (biome == Biome::PLAIN) {
-      _plain_groups.emplace_back(cur_group);
+      _plain_groups.emplace_back(cur_group, Biome::PLAIN);
     } else if (biome == Biome::HILL) {
-      _hill_groups.emplace_back(cur_group);
+      _hill_groups.emplace_back(cur_group, Biome::HILL);
     } else if (biome == Biome::WATER) {
-      _water_groups.emplace_back(cur_group, std::make_unique<RidgeSet>(_ridge_config));
+      _water_groups.emplace_back(cur_group, std::make_unique<RidgeSet>(_ridge_config), Biome::WATER);
     } else if (biome == Biome::MOUNTAIN) {
-      _mountain_groups.emplace_back(cur_group, std::make_unique<RidgeSet>(_ridge_config));
+      _mountain_groups.emplace_back(cur_group, std::make_unique<RidgeSet>(_ridge_config), Biome::MOUNTAIN);
     }
   }
 }

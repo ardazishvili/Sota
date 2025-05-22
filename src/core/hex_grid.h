@@ -60,7 +60,7 @@ class HexGrid : public Node3D {
 
   virtual void init_col_row_layout() = 0;
   virtual void make_tiles();
-  std::map<CubeCoordinates, TileMesh*> _cube_to_hexagon;
+  std::map<CubeCoordinates, TileMesh*> _cube_coord_to_tile_mesh;
 
   bool _frame_state{false};
   float _frame_offset{0.0};

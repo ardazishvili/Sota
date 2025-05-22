@@ -1,10 +1,18 @@
 #include "ridge_impl/ridge_group.h"
 
 #include <algorithm>  // for transform
-#include <iterator>   // for back_insert_iterator, back_inserter
+#include <cassert>
+#include <cstddef>
+#include <iterator>  // for back_insert_iterator, back_inserter
+#include <memory>
+#include <numeric>
+#include <unordered_set>
 
+#include "ridge_config.h"
 #include "ridge_impl/ridge_mesh.h"  // for RidgeMesh
 #include "ridge_impl/ridge_set.h"   // for RidgeSet
+#include "tile_mesh.h"
+#include "types.h"
 #include "vector3i.h"
 
 namespace sota {
@@ -27,6 +35,7 @@ void RidgeGroup::init_ridges(DiscreteVertexToDistance& distance_map, float offse
 const GroupOfRidgeMeshes& RidgeGroup::meshes() { return _meshes; }
 
 void RidgeGroup::fmap(std::function<void(const GroupOfRidgeMeshes&)> func) { func(_meshes); }
+void RidgeGroup::fmap_mutable(std::function<void(GroupOfRidgeMeshes&)> func) { func(_meshes); }
 
 void RidgeGroup::assign_ridges() {
   auto* ridges = _ridge_set.value()->ridges();
@@ -44,4 +53,80 @@ void RidgeGroup::calculate_corner_points_distances_to_border(DiscreteVertexToDis
     m->calculate_corner_points_distances_to_border(distance_map, divisions);
   }
 }
+
+bool check_biomes(std::vector<RidgeGroup*>& groups) {
+  if (groups.empty()) {
+    return true;
+  }
+  Biome biome_of_first_group = groups[0]->biome();
+  return std::all_of(groups.begin(), groups.end(),
+                     [biome_of_first_group](RidgeGroup* group) { return group->biome() == biome_of_first_group; });
+}
+
+std::optional<RidgeGroup> combine(std::vector<RidgeGroup*> groups, RidgeConfig config) {
+  if (groups.empty()) {
+    return {};
+  }
+  if (!check_biomes(groups)) {
+    return {};
+  }
+  size_t new_size = std::accumulate(groups.begin(), groups.end(), 0,
+                                    [](size_t acc, const RidgeGroup* group) { return group->size(); });
+
+  GroupOfRidgeMeshes res;
+  res.reserve(new_size);
+  for (auto* group : groups) {
+    res.insert(res.cend(), group->_meshes.begin(), group->_meshes.end());
+  }
+  return (*groups.begin())->_ridge_set.has_value()
+             ? RidgeGroup(res, std::make_unique<RidgeSet>(config), groups[0]->biome())
+             : RidgeGroup(res, groups[0]->biome());
+}
+
+void subtract(std::vector<RidgeGroup>& base, std::vector<RidgeGroup*> removed) {
+  for (RidgeGroup* group_to_be_removed : removed) {
+    auto pred = [group_to_be_removed](const RidgeGroup& group) { return std::addressof(group) == group_to_be_removed; };
+
+    size_t erased_num = std::erase_if(base, pred);
+    assert(erased_num == 1);
+  }
+}
+
+static void dfs(RidgeMesh* current, GroupOfRidgeMeshes& ridge_meshed_to_add, std::unordered_set<RidgeMesh*>& visited) {
+  if (visited.contains(current)) {
+    return;
+  }
+  visited.insert(current);
+  ridge_meshed_to_add.push_back(current);
+  for (TileMesh* tile_mesh : current->get_neighbours()) {
+    RidgeMesh* ridge_mesh = dynamic_cast<RidgeMesh*>(tile_mesh);
+    dfs(ridge_mesh, ridge_meshed_to_add, visited);
+  }
+}
+
+std::vector<RidgeGroup> remove_mesh(RidgeGroup& ridge_group, RidgeMesh* mesh, RidgeConfig config) {
+  Biome biome = ridge_group.biome();
+  for (TileMesh* tile_mesh : mesh->get_neighbours()) {
+    RidgeMesh* neighbour = dynamic_cast<RidgeMesh*>(tile_mesh);
+    neighbour->remove_neighbour(mesh);
+  }
+  std::vector<RidgeGroup> res;
+  std::unordered_set<RidgeMesh*> visited;
+  for (RidgeMesh* ridge_mesh : ridge_group._meshes) {
+    GroupOfRidgeMeshes ridge_meshed_to_add;
+    if (ridge_mesh == mesh || visited.contains(ridge_mesh)) {
+      continue;
+    }
+    dfs(ridge_mesh, ridge_meshed_to_add, visited);
+    RidgeGroup new_group = ridge_group._ridge_set.has_value()
+                               ? RidgeGroup(ridge_meshed_to_add, std::make_unique<RidgeSet>(config), biome)
+                               : RidgeGroup(ridge_meshed_to_add, biome);
+    res.emplace_back(std::move(new_group));
+  }
+
+  assert(1 <= res.size() && res.size() <= 3);
+
+  return res;
+}
+
 }  // namespace sota

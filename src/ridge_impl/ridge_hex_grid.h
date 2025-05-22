@@ -13,6 +13,7 @@
 #include "ridge_impl/ridge_group.h"         // for BiomeGroups, GroupOfRidge...
 #include "ridge_impl/ridge_set.h"
 #include "ridge_impl/terraformer.h"
+#include "ridge_mesh.h"
 #include "tal/godot_core.h"
 #include "tal/noise.h"      // for FastNoiseLite
 #include "tal/reference.h"  // for Ref
@@ -80,7 +81,9 @@ class RidgeHexGrid : public HexGrid, public RidgeBased {
 
   std::vector<Ref<MatrixProcessor>> _tile_processors;
 
-  BiomeTile* make_biome_tile(Biome biome, int row, int col);
+  void update_biome(BiomeTile* biome_tile, Biome new_biome);
+
+  Neighbours get_neighbours(BiomeTile* biome_tile, std::optional<const GroupOfRidgeMeshes*> group);
 
  protected:
   friend BiomeTile;  // It's OK for BiomeTiles to ping their parent, e.g. in 'on_click' handler
@@ -89,7 +92,6 @@ class RidgeHexGrid : public HexGrid, public RidgeBased {
     for (Ref<MatrixProcessor> processor : _tile_processors) {
       processor->process(row, col);
     }
-    calculate_geometry();
   }
 
   DiscreteVertexToDistance _distance_map;
@@ -99,6 +101,8 @@ class RidgeHexGrid : public HexGrid, public RidgeBased {
   void init() override;
   void calculate_geometry();
   void make_tiles() override;
+
+  BiomeTile* make_biome_tile(Biome biome, int row, int col);
 
  private:
   std::unordered_map<Biome, Ref<Texture>> _texture;
@@ -110,7 +114,10 @@ class RidgeHexGrid : public HexGrid, public RidgeBased {
   bool _smooth_normals{false};
   float _biomes_hill_level_ratio{0.7};
   float _biomes_plain_hill_gain{0.1f};
-  std::unordered_map<int, Vector3> _offsets;
+  std::unordered_map<int, Vector3> _id_to_offset_coordinate;
+
+  float _global_min_y = std::numeric_limits<float>::max();
+  float _global_max_y = std::numeric_limits<float>::min();
 
   void calculate_neighbours(const GroupOfRidgeMeshes& group);
   void assign_neighbours(const GroupOfRidgeMeshes& group);
@@ -120,8 +127,8 @@ class RidgeHexGrid : public HexGrid, public RidgeBased {
   virtual ClipOptions get_clip_options(int row, int col) const = 0;
 
   void init_biomes();
-  void prepare_heights_calculation();
-  void calculate_final_heights();
+  void prepare_heights_calculation(RidgeGroup& group);
+  void calculate_final_heights(RidgeGroup& group);
 
   void assign_cube_coordinates_map();
   void calculate_normals() override;
@@ -129,6 +136,12 @@ class RidgeHexGrid : public HexGrid, public RidgeBased {
   std::vector<std::vector<Biome>> calculate_biomes();
 
   std::vector<TileMesh*> meshes();
+
+  Ref<RidgeMesh> make_biome_mesh(Biome biome, int id, Vector3i layout);
+  RidgeGroup& get_group(BiomeTile* biome_tile);
+  BiomeTile* get_biome_tile(TileMesh* target);
+  void update_biome_groups(std::vector<RidgeGroup*> groups_to_be_removed, std::vector<RidgeGroup>& to_be_added,
+                           Biome biome);
 };
 
 class RectRidgeHexGrid : public RidgeHexGrid {

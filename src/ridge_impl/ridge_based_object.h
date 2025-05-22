@@ -7,6 +7,7 @@
 #include "ridge.h"
 #include "ridge_impl/ridge_group.h"
 #include "tal/godot_core.h"
+#include "types.h"
 
 namespace sota {
 
@@ -42,6 +43,21 @@ class RidgeBased {
     res.insert(res.end(), _plain_groups.begin(), _plain_groups.end());
     res.insert(res.end(), _hill_groups.begin(), _hill_groups.end());
     return res;
+  }
+
+  std::vector<RidgeGroup>& get_groups_by_biome(Biome biome) {
+    switch (biome) {
+      case Biome::PLAIN:
+        return _plain_groups;
+      case Biome::HILL:
+        return _hill_groups;
+      case Biome::MOUNTAIN:
+        return _mountain_groups;
+      case Biome::WATER:
+        return _water_groups;
+      default:
+        printerr("Unknown biome in get_groups_by_biome");  // should be never reached
+    }
   }
 
  protected:
