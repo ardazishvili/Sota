@@ -17,6 +17,8 @@ using Neighbours = std::vector<TileMesh*>;
 
 enum class Biome { PLAIN = 0, HILL, MOUNTAIN, WATER };
 
+std::string biome_to_string(Biome biome);
+
 struct ClipOptions {
   bool left{false};
   bool right{false};

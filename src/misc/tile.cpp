@@ -4,8 +4,8 @@
 #include "honeycomb/honeycomb_honey.h"
 #include "misc/cube_coordinates.h"
 #include "misc/types.h"
-#include "ridge_mesh.h"
 #include "ridge_impl/ridge_hex_grid.h"
+#include "ridge_mesh.h"
 #include "tal/callable.h"
 #include "tal/engine.h"
 #include "tal/event.h"
@@ -69,8 +69,12 @@ void BiomeTile::_bind_methods() {
 }
 
 void BiomeTile::handle_mouse_entered() {
-  // placeholder
+  if (Input::get_singleton()->is_mouse_button_pressed(MOUSE_BUTTON_LEFT)) {
+    auto* ridge_hex_grid_parent = dynamic_cast<RidgeHexGrid*>(get_parent());
+    ridge_hex_grid_parent->process_tile(_row, _col);
+  }
 }
+
 void BiomeTile::handle_mouse_exited() {
   // placeholder
 }

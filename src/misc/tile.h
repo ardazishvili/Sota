@@ -11,6 +11,7 @@
 #include "tal/mesh.h"
 #include "tal/node.h"
 #include "tal/reference.h"
+#include "tile_mesh.h"
 
 namespace sota {
 
@@ -35,6 +36,14 @@ class Tile : public Node3D {
   void destroy() {
     get_parent()->remove_child(this);
     this->queue_free();
+  }
+
+  void replace_mesh(Ref<TileMesh> new_mesh) {
+    _mesh = new_mesh;
+    auto points = new_mesh->inner_mesh()->base().points();
+    auto center = new_mesh->inner_mesh()->base().center();
+    _sphere_shaped3d->set_radius(center.distance_to(points[0]));
+    _main_mesh_instance->set_mesh(new_mesh->inner_mesh());
   }
 
  protected:
