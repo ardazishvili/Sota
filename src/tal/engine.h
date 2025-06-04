@@ -8,6 +8,8 @@ using Engine = godot::Engine;
 using EditorInterface = godot::EditorInterface;
 
 #else
+#ifdef SOTA_ENGINE
 #include "editor/editor_interface.h"
+#endif
 #include "core/config/engine.h"
 #endif
