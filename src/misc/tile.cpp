@@ -5,7 +5,7 @@
 #include "misc/cube_coordinates.h"
 #include "misc/types.h"
 #include "ridge_mesh.h"
-#include "src/ridge_impl/ridge_hex_grid.h"
+#include "ridge_impl/ridge_hex_grid.h"
 #include "tal/callable.h"
 #include "tal/engine.h"
 #include "tal/event.h"
