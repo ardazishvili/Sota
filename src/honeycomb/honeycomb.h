@@ -64,7 +64,7 @@ class Honeycomb : public HexGrid {
   static void _bind_methods();
 
   void init() override;
-  void init_hexmesh() override;
+  void make_tiles() override;
 
   virtual int calculate_honey_id_offset() = 0;
 

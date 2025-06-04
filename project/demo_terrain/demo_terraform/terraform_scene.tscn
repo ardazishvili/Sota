@@ -1,0 +1,151 @@
+[gd_scene load_steps=17 format=3 uid="uid://d3ua764ah600y"]
+
+[ext_resource type="FastNoiseLite" uid="uid://cgxvojmlhcxha" path="res://demo_terrain/resources/rect_terrain_biomes_noise.tres" id="1_ef2mm"]
+[ext_resource type="FastNoiseLite" uid="uid://b0o4avj71sfcj" path="res://demo_terrain/resources/rect_terrain_plain_noise.tres" id="2_bp2s3"]
+[ext_resource type="FastNoiseLite" uid="uid://beit0r3ccwphn" path="res://demo_terrain/resources/rect_terrain_mountain_noise.tres" id="3_803qo"]
+[ext_resource type="Texture2D" uid="uid://480r6dmk61dl" path="res://demo_terrain/textures/grass0.png" id="4_43mri"]
+[ext_resource type="Texture2D" uid="uid://cdx7ceoux78g0" path="res://demo_terrain/textures/yellow_grass.png" id="5_7hnnf"]
+[ext_resource type="Texture2D" uid="uid://do00yjl6ipe16" path="res://demo_terrain/textures/water.png" id="6_1raos"]
+[ext_resource type="Texture2D" uid="uid://ba6285rpeyj4l" path="res://demo_terrain/textures/snow.png" id="7_am2ly"]
+[ext_resource type="Shader" path="res://demo_terrain/shaders/terrain.gdshader" id="8_k1okd"]
+[ext_resource type="Script" path="res://demo_terrain/demo_terraform/rect_ridge_hex_grid.gd" id="9_f7061"]
+[ext_resource type="FastNoiseLite" uid="uid://cfqdbsjbv1tr3" path="res://demo_terrain/resources/hex_terrain_biomes_noise.tres" id="10_xb5yc"]
+[ext_resource type="FastNoiseLite" uid="uid://d4lduvo2g6nuv" path="res://demo_terrain/resources/hex_terrain_plain_noise.tres" id="11_p3rrt"]
+[ext_resource type="FastNoiseLite" uid="uid://c4332g4a8o75g" path="res://demo_terrain/resources/hex_terrain_mountain_noise.tres" id="12_n0cpy"]
+[ext_resource type="Script" path="res://demo_terrain/demo_terraform/hexagonal_ridge_hex_grid.gd" id="13_02odl"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_btloy"]
+sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+ground_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+
+[sub_resource type="Sky" id="Sky_ljoqc"]
+sky_material = SubResource("ProceduralSkyMaterial_btloy")
+
+[sub_resource type="Environment" id="Environment_h55sa"]
+background_mode = 2
+sky = SubResource("Sky_ljoqc")
+tonemap_mode = 2
+glow_enabled = true
+
+[node name="TerraformScene" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_h55sa")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.866024, -0.433016, 0.250001, -0.290297, 0.842538, 0.453715, -0.407101, 0.320353, -0.855361, 0, 3.65866, -9.7787)
+shadow_enabled = true
+
+[node name="set_plain_button_rectangular" type="Button" parent="."]
+anchors_preset = -1
+anchor_left = 0.595
+anchor_top = 0.904
+anchor_right = 0.83
+anchor_bottom = 0.997
+offset_left = 0.559937
+offset_top = 0.207947
+offset_right = -0.160034
+offset_bottom = -0.0559692
+text = "Rectangular terrain: set all Plain"
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.450099, 0.892979, 0, -0.892979, 0.450099, 0.287141, 3.91961, 3.73948)
+
+[node name="RectRidgeHexGrid" type="RectRidgeHexGrid" parent="."]
+_height = 4
+_width = 4
+noise_biomes = ExtResource("1_ef2mm")
+noise_plain_hill = ExtResource("2_bp2s3")
+noise_mountain_water = ExtResource("3_803qo")
+texture_plain = ExtResource("4_43mri")
+texture_hill = ExtResource("5_7hnnf")
+texture_water = ExtResource("6_1raos")
+texture_mountain = ExtResource("7_am2ly")
+_shader = ExtResource("8_k1okd")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.16062, 0, 0)
+script = ExtResource("9_f7061")
+
+[node name="HexagonalRidgeHexGrid" type="HexagonalRidgeHexGrid" parent="."]
+_size = 2
+noise_biomes = ExtResource("10_xb5yc")
+noise_plain_hill = ExtResource("11_p3rrt")
+noise_mountain_water = ExtResource("12_n0cpy")
+texture_plain = ExtResource("4_43mri")
+texture_hill = ExtResource("5_7hnnf")
+texture_water = ExtResource("6_1raos")
+texture_mountain = ExtResource("7_am2ly")
+_shader = ExtResource("8_k1okd")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.2908, 0, -0.382719)
+script = ExtResource("13_02odl")
+
+[node name="mode_plain_button" type="Button" parent="."]
+anchors_preset = -1
+anchor_left = 0.852
+anchor_top = 0.094
+anchor_right = 0.971
+anchor_bottom = 0.181
+offset_left = -0.504089
+offset_top = 0.0879974
+offset_right = 2.40796
+offset_bottom = 3.71199
+text = "Mode: plain"
+
+[node name="mode_hill_button" type="Button" parent="."]
+anchors_preset = -1
+anchor_left = 0.852
+anchor_top = 0.224
+anchor_right = 0.973
+anchor_bottom = 0.316
+offset_left = -0.504089
+offset_top = -0.152008
+offset_right = 0.104004
+offset_bottom = 0.231995
+text = "Mode: hill
+"
+
+[node name="mode_mountain_button" type="Button" parent="."]
+anchors_preset = -1
+anchor_left = 0.852
+anchor_top = 0.355
+anchor_right = 0.973
+anchor_bottom = 0.448
+offset_left = -0.504089
+offset_top = -0.0400085
+offset_right = 0.104004
+offset_bottom = -0.304016
+text = "Mode: mountain"
+
+[node name="mode_water_button" type="Button" parent="."]
+anchors_preset = -1
+anchor_left = 0.852
+anchor_top = 0.491
+anchor_right = 0.973
+anchor_bottom = 0.583
+offset_left = -0.504089
+offset_top = -0.16803
+offset_right = 0.104004
+offset_bottom = 0.216003
+text = "Mode: water"
+
+[node name="Button" type="Button" parent="."]
+anchors_preset = -1
+anchor_left = 0.15
+anchor_top = 0.904
+anchor_right = 0.385
+anchor_bottom = 0.997
+offset_left = 0.199997
+offset_top = 0.207947
+offset_right = -0.519989
+offset_bottom = -0.0559692
+text = "Hexagonal terrain: set all Plain"
+
+[connection signal="pressed" from="set_plain_button_rectangular" to="RectRidgeHexGrid" method="_on_button_pressed"]
+[connection signal="pressed" from="mode_plain_button" to="RectRidgeHexGrid" method="_on_mode_plain_button_pressed"]
+[connection signal="pressed" from="mode_plain_button" to="HexagonalRidgeHexGrid" method="_on_mode_plain_button_pressed"]
+[connection signal="pressed" from="mode_hill_button" to="RectRidgeHexGrid" method="_on_mode_hill_button_pressed"]
+[connection signal="pressed" from="mode_hill_button" to="HexagonalRidgeHexGrid" method="_on_mode_hill_button_pressed"]
+[connection signal="pressed" from="mode_mountain_button" to="RectRidgeHexGrid" method="_on_mode_mountain_button_pressed"]
+[connection signal="pressed" from="mode_mountain_button" to="HexagonalRidgeHexGrid" method="_on_mode_mountain_button_pressed"]
+[connection signal="pressed" from="mode_water_button" to="RectRidgeHexGrid" method="_on_mode_water_button_pressed"]
+[connection signal="pressed" from="mode_water_button" to="HexagonalRidgeHexGrid" method="_on_mode_water_button_pressed"]
+[connection signal="pressed" from="Button" to="HexagonalRidgeHexGrid" method="_on_button_pressed"]

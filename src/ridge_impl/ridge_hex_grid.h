@@ -7,22 +7,31 @@
 #include <vector>         // for vector
 
 #include "core/hex_grid.h"  // for HexGrid
+#include "godot_cpp/variant/string.hpp"
+#include "godot_cpp/variant/typed_array.hpp"
 #include "misc/cube_coordinates.h"
 #include "misc/types.h"                     // for Biome, ClipOptions
 #include "ridge_impl/ridge_based_object.h"  // for RidgeBased
 #include "ridge_impl/ridge_group.h"         // for BiomeGroups, GroupOfRidge...
 #include "ridge_impl/ridge_set.h"
+#include "ridge_impl/terraformer.h"
 #include "tal/noise.h"      // for FastNoiseLite
 #include "tal/reference.h"  // for Ref
 #include "tal/texture.h"    // for Texture
+#include "tal/vector3.h"
+#include "tal/vector3i.h"
 
 namespace sota {
+
+class BiomeTile;
 
 class RidgeHexGrid : public HexGrid, public RidgeBased {
   GDCLASS(RidgeHexGrid, HexGrid)
 
  public:
   RidgeHexGrid();
+
+  void set_terraformer(const Ref<Terraformer> p_terraformer);
 
   void set_biomes_noise(const Ref<FastNoiseLite> p_biomes_noise);
   Ref<FastNoiseLite> get_biomes_noise() const;
@@ -66,13 +75,27 @@ class RidgeHexGrid : public HexGrid, public RidgeBased {
   void set_smooth_normals(bool p_smooth_normals);
   bool get_smooth_normals() const;
 
+  std::vector<Ref<MatrixProcessor>> _tile_processors;
+
+  BiomeTile* make_biome_tile(Biome biome, int row, int col);
+
  protected:
+  friend BiomeTile;  // It's OK for BiomeTiles to ping their parent, e.g. in 'on_click' handler
+
+  void process_tile(int row, int col) {
+    for (Ref<MatrixProcessor> processor : _tile_processors) {
+      processor->process(row, col);
+    }
+    calculate_geometry();
+  }
+
   DiscreteVertexToDistance _distance_map;
 
   static void _bind_methods();
 
   void init() override;
-  void init_hexmesh() override;
+  void calculate_geometry();
+  void make_tiles() override;
 
  private:
   std::unordered_map<Biome, Ref<Texture>> _texture;
@@ -84,6 +107,7 @@ class RidgeHexGrid : public HexGrid, public RidgeBased {
   bool _smooth_normals{false};
   float _biomes_hill_level_ratio{0.7};
   float _biomes_plain_hill_gain{0.1f};
+  std::unordered_map<int, Vector3> _offsets;
 
   void calculate_neighbours(const GroupOfRidgeMeshes& group);
   void assign_neighbours(const GroupOfRidgeMeshes& group);
@@ -98,6 +122,8 @@ class RidgeHexGrid : public HexGrid, public RidgeBased {
 
   void assign_cube_coordinates_map();
   void calculate_normals() override;
+  void calculate_offsets();
+  std::vector<std::vector<Biome>> calculate_biomes();
 
   std::vector<TileMesh*> meshes();
 };
@@ -119,6 +145,8 @@ class RectRidgeHexGrid : public RidgeHexGrid {
   BiomeGroups collect_biome_groups(Biome b) override;
   ClipOptions get_clip_options(int row, int col) const override;
 
+  void set_biomes(godot::String str, int row_num, int col_num);
+
  protected:
   int _height{0};
   int _width{0};
@@ -136,6 +164,8 @@ class HexagonalRidgeHexGrid : public RidgeHexGrid {
   int calculate_id(int row, int col) const override;
   BiomeGroups collect_biome_groups(Biome b) override;
   ClipOptions get_clip_options(int row, int col) const override;
+
+  void set_biomes(godot::String str, int size);
 
  protected:
   int _size{0};

@@ -5,8 +5,10 @@
 #include "misc/cube_coordinates.h"
 #include "misc/types.h"
 #include "ridge_mesh.h"
+#include "src/ridge_impl/ridge_hex_grid.h"
 #include "tal/callable.h"
 #include "tal/engine.h"
+#include "tal/event.h"
 #include "tal/godot_core.h"
 #include "tal/mesh.h"
 #include "tal/vector3.h"
@@ -14,7 +16,6 @@
 namespace sota {
 
 // Tile definitions
-Tile::~Tile() {}
 
 Tile::Tile(Ref<TileMesh> mesh, Vector3 offset, Node3D* parent, OffsetCoordinates offset_coord)
     : _mesh(mesh), _offset_coord(offset_coord), _shifted(is_odd(offset_coord.row)) {
@@ -39,21 +40,53 @@ Tile::Tile(Ref<TileMesh> mesh, Vector3 offset, Node3D* parent, OffsetCoordinates
   _main_mesh_instance->add_child(_static_body);
   _static_body->add_child(_collision_shape3d);
 #ifdef SOTA_ENGINE
-  Node* root_scene = EditorInterface::get_singleton()->get_edited_scene_root();
-  _main_mesh_instance->set_owner(root_scene);
-  _static_body->set_owner(root_scene);
-  _collision_shape3d->set_owner(root_scene);
+  if (Engine::get_singleton()->is_editor_hint()) {
+    Node* root_scene = EditorInterface::get_singleton()->get_edited_scene_root();
+    this->set_owner(root_scene);
+    _main_mesh_instance->set_owner(root_scene);
+    _static_body->set_owner(root_scene);
+    _collision_shape3d->set_owner(root_scene);
+  }
 #endif
-
-  _static_body->connect("mouse_entered", Callable(mesh.ptr(), "handle_mouse_entered"));
-  _static_body->connect("mouse_exited", Callable(mesh.ptr(), "handle_mouse_exited"));
-  _static_body->connect("input_event", Callable(mesh.ptr(), "handle_input_event"));
 }
 
 Ref<TileMesh> Tile::mesh() const { return _mesh; }
 
 // BiomeTile definitions
+
+BiomeTile::BiomeTile(Ref<RidgeMesh> ridge_hex_mesh, Node3D* parent, Biome biome, OffsetCoordinates offset_coord,
+                     int row, int col)
+    : Tile(ridge_hex_mesh, ridge_hex_mesh->get_center(), parent, offset_coord), _biome(biome), _row(row), _col(col) {
+  _static_body->connect("mouse_entered", Callable(this, "handle_mouse_entered"));
+  _static_body->connect("mouse_exited", Callable(this, "handle_mouse_exited"));
+  _static_body->connect("input_event", Callable(this, "handle_input_event"));
+}
+
+void BiomeTile::_bind_methods() {
+  ClassDB::bind_method(D_METHOD("handle_mouse_entered"), &BiomeTile::handle_mouse_entered);
+  ClassDB::bind_method(D_METHOD("handle_mouse_exited"), &BiomeTile::handle_mouse_exited);
+  ClassDB::bind_method(D_METHOD("handle_input_event"), &BiomeTile::handle_input_event);
+}
+
+void BiomeTile::handle_mouse_entered() {
+  // placeholder
+}
+void BiomeTile::handle_mouse_exited() {
+  // placeholder
+}
+
+void BiomeTile::handle_input_event(Camera3D* p_camera, const Ref<InputEvent>& p_event, const Vector3& p_event_position,
+                                   const Vector3& p_normal, int32_t p_shape_idx) {
+  if (auto* mouse_event = dynamic_cast<InputEventMouse*>(p_event.ptr()); mouse_event) {
+    if (mouse_event->get_button_mask().has_flag(MOUSE_BUTTON_MASK_LEFT) && mouse_event->is_pressed()) {
+      auto* ridge_hex_grid_parent = dynamic_cast<RidgeHexGrid*>(get_parent());
+      ridge_hex_grid_parent->process_tile(_row, _col);
+    }
+  }
+}
+
 Biome BiomeTile::biome() const { return _biome; }
+void BiomeTile::set_biome(Biome biome) { _biome = biome; }
 
 Neighbours BiomeTile::neighbours() const { return _neighbours; }
 void BiomeTile::set_neighbours(Neighbours neighbours) { _neighbours = neighbours; }
