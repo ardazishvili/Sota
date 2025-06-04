@@ -47,6 +47,8 @@ auto printerr(Args&&... args) -> decltype(UtilityFunctions::print(std::forward<A
 #ifdef SOTA_ENGINE
 #include "editor/editor_interface.h"
 #endif
+#include "core/string/ustring.h"
+#include "core/variant/typed_array.h"
 #include "modules/register_module_types.h"
 
 template <typename... Args>

@@ -1,7 +1,9 @@
 #pragma once
 
 #include "core/hex_grid.h"
+#ifdef SOTA_GDEXTENSION
 #include "godot_cpp/classes/wrapped.hpp"
+#endif
 #include "misc/types.h"
 #include "tal/godot_core.h"
 #include "tal/reference.h"
