@@ -7,11 +7,11 @@
 
 #include "godot_cpp/classes/global_constants.hpp"
 #include "godot_cpp/core/class_db.hpp"
+#include "godot_cpp/core/memory.hpp"
 #include "godot_cpp/core/property_info.hpp"
 #include "godot_cpp/godot.hpp"
 #include "godot_cpp/variant/utility_functions.hpp"
 #include "godot_cpp/variant/variant.hpp"
-#include "godot_cpp/core/memory.hpp"
 
 using ClassDB = godot::ClassDB;
 using UtilityFunctions = godot::UtilityFunctions;
@@ -43,12 +43,9 @@ auto printerr(Args&&... args) -> decltype(UtilityFunctions::print(std::forward<A
 #include "core/object/class_db.h"
 #include "core/os/memory.h"
 #include "core/string/print_string.h"
-#include "core/variant/variant_utility.h"
-#ifdef SOTA_ENGINE
-#include "editor/editor_interface.h"
-#endif
 #include "core/string/ustring.h"
 #include "core/variant/typed_array.h"
+#include "core/variant/variant_utility.h"
 #include "modules/register_module_types.h"
 
 template <typename... Args>

@@ -7,22 +7,22 @@
 #include <vector>         // for vector
 
 #include "core/hex_grid.h"  // for HexGrid
-#ifdef SOTA_GDEXTENSION
-#include "godot_cpp/variant/string.hpp"
-#include "godot_cpp/variant/typed_array.hpp"
-#endif
-#include "tal/godot_core.h"
 #include "misc/cube_coordinates.h"
 #include "misc/types.h"                     // for Biome, ClipOptions
 #include "ridge_impl/ridge_based_object.h"  // for RidgeBased
 #include "ridge_impl/ridge_group.h"         // for BiomeGroups, GroupOfRidge...
 #include "ridge_impl/ridge_set.h"
 #include "ridge_impl/terraformer.h"
+#include "tal/godot_core.h"
 #include "tal/noise.h"      // for FastNoiseLite
 #include "tal/reference.h"  // for Ref
 #include "tal/texture.h"    // for Texture
 #include "tal/vector3.h"
 #include "tal/vector3i.h"
+
+#ifdef SOTA_GDEXTENSION
+using String = godot::String;  // TODO: see https://github.com/ardazishvili/Sota/issues/89
+#endif
 
 namespace sota {
 
@@ -147,11 +147,7 @@ class RectRidgeHexGrid : public RidgeHexGrid {
   int calculate_id(int row, int col) const override;
   BiomeGroups collect_biome_groups(Biome b) override;
   ClipOptions get_clip_options(int row, int col) const override;
-#ifdef SOTA_GDEXTENSION
-  void set_biomes(godot::String str, int row_num, int col_num);
-#else
   void set_biomes(String str, int row_num, int col_num);
-#endif
 
  protected:
   int _height{0};
@@ -170,11 +166,7 @@ class HexagonalRidgeHexGrid : public RidgeHexGrid {
   int calculate_id(int row, int col) const override;
   BiomeGroups collect_biome_groups(Biome b) override;
   ClipOptions get_clip_options(int row, int col) const override;
-#ifdef SOTA_GDEXTENSION
-  void set_biomes(godot::String str, int size);
-#else
   void set_biomes(String str, int size);
-#endif
 
  protected:
   int _size{0};
