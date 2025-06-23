@@ -578,11 +578,8 @@ ClipOptions RectRidgeHexGrid::get_clip_options(int row, int col) const {
           .up = row == (_height - 1),
           .down = row == 0};
 }
-#ifdef SOTA_GDEXTENSION
-void RectRidgeHexGrid::set_biomes(godot::String str, int row_num, int col_num) {
-#else
+
 void RectRidgeHexGrid::set_biomes(String str, int row_num, int col_num) {
-#endif
   int n = str.length();
   if (n != (row_num * col_num)) {
     print("Wrong number of biomes in set_biomes method ");
@@ -680,11 +677,8 @@ BiomeGroups HexagonalRidgeHexGrid::collect_biome_groups(Biome b) {
 ClipOptions HexagonalRidgeHexGrid::get_clip_options(int row, int col) const {
   return {.left = false, .right = false, .up = false, .down = false};
 }
-#ifdef SOTA_GDEXTENSION
-void HexagonalRidgeHexGrid::set_biomes(godot::String str, int size) {
-#else
+
 void HexagonalRidgeHexGrid::set_biomes(String str, int size) {
-#endif
   int n = std::accumulate(_tiles_layout.begin(), _tiles_layout.end(), 0,
                           [](int acc, const std::vector<Tile*>& row_of_tiles) { return acc + row_of_tiles.size(); });
   if (n != str.length()) {

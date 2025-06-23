@@ -4,9 +4,6 @@
 #include "core/hex_mesh.h"
 #include "core/mesh.h"
 #include "core/pent_mesh.h"
-#ifdef SOTA_GDEXTENSION
-#include "godot_cpp/core/class_db.hpp"
-#endif
 #include "honeycomb/honeycomb.h"
 #include "honeycomb/honeycomb_cell.h"
 #include "honeycomb/honeycomb_honey.h"
