@@ -1,8 +1,8 @@
 [gd_scene load_steps=13 format=3 uid="uid://r54herf7ach2"]
 
 [ext_resource type="FastNoiseLite" uid="uid://hpxe5e8u2ccb" path="res://demo_polyhedron/resources/polyhedron_noise_scene__noise.tres" id="1_17pyv"]
-[ext_resource type="Shader" path="res://demo_polyhedron/shaders/polyhedron_color.gdshader" id="1_d15u1"]
-[ext_resource type="Script" path="res://demo_polyhedron/noise_polyhedron_mesh.gd" id="3_1e8su"]
+[ext_resource type="Shader" uid="uid://jhk4m6s6f7f7" path="res://demo_polyhedron/shaders/polyhedron_color.gdshader" id="1_d15u1"]
+[ext_resource type="Script" uid="uid://7gkqd03iudlj" path="res://demo_polyhedron/noise_polyhedron_mesh.gd" id="3_1e8su"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_qjkvq"]
 sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)

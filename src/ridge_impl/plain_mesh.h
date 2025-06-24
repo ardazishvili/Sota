@@ -13,9 +13,18 @@ namespace sota {
 class PlainMesh : public RidgeMesh {
   GDCLASS(PlainMesh, RidgeMesh)
  public:
+  PlainMesh() = default;  // existence is 'must' for Godot
+  PlainMesh(const PlainMesh& other) = delete;
+  PlainMesh(PlainMesh&& other) = delete;
+  // copying operator= defined inside GDCLASS
+  PlainMesh& operator=(PlainMesh&& rhs) = delete;
+
   PlainMesh(Hexagon hex, RidgeHexMeshParams params) : RidgeMesh(hex, params) {}
   PlainMesh(Pentagon pentagon, RidgePentagonMeshParams params) : RidgeMesh(pentagon, params) {}
   void calculate_final_heights(DiscreteVertexToDistance& distance_map, float diameter, int divisions) override;
+
+ protected:
+  static void _bind_methods() {}
 };
 
 }  // namespace sota

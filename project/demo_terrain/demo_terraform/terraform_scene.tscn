@@ -7,12 +7,12 @@
 [ext_resource type="Texture2D" uid="uid://cdx7ceoux78g0" path="res://demo_terrain/textures/yellow_grass.png" id="5_7hnnf"]
 [ext_resource type="Texture2D" uid="uid://do00yjl6ipe16" path="res://demo_terrain/textures/water.png" id="6_1raos"]
 [ext_resource type="Texture2D" uid="uid://ba6285rpeyj4l" path="res://demo_terrain/textures/snow.png" id="7_am2ly"]
-[ext_resource type="Shader" path="res://demo_terrain/shaders/terrain.gdshader" id="8_k1okd"]
-[ext_resource type="Script" path="res://demo_terrain/demo_terraform/rect_ridge_hex_grid.gd" id="9_f7061"]
+[ext_resource type="Shader" uid="uid://143op10mrkp7" path="res://demo_terrain/shaders/terrain.gdshader" id="8_k1okd"]
+[ext_resource type="Script" uid="uid://crqj0bi2uwhc3" path="res://demo_terrain/demo_terraform/rect_ridge_hex_grid.gd" id="9_f7061"]
 [ext_resource type="FastNoiseLite" uid="uid://cfqdbsjbv1tr3" path="res://demo_terrain/resources/hex_terrain_biomes_noise.tres" id="10_xb5yc"]
 [ext_resource type="FastNoiseLite" uid="uid://d4lduvo2g6nuv" path="res://demo_terrain/resources/hex_terrain_plain_noise.tres" id="11_p3rrt"]
 [ext_resource type="FastNoiseLite" uid="uid://c4332g4a8o75g" path="res://demo_terrain/resources/hex_terrain_mountain_noise.tres" id="12_n0cpy"]
-[ext_resource type="Script" path="res://demo_terrain/demo_terraform/hexagonal_ridge_hex_grid.gd" id="13_02odl"]
+[ext_resource type="Script" uid="uid://bwgx0m7a1xmfm" path="res://demo_terrain/demo_terraform/hexagonal_ridge_hex_grid.gd" id="13_02odl"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_btloy"]
 sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
@@ -52,8 +52,8 @@ text = "Rectangular terrain: set all Plain"
 transform = Transform3D(1, 0, 0, 0, 0.450099, 0.892979, 0, -0.892979, 0.450099, 0.287141, 3.91961, 3.73948)
 
 [node name="RectRidgeHexGrid" type="RectRidgeHexGrid" parent="."]
-_height = 4
-_width = 4
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.16062, 0, 0)
+_shader = ExtResource("8_k1okd")
 noise_biomes = ExtResource("1_ef2mm")
 noise_plain_hill = ExtResource("2_bp2s3")
 noise_mountain_water = ExtResource("3_803qo")
@@ -61,12 +61,13 @@ texture_plain = ExtResource("4_43mri")
 texture_hill = ExtResource("5_7hnnf")
 texture_water = ExtResource("6_1raos")
 texture_mountain = ExtResource("7_am2ly")
-_shader = ExtResource("8_k1okd")
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.16062, 0, 0)
+_height = 4
+_width = 4
 script = ExtResource("9_f7061")
 
 [node name="HexagonalRidgeHexGrid" type="HexagonalRidgeHexGrid" parent="."]
-_size = 2
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.2908, 0, -0.382719)
+_shader = ExtResource("8_k1okd")
 noise_biomes = ExtResource("10_xb5yc")
 noise_plain_hill = ExtResource("11_p3rrt")
 noise_mountain_water = ExtResource("12_n0cpy")
@@ -74,8 +75,7 @@ texture_plain = ExtResource("4_43mri")
 texture_hill = ExtResource("5_7hnnf")
 texture_water = ExtResource("6_1raos")
 texture_mountain = ExtResource("7_am2ly")
-_shader = ExtResource("8_k1okd")
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.2908, 0, -0.382719)
+_size = 2
 script = ExtResource("13_02odl")
 
 [node name="mode_plain_button" type="Button" parent="."]
