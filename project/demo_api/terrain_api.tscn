@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://dbklmh0noh04f"]
 
-[ext_resource type="Shader" path="res://demo_terrain/shaders/wireframe.gdshader" id="1_rxou3"]
-[ext_resource type="Script" path="res://demo_api/scripts/rect_hex_grid_api_test.gd" id="2_brekk"]
+[ext_resource type="Shader" uid="uid://d8spdsuaxujn" path="res://demo_terrain/shaders/wireframe.gdshader" id="1_rxou3"]
+[ext_resource type="Script" uid="uid://ctyhfhivv472v" path="res://demo_api/scripts/rect_hex_grid_api_test.gd" id="2_brekk"]
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_4edwr"]
 noise_type = 3

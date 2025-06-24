@@ -1,11 +1,11 @@
 [gd_scene load_steps=18 format=3 uid="uid://bdxn6fvhokycx"]
 
-[ext_resource type="Shader" path="res://demo_polyhedron/shaders/polyhedron_biome.gdshader" id="1_cvwy6"]
+[ext_resource type="Shader" uid="uid://bny1m06qhs82i" path="res://demo_polyhedron/shaders/polyhedron_biome.gdshader" id="1_cvwy6"]
 [ext_resource type="Texture2D" uid="uid://do00yjl6ipe16" path="res://demo_terrain/textures/water.png" id="2_psly8"]
 [ext_resource type="Texture2D" uid="uid://480r6dmk61dl" path="res://demo_terrain/textures/grass0.png" id="3_1r3in"]
 [ext_resource type="Texture2D" uid="uid://cdx7ceoux78g0" path="res://demo_terrain/textures/yellow_grass.png" id="3_du0fe"]
 [ext_resource type="Texture2D" uid="uid://ba6285rpeyj4l" path="res://demo_terrain/textures/snow.png" id="4_admok"]
-[ext_resource type="Script" path="res://demo_polyhedron/ridge_polyhedron_mesh.gd" id="6_n245r"]
+[ext_resource type="Script" uid="uid://d57iwko53pci" path="res://demo_polyhedron/ridge_polyhedron_mesh.gd" id="6_n245r"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_qjkvq"]
 sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)

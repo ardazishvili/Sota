@@ -15,9 +15,13 @@
 #include "prism_impl/prism_hex_mesh.h"
 #include "prism_pent_mesh.h"
 #include "ridge_based_polyhedron.h"
+#include "ridge_impl/hill_mesh.h"
+#include "ridge_impl/mountain_mesh.h"
+#include "ridge_impl/plain_mesh.h"
 #include "ridge_impl/ridge_hex_grid.h"
 #include "ridge_impl/ridge_mesh.h"
 #include "ridge_impl/terraformer.h"
+#include "ridge_impl/water_mesh.h"
 #include "src/tal/godot_core.h"
 #include "tile.h"
 
@@ -56,6 +60,12 @@ void initialize_Sota_module(ModuleInitializationLevel p_level) {
   GDREGISTER_ABSTRACT_CLASS(sota::RidgeMesh);       // NOT ABSTRACT, see comment to `initialize_Sota_module`
   GDREGISTER_ABSTRACT_CLASS(sota::HoneycombCell);   // NOT ABSTRACT, see comment to `initialize_Sota_module`
   GDREGISTER_ABSTRACT_CLASS(sota::HoneycombHoney);  // NOT ABSTRACT, see comment to `initialize_Sota_module`
+
+  // Ridge meshes
+  GDREGISTER_ABSTRACT_CLASS(sota::PlainMesh);     // NOT ABSTRACT, see comment to `initialize_Sota_module`
+  GDREGISTER_ABSTRACT_CLASS(sota::HillMesh);      // NOT ABSTRACT, see comment to `initialize_Sota_module`
+  GDREGISTER_ABSTRACT_CLASS(sota::MountainMesh);  // NOT ABSTRACT, see comment to `initialize_Sota_module`
+  GDREGISTER_ABSTRACT_CLASS(sota::WaterMesh);     // NOT ABSTRACT, see comment to `initialize_Sota_module`
 
   // Grids made of ridge hexes - hexes based on global graph of ridges
   GDREGISTER_ABSTRACT_CLASS(sota::RidgeHexGrid);
