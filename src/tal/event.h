@@ -11,12 +11,12 @@ using Input = godot::Input;
 using InputEventMouse = godot::InputEventMouse;
 
 constexpr godot::MouseButton MOUSE_BUTTON_LEFT = godot::MOUSE_BUTTON_LEFT;
-
 constexpr godot::MouseButtonMask MOUSE_BUTTON_MASK_LEFT = godot::MouseButtonMask::MOUSE_BUTTON_MASK_LEFT;
 constexpr godot::MouseButtonMask MOUSE_BUTTON_MASK_RIGHT = godot::MouseButtonMask::MOUSE_BUTTON_MASK_RIGHT;
 #else
 #include "core/input/input_event.h"
 
+constexpr MouseButton MOUSE_BUTTON_LEFT = MouseButton::LEFT;
 constexpr MouseButtonMask MOUSE_BUTTON_MASK_LEFT = MouseButtonMask::LEFT;
 constexpr MouseButtonMask MOUSE_BUTTON_MASK_RIGHT = MouseButtonMask::RIGHT;
 #endif
