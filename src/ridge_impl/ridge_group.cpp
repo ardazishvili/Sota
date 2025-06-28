@@ -8,6 +8,7 @@
 #include <numeric>
 #include <unordered_set>
 
+#include "misc/tile.h"
 #include "ridge_config.h"
 #include "ridge_impl/ridge_mesh.h"  // for RidgeMesh
 #include "ridge_impl/ridge_set.h"   // for RidgeSet
@@ -98,7 +99,7 @@ static void dfs(RidgeMesh* current, GroupOfRidgeMeshes& ridge_meshed_to_add, std
   }
   visited.insert(current);
   ridge_meshed_to_add.push_back(current);
-  for (TileMesh* tile_mesh : current->get_neighbours()) {
+  for (TileMesh* tile_mesh : current->tile()->neighbours()) {
     RidgeMesh* ridge_mesh = dynamic_cast<RidgeMesh*>(tile_mesh);
     dfs(ridge_mesh, ridge_meshed_to_add, visited);
   }
@@ -106,9 +107,9 @@ static void dfs(RidgeMesh* current, GroupOfRidgeMeshes& ridge_meshed_to_add, std
 
 std::vector<RidgeGroup> remove_mesh(RidgeGroup& ridge_group, RidgeMesh* mesh, RidgeConfig config) {
   Biome biome = ridge_group.biome();
-  for (TileMesh* tile_mesh : mesh->get_neighbours()) {
+  for (TileMesh* tile_mesh : mesh->tile()->neighbours()) {
     RidgeMesh* neighbour = dynamic_cast<RidgeMesh*>(tile_mesh);
-    neighbour->remove_neighbour(mesh);
+    neighbour->tile()->remove_neighbour(mesh);
   }
   std::vector<RidgeGroup> res;
   std::unordered_set<RidgeMesh*> visited;

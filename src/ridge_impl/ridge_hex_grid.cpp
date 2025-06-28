@@ -525,7 +525,7 @@ Neighbours RidgeHexGrid::get_neighbours(BiomeTile* biome_tile, std::optional<con
   return hexagon_neighbours;
 }
 
-void RidgeHexGrid::calculate_neighbours(const GroupOfRidgeMeshes& group) {
+void RidgeHexGrid::assign_neighbours(const GroupOfRidgeMeshes& group) {
   for (auto& row : _tiles_layout) {
     for (auto& tile_ptr : row) {
       BiomeTile* tile = dynamic_cast<BiomeTile*>(tile_ptr);
@@ -539,19 +539,6 @@ void RidgeHexGrid::calculate_neighbours(const GroupOfRidgeMeshes& group) {
   }
 }
 
-void RidgeHexGrid::assign_neighbours(const GroupOfRidgeMeshes& group) {
-  for (auto& row : _tiles_layout) {
-    for (auto& tile_ptr : row) {
-      BiomeTile* tile = dynamic_cast<BiomeTile*>(tile_ptr);
-      RidgeMesh* ridge_mesh = dynamic_cast<RidgeMesh*>(tile->mesh().ptr());
-      if (!is_member_of_group(&group, tile->mesh().ptr())) {
-        continue;
-      }
-      ridge_mesh->set_neighbours(tile->neighbours());
-    }
-  }
-}
-
 void RidgeHexGrid::init_ridges(std::vector<RidgeGroup>& group, float ridge_offset) {
   for (RidgeGroup& group : group) {
     group.init_ridges(_distance_map, ridge_offset, _divisions);
@@ -559,7 +546,6 @@ void RidgeHexGrid::init_ridges(std::vector<RidgeGroup>& group, float ridge_offse
 }
 
 void RidgeHexGrid::prepare_heights_calculation(RidgeGroup& group) {
-  calculate_neighbours(group.meshes());
   assign_neighbours(group.meshes());
   if (group.has_ridge_set()) {
     auto offset = group.biome() == Biome::MOUNTAIN ? _ridge_config.top_ridge_offset : _ridge_config.bottom_ridge_offset;

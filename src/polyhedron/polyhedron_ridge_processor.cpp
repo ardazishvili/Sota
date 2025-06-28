@@ -114,7 +114,7 @@ void PolyhedronRidgeProcessor::set_neighbours() {
       printerr("Number of neighbours in PolyhedronRidgeProcessor is not 5 or 6");
     }
 
-    ridge_mesh->set_neighbours(neighbours_meshes);
+    cur_wrapper->tile()->set_neighbours(neighbours_meshes);
   }
   if (pentagon_cnt != 12) {
     printerr("Number of pentagons in PolyhedronRidgeProcessor is not 12");
@@ -135,7 +135,7 @@ void dfs(TileMesh* cur, GroupOfRidgeMeshes& cur_group, std::unordered_set<TileMe
   RidgeMesh* ridge_mesh = dynamic_cast<RidgeMesh*>(cur);
   cur_group.emplace_back(ridge_mesh);
 
-  for (auto* n : ridge_mesh->get_neighbours()) {
+  for (auto* n : ridge_mesh->tile()->neighbours()) {
     dfs(n, cur_group, visited, biome);
   }
 }
@@ -175,13 +175,13 @@ void PolyhedronRidgeProcessor::set_group_neighbours() {
   auto processor = [](const GroupOfRidgeMeshes& g) {
     for (RidgeMesh* ridge_mesh : g) {
       Neighbours group_neighbours;
-      Neighbours all_neighbours = ridge_mesh->get_neighbours();
+      Neighbours all_neighbours = ridge_mesh->tile()->neighbours();
       std::copy_if(all_neighbours.begin(), all_neighbours.end(), std::back_inserter(group_neighbours),
                    [g](TileMesh* n) {
                      RidgeMesh* ridge_n = dynamic_cast<RidgeMesh*>(n);
                      return std::find(g.begin(), g.end(), ridge_n) != g.end();
                    });
-      ridge_mesh->set_neighbours(group_neighbours);
+      ridge_mesh->tile()->set_neighbours(group_neighbours);
     }
   };
   for (RidgeGroup& ridge_group : all_groups()) {

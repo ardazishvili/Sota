@@ -8,6 +8,7 @@
 namespace sota {
 
 class SotaMesh;
+class Tile;
 
 class TileMesh : public RefCounted {
   GDCLASS(TileMesh, RefCounted)
@@ -17,9 +18,15 @@ class TileMesh : public RefCounted {
   virtual SotaMesh* inner_mesh() const = 0;
 
   DiscreteVertexToNormals get_discrete_vertex_to_normals();
+  Tile* tile() const {
+    // std::cout << "tile is " << _tile << std::endl;
+    return _tile;
+  }
+  void set_tile(Tile* tile) { _tile = tile; }
 
  protected:
   static void _bind_methods() {}
+  Tile* _tile = nullptr;
 };
 
 }  // namespace sota

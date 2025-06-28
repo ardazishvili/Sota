@@ -7,17 +7,18 @@
 #include "core/general_utility.h"  // for MeshProcessor
 #include "core/mesh.h"             // for SotaMesh
 #include "misc/discretizer.h"      // for Dicretizer
-#include "misc/types.h"            // for Neighbours
-#include "misc/utilities.h"        // for to_point_divis...
-#include "primitives/polygon.h"    // for RegularPolygon
-#include "tal/arrays.h"            // for Vector3Array
-#include "tal/callable.h"          // for Callable
-#include "tal/godot_core.h"        // for print
-#include "tal/noise.h"             // for FastNoiseLite
-#include "tal/reference.h"         // for Ref
-#include "tal/vector2.h"           // for Vector2
-#include "tal/vector3.h"           // for Vector3
-#include "tile_mesh.h"             // for TileMesh
+#include "misc/tile.h"
+#include "misc/types.h"          // for Neighbours
+#include "misc/utilities.h"      // for to_point_divis...
+#include "primitives/polygon.h"  // for RegularPolygon
+#include "tal/arrays.h"          // for Vector3Array
+#include "tal/callable.h"        // for Callable
+#include "tal/godot_core.h"      // for print
+#include "tal/noise.h"           // for FastNoiseLite
+#include "tal/reference.h"       // for Ref
+#include "tal/vector2.h"         // for Vector2
+#include "tal/vector3.h"         // for Vector3
+#include "tile_mesh.h"           // for TileMesh
 
 namespace sota {
 class Ridge;
@@ -48,12 +49,10 @@ void RidgeMesh::calculate_corner_points_distances_to_border(DiscreteVertexToDist
   };
 
   std::vector<Vector3> neighbours_corner_points;
-  for (const auto& n : _neighbours) {
-    if (n) {
-      RidgeMesh* ridge_mesh = dynamic_cast<RidgeMesh*>(n);
-      auto points = ridge_mesh->inner_mesh()->base().points();
-      neighbours_corner_points.insert(neighbours_corner_points.end(), points.begin(), points.end());
-    }
+  for (const auto& n : tile()->neighbours()) {
+    RidgeMesh* ridge_mesh = dynamic_cast<RidgeMesh*>(n);
+    auto points = ridge_mesh->inner_mesh()->base().points();
+    neighbours_corner_points.insert(neighbours_corner_points.end(), points.begin(), points.end());
   }
 
   auto corner_points = _mesh->base().points();
@@ -91,10 +90,8 @@ std::set<int> RidgeMesh::get_exclude_border_set() const {
     Vector3 p1 = corner_points[i];
     Vector3 p2 = corner_points[(i + 1) % size];
     Vector3 mid = (p1 + p2) / 2;
-    if (std::any_of(_neighbours.begin(), _neighbours.end(), [approx_R, mid](TileMesh* tile_mesh) {
-          if (!tile_mesh) {
-            return false;
-          }
+    Neighbours ns = tile()->neighbours();
+    if (std::any_of(ns.begin(), ns.end(), [approx_R, mid](TileMesh* tile_mesh) {
           return mid.distance_to(tile_mesh->inner_mesh()->get_center()) < (approx_R * 1.1);
         })) {
       result.insert(i);
@@ -109,11 +106,9 @@ void RidgeMesh::calculate_ridge_based_heights(std::function<double(double, doubl
   shift_compress();
 
   std::vector<Vector3> neighbours_corner_points;
-  for (TileMesh* n : _neighbours) {
-    if (n) {
-      std::vector<Vector3> points = dynamic_cast<RidgeMesh*>(n)->inner_mesh()->base().points();
-      neighbours_corner_points.insert(neighbours_corner_points.end(), points.begin(), points.end());
-    }
+  for (TileMesh* n : tile()->neighbours()) {
+    std::vector<Vector3> points = dynamic_cast<RidgeMesh*>(n)->inner_mesh()->base().points();
+    neighbours_corner_points.insert(neighbours_corner_points.end(), points.begin(), points.end());
   }
 
   auto vertices = _mesh->get_vertices();
@@ -136,13 +131,6 @@ void RidgeMesh::calculate_initial_heights() {
   _mesh->set_vertices(vertices);
 
   _mesh->update();
-}
-
-std::vector<TileMesh*> RidgeMesh::get_neighbours() const {
-  std::vector<TileMesh*> res;
-  std::copy_if(_neighbours.begin(), _neighbours.end(), std::back_inserter(res),
-               [](TileMesh* n) { return n != nullptr; });
-  return res;
 }
 
 void RidgeMesh::set_shift_compress(float y_shift, float y_compress) {
