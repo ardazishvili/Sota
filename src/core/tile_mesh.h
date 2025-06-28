@@ -18,10 +18,7 @@ class TileMesh : public RefCounted {
   virtual SotaMesh* inner_mesh() const = 0;
 
   DiscreteVertexToNormals get_discrete_vertex_to_normals();
-  Tile* tile() const {
-    // std::cout << "tile is " << _tile << std::endl;
-    return _tile;
-  }
+  Tile* tile() const { return _tile; }
   void set_tile(Tile* tile) { _tile = tile; }
 
  protected:
