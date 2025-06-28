@@ -138,7 +138,6 @@ class RidgeHexGrid : public HexGrid, public RidgeBased {
 
   Ref<RidgeMesh> make_biome_mesh(Biome biome, int id, Vector3i layout);
   RidgeGroup& get_group(BiomeTile* biome_tile);
-  BiomeTile* get_biome_tile(TileMesh* target);
   void update_biome_groups(std::vector<RidgeGroup*> groups_to_be_removed, std::vector<RidgeGroup>& to_be_added,
                            Biome biome);
 };

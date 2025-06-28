@@ -414,19 +414,6 @@ RidgeGroup& RidgeHexGrid::get_group(BiomeTile* biome_tile) {
   return _plain_groups[0];
 }
 
-BiomeTile* RidgeHexGrid::get_biome_tile(TileMesh* target) {
-  for (auto& vec : _tiles_layout) {
-    for (Tile* tile : vec) {
-      if (tile->mesh().ptr() == target) {
-        return dynamic_cast<BiomeTile*>(tile);
-      }
-    }
-  }
-
-  printerr("can't find BiomeTile by TileMesh*");  // should be never reached
-  return nullptr;
-}
-
 void RidgeHexGrid::update_biome_groups(std::vector<RidgeGroup*> to_be_removed, std::vector<RidgeGroup>& to_be_added,
                                        Biome biome) {
   std::vector<RidgeGroup>& groups_to_be_modified = get_groups_by_biome(biome);
@@ -466,10 +453,7 @@ void RidgeHexGrid::update_biome(BiomeTile* biome_tile, Biome new_biome) {
       continue;  // it's OK e.g. for border tiles
     }
 
-    BiomeTile* neighbour_biome_tile = get_biome_tile(neighbour_tile_mesh);
-    if (!neighbour_biome_tile) {
-      continue;  // always not OK, error will be print from 'get_biome_tile'
-    }
+    BiomeTile* neighbour_biome_tile = dynamic_cast<BiomeTile*>(neighbour_tile_mesh->tile());
     RidgeGroup& group = get_group(neighbour_biome_tile);
     Biome biome = neighbour_biome_tile->biome();
     if (biome == new_biome && std::find(groups_to_join.begin(), groups_to_join.end(), &group) == groups_to_join.end()) {
