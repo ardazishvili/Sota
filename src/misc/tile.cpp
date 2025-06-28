@@ -17,20 +17,14 @@ namespace sota {
 
 // Tile definitions
 
-Tile::Tile(Ref<TileMesh> mesh, Vector3 offset, Node3D* parent, OffsetCoordinates offset_coord)
-    : _mesh(mesh), _offset_coord(offset_coord), _shifted(is_odd(offset_coord.row)) {
+Tile::Tile(Ref<TileMesh> mesh, Node3D* parent) : _mesh(mesh) {
   _main_mesh_instance = memnew(MeshInstance3D());
   _sphere_shaped3d = Ref<SphereShape3D>(memnew(SphereShape3D()));
-
-  auto points = mesh->inner_mesh()->base().points();
-  auto center = mesh->inner_mesh()->base().center();
-  _sphere_shaped3d->set_radius(center.distance_to(points[0]));
 
   _collision_shape3d = memnew(CollisionShape3D());
   _collision_shape3d->set_shape(_sphere_shaped3d);
 
   _static_body = memnew(StaticBody3D());
-  _static_body->set_position(offset);
 
   _main_mesh_instance->set_mesh(mesh->inner_mesh());
 
@@ -56,7 +50,10 @@ Ref<TileMesh> Tile::mesh() const { return _mesh; }
 
 BiomeTile::BiomeTile(Ref<RidgeMesh> ridge_hex_mesh, Node3D* parent, Biome biome, OffsetCoordinates offset_coord,
                      int row, int col)
-    : Tile(ridge_hex_mesh, ridge_hex_mesh->get_center(), parent, offset_coord), _biome(biome), _row(row), _col(col) {
+    : OffsetTile(ridge_hex_mesh, ridge_hex_mesh->get_center(), parent, offset_coord),
+      _biome(biome),
+      _row(row),
+      _col(col) {
   _static_body->connect("mouse_entered", Callable(this, "handle_mouse_entered"));
   _static_body->connect("mouse_exited", Callable(this, "handle_mouse_exited"));
   _static_body->connect("input_event", Callable(this, "handle_input_event"));
@@ -99,7 +96,7 @@ void BiomeTile::set_neighbours(Neighbours neighbours) { _neighbours = neighbours
 Ref<HoneycombHoney> HoneycombTile::honey_mesh() const { return _honey; }
 HoneycombTile::HoneycombTile(Ref<HoneycombCell> walls, Ref<HoneycombHoney> honey, Node3D* parent,
                              OffsetCoordinates offset_coord)
-    : Tile(walls, walls->inner_mesh()->get_center(), parent, offset_coord), _honey(honey) {
+    : OffsetTile(walls, walls->inner_mesh()->get_center(), parent, offset_coord), _honey(honey) {
   _second_mesh_instance = memnew(MeshInstance3D());
 
   _second_mesh_instance->set_mesh(honey->inner_mesh());

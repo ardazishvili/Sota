@@ -1,5 +1,6 @@
 #pragma once
 
+#include "misc/tile.h"
 #include "tal/camera.h"
 #include "tal/engine.h"
 #include "tal/event.h"
@@ -8,23 +9,24 @@
 #include "tal/node.h"  // for Node3D
 #include "tal/reference.h"
 #include "tal/vector3.h"
+#include "types.h"
 
 namespace sota {
 
 class SotaMesh;
 
-enum class DynamicWrapperState { IDLE, DOWN, UP };
+enum class PolyhedronTileState { IDLE, DOWN, UP };
 
-class DynamicWrapper : public Node3D {
-  GDCLASS(DynamicWrapper, Node3D)
+class PolyhedronTile : public Tile {
+  GDCLASS(PolyhedronTile, Tile)
  public:
-  DynamicWrapper() = default;
-  DynamicWrapper(const DynamicWrapper& other) = default;
-  DynamicWrapper(DynamicWrapper&& other) = default;
+  PolyhedronTile() = default;
+  PolyhedronTile(const PolyhedronTile& other) = default;
+  PolyhedronTile(PolyhedronTile&& other) = default;
   // copying operator= defined inside GDCLASS
-  DynamicWrapper& operator=(DynamicWrapper&& other) = delete;
+  PolyhedronTile& operator=(PolyhedronTile&& other) = delete;
 
-  DynamicWrapper(SotaMesh* sota_mesh, Node3D* parent);
+  PolyhedronTile(Ref<TileMesh> mesh, Node3D* parent);
 
 #ifdef SOTA_GDEXTENSION
   void _physics_process(double delta) override;
@@ -38,21 +40,16 @@ class DynamicWrapper : public Node3D {
   static void _bind_methods();
 
  private:
-  Ref<SphereShape3D> _sphere_shaped3d;
-  CollisionShape3D* _collision_shape3d{nullptr};
-  StaticBody3D* _static_body{nullptr};
-  MeshInstance3D* _mesh_instance{nullptr};
-
-  DynamicWrapperState _state{DynamicWrapperState::IDLE};
+  PolyhedronTileState _state{PolyhedronTileState::IDLE};
   Vector3 _min{0.9, 0.9, 0.9};
   Vector3 _max{1.0, 1.0, 1.0};
   Vector3 _scale_speed{0.0016, 0.0016, 0.0016};
   static constexpr float SCALE_TOL = 0.001;
 
   void handle_input_event(Camera3D* p_camera, const Ref<InputEvent>& p_event, const Vector3& p_event_position,
-                          const Vector3& p_normal, int32_t p_shape_idx);
-  void handle_mouse_entered();
-  void handle_mouse_exited();
+                          const Vector3& p_normal, int32_t p_shape_idx) override;
+  void handle_mouse_entered() override;
+  void handle_mouse_exited() override;
 };
 
 }  // namespace sota

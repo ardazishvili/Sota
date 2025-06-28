@@ -9,7 +9,7 @@
 
 #include "core/tile_mesh.h"  // for TileMesh
 #include "discretizer.h"
-#include "misc/dynamic_wrapper.h"
+#include "misc/polyhedron_tile.h"
 #include "misc/types.h"  // for Biome
 #include "polygon.h"
 #include "polyhedron/polyhedron_mesh_processor.h"
@@ -52,7 +52,7 @@ class PolygonWrapper : public Node3D {
   void set_mesh(Ref<TileMesh> tile_mesh, Node3D* parent) {
     parent->add_child(this);
     _tile_mesh = tile_mesh;
-    _mesh_instance_wrapper = memnew(DynamicWrapper(_tile_mesh->inner_mesh(), this));
+    _mesh_instance_wrapper = memnew(PolyhedronTile(_tile_mesh, this));
   }
 
  private:
@@ -61,7 +61,7 @@ class PolygonWrapper : public Node3D {
   std::unique_ptr<RegularPolygon> _polygon;
 
   Ref<TileMesh> _tile_mesh;
-  DynamicWrapper* _mesh_instance_wrapper;
+  PolyhedronTile* _mesh_instance_wrapper;
 };
 
 class Polyhedron : public Node3D {
