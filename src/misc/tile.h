@@ -25,13 +25,10 @@ class Tile : public Node3D {
   // copying operator= defined inside GDCLASS
   Tile& operator=(Tile&& other) = delete;
 
-  Tile(Ref<TileMesh> mesh, Vector3 offset, Node3D* parent, OffsetCoordinates offset_coord);
+  Tile(Ref<TileMesh> mesh, Node3D* parent);
 
   Ref<TileMesh> mesh() const;
   int id() const { return _mesh->get_id(); }
-  bool is_shifted() const { return _shifted; }
-  OffsetCoordinates get_offset_coords() const { return _offset_coord; }
-  CubeCoordinates get_cube_coords() const { return offsetToCube(_offset_coord); }
 
   void destroy() {
     get_parent()->remove_child(this);
@@ -48,20 +45,57 @@ class Tile : public Node3D {
 
  protected:
   StaticBody3D* _static_body{nullptr};
+  Ref<SphereShape3D> _sphere_shaped3d{nullptr};
+  Ref<TileMesh> _mesh;
+  MeshInstance3D* _main_mesh_instance{nullptr};
+
+  static void _bind_methods() {}
+  virtual void handle_input_event(Camera3D* p_camera, const Ref<InputEvent>& p_event, const Vector3& p_event_position,
+                                  const Vector3& p_normal, int32_t p_shape_idx) = 0;
+  virtual void handle_mouse_entered() = 0;
+  virtual void handle_mouse_exited() = 0;
+
+ private:
+  CollisionShape3D* _collision_shape3d{nullptr};
+};
+
+class OffsetTile : public Tile {
+  GDCLASS(OffsetTile, Tile);
+
+ public:
+  OffsetTile() = default;
+  OffsetTile(const OffsetTile& other) = default;
+  OffsetTile(OffsetTile&& other) = default;
+  // copying operator= defined inside GDCLASS
+  OffsetTile& operator=(OffsetTile&& other) = delete;
+
+  OffsetTile(Ref<TileMesh> mesh, Vector3 offset, Node3D* parent, OffsetCoordinates offset_coord)
+      : Tile(mesh, parent), _offset_coord(offset_coord), _shifted(is_odd(offset_coord.row)) {
+    auto points = _mesh->inner_mesh()->base().points();
+    auto center = _mesh->inner_mesh()->base().center();
+    _sphere_shaped3d->set_radius(center.distance_to(points[0]));
+
+    _static_body->set_position(offset);
+  }
+  bool is_shifted() const { return _shifted; }
+  OffsetCoordinates get_offset_coords() const { return _offset_coord; }
+  CubeCoordinates get_cube_coords() const { return offsetToCube(_offset_coord); }
+
+  void handle_input_event(Camera3D* p_camera, const Ref<InputEvent>& p_event, const Vector3& p_event_position,
+                          const Vector3& p_normal, int32_t p_shape_idx) override {}
+  void handle_mouse_entered() override {}
+  void handle_mouse_exited() override {}
+
+ protected:
   static void _bind_methods() {}
 
  private:
-  Ref<SphereShape3D> _sphere_shaped3d{nullptr};
-  CollisionShape3D* _collision_shape3d{nullptr};
-  MeshInstance3D* _main_mesh_instance{nullptr};
-
-  Ref<TileMesh> _mesh;
   OffsetCoordinates _offset_coord;
   const bool _shifted = false;  // odd rows are shifted by half of small radius
 };
 
-class BiomeTile : public Tile {
-  GDCLASS(BiomeTile, Tile)
+class BiomeTile : public OffsetTile {
+  GDCLASS(BiomeTile, OffsetTile)
  public:
   BiomeTile() = default;
   BiomeTile(const BiomeTile& other) = default;
@@ -90,21 +124,26 @@ class BiomeTile : public Tile {
   Neighbours _neighbours;
 
   void handle_input_event(Camera3D* p_camera, const Ref<InputEvent>& p_event, const Vector3& p_event_position,
-                          const Vector3& p_normal, int32_t p_shape_idx);
-  void handle_mouse_entered();
-  void handle_mouse_exited();
+                          const Vector3& p_normal, int32_t p_shape_idx) override;
+  void handle_mouse_entered() override;
+  void handle_mouse_exited() override;
 
   int _row = -1;  // INVALID BY DEFAULT
   int _col = -1;  // INVALID BY DEFAULT
 };
 
-class HoneycombTile : public Tile {
+class HoneycombTile : public OffsetTile {
  public:
   HoneycombTile() = delete;
   HoneycombTile(Ref<HoneycombCell> walls, Ref<HoneycombHoney> honey, Node3D* parent, OffsetCoordinates offset_coord);
 
   // getters
   Ref<HoneycombHoney> honey_mesh() const;
+
+  void handle_input_event(Camera3D* p_camera, const Ref<InputEvent>& p_event, const Vector3& p_event_position,
+                          const Vector3& p_normal, int32_t p_shape_idx) override {}
+  void handle_mouse_entered() override {}
+  void handle_mouse_exited() override {}
 
  private:
   Ref<HoneycombHoney> _honey;

@@ -7,7 +7,7 @@
 #include "honeycomb/honeycomb.h"
 #include "honeycomb/honeycomb_cell.h"
 #include "honeycomb/honeycomb_honey.h"
-#include "misc/dynamic_wrapper.h"
+#include "misc/polyhedron_tile.h"
 #include "polyhedron/hex_polyhedron.h"
 #include "polyhedron/noise_polyhedron.h"
 #include "polyhedron/prism_polyhedron.h"
@@ -85,8 +85,9 @@ void initialize_Sota_module(ModuleInitializationLevel p_level) {
   GDREGISTER_CLASS(sota::RidgePolyhedron);
 
   // other
-  GDREGISTER_CLASS(sota::DynamicWrapper);
-  GDREGISTER_CLASS(sota::Tile);
+  GDREGISTER_ABSTRACT_CLASS(sota::Tile);
+  GDREGISTER_CLASS(sota::PolyhedronTile);
+  GDREGISTER_CLASS(sota::OffsetTile);
   GDREGISTER_CLASS(sota::BiomeTile);
 
   GDREGISTER_ABSTRACT_CLASS(sota::MatrixProcessor);

@@ -120,7 +120,7 @@ void HexGrid::make_tiles() {
 
       Ref<SimpleMesh> simple_mesh = Ref<SimpleMesh>(memnew(SimpleMesh(hex, params)));
       _tiles_layout.back().push_back(
-          make_non_ref<Tile>(simple_mesh, offset, this, OffsetCoordinates{.row = val.x, .col = val.z}));
+          make_non_ref<OffsetTile>(simple_mesh, offset, this, OffsetCoordinates{.row = val.x, .col = val.z}));
     }
   }
 }
