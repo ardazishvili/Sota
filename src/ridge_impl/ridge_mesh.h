@@ -26,6 +26,7 @@
 
 namespace sota {
 class Ridge;
+class Tile;
 
 struct RidgeHexMeshParams {
   HexMeshParams hex_mesh_params;
@@ -49,13 +50,11 @@ class RidgeMesh : public TileMesh {
   RidgeMesh& operator=(RidgeMesh&& rhs) = delete;
 
   // getters
-  std::vector<TileMesh*> get_neighbours() const;
   std::pair<float, float> get_min_max_height() const { return {_min_height, _max_height}; }
 
   // setters
   void set_plain_noise(Ref<FastNoiseLite> plain_noise);
   void set_ridge_noise(Ref<FastNoiseLite> ridge_noise);
-  void set_neighbours(Neighbours p_neighbours) { _neighbours = p_neighbours; }
   void set_ridges(std::vector<Ridge*> r) { _ridges = r; }
   void set_shift_compress(float y_shift, float y_compress);
 
@@ -70,8 +69,6 @@ class RidgeMesh : public TileMesh {
   void init() { _mesh->init(); }
   Vector3 get_center() { return _mesh->get_center(); }
   SotaMesh* inner_mesh() const override { return _mesh.ptr(); }
-
-  void remove_neighbour(RidgeMesh* neighbour) { std::erase(_neighbours, neighbour); }
 
   int get_id() override { return _mesh->get_id(); }
 
@@ -99,7 +96,6 @@ class RidgeMesh : public TileMesh {
   Ref<FastNoiseLite> _plain_noise;
   Ref<FastNoiseLite> _ridge_noise;
   std::vector<Ridge*> _ridges;
-  Neighbours _neighbours = {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr};
 
   float _min_height = std::numeric_limits<float>::max();
   float _max_height = std::numeric_limits<float>::min();

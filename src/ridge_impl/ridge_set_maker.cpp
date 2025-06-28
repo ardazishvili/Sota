@@ -3,8 +3,9 @@
 #include <algorithm>  // for find, sort
 #include <random>     // for mt19937, uniform_int_distri...
 
-#include "core/mesh.h"                    // for SotaMesh
-#include "core/tile_mesh.h"               // for TileMesh
+#include "core/mesh.h"       // for SotaMesh
+#include "core/tile_mesh.h"  // for TileMesh
+#include "misc/tile.h"
 #include "ridge_impl/ridge_connection.h"  // for RidgeConnection, RidgeVertex
 #include "ridge_impl/ridge_mesh.h"        // for RidgeMesh
 #include "tal/vector3.h"                  // for Vector3
@@ -20,7 +21,7 @@ unsigned int RidgeSetMaker::unvisited_neighbours_count(const RidgeMesh* mesh) co
 }
 
 RidgeMeshPointerVector RidgeSetMaker::unvisited_neighbours(const RidgeMesh* mesh) const {
-  auto all_neighbours = mesh->get_neighbours();
+  auto all_neighbours = mesh->tile()->neighbours();
   RidgeMeshPointerVector unvisited;
   for (TileMesh* tile_mesh : all_neighbours) {
     RidgeMesh* ridge_mesh = dynamic_cast<RidgeMesh*>(tile_mesh);

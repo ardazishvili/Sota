@@ -119,7 +119,6 @@ class RidgeHexGrid : public HexGrid, public RidgeBased {
   float _global_min_y = std::numeric_limits<float>::max();
   float _global_max_y = std::numeric_limits<float>::min();
 
-  void calculate_neighbours(const GroupOfRidgeMeshes& group);
   void assign_neighbours(const GroupOfRidgeMeshes& group);
   void init_ridges(std::vector<RidgeGroup>& group, float ridge_offset);
 

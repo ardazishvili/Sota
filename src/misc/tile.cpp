@@ -18,6 +18,8 @@ namespace sota {
 // Tile definitions
 
 Tile::Tile(Ref<TileMesh> mesh, Node3D* parent) : _mesh(mesh) {
+  mesh->set_tile(this);
+
   _main_mesh_instance = memnew(MeshInstance3D());
   _sphere_shaped3d = Ref<SphereShape3D>(memnew(SphereShape3D()));
 
@@ -46,8 +48,16 @@ Tile::Tile(Ref<TileMesh> mesh, Node3D* parent) : _mesh(mesh) {
 
 Ref<TileMesh> Tile::mesh() const { return _mesh; }
 
-// BiomeTile definitions
+void Tile::set_neighbours(Neighbours neighbours) { _neighbours = neighbours; }
+void Tile::remove_neighbour(RidgeMesh* neighbour) { std::erase(_neighbours, neighbour); }
+Neighbours Tile::neighbours() const {
+  std::vector<TileMesh*> res;
+  std::copy_if(_neighbours.begin(), _neighbours.end(), std::back_inserter(res),
+               [](TileMesh* n) { return n != nullptr; });
+  return res;
+}
 
+// BiomeTile definitions
 BiomeTile::BiomeTile(Ref<RidgeMesh> ridge_hex_mesh, Node3D* parent, Biome biome, OffsetCoordinates offset_coord,
                      int row, int col)
     : OffsetTile(ridge_hex_mesh, ridge_hex_mesh->get_center(), parent, offset_coord),
@@ -88,9 +98,6 @@ void BiomeTile::handle_input_event(Camera3D* p_camera, const Ref<InputEvent>& p_
 
 Biome BiomeTile::biome() const { return _biome; }
 void BiomeTile::set_biome(Biome biome) { _biome = biome; }
-
-Neighbours BiomeTile::neighbours() const { return _neighbours; }
-void BiomeTile::set_neighbours(Neighbours neighbours) { _neighbours = neighbours; }
 
 // HoneycombTile definitions
 Ref<HoneycombHoney> HoneycombTile::honey_mesh() const { return _honey; }

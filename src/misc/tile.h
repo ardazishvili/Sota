@@ -37,11 +37,16 @@ class Tile : public Node3D {
 
   void replace_mesh(Ref<TileMesh> new_mesh) {
     _mesh = new_mesh;
+    _mesh->set_tile(this);
     auto points = new_mesh->inner_mesh()->base().points();
     auto center = new_mesh->inner_mesh()->base().center();
     _sphere_shaped3d->set_radius(center.distance_to(points[0]));
     _main_mesh_instance->set_mesh(new_mesh->inner_mesh());
   }
+
+  void set_neighbours(Neighbours neighbours);
+  void remove_neighbour(RidgeMesh* neighbour);
+  Neighbours neighbours() const;
 
  protected:
   StaticBody3D* _static_body{nullptr};
@@ -57,6 +62,7 @@ class Tile : public Node3D {
 
  private:
   CollisionShape3D* _collision_shape3d{nullptr};
+  Neighbours _neighbours;
 };
 
 class OffsetTile : public Tile {
@@ -109,19 +115,16 @@ class BiomeTile : public OffsetTile {
   // getters
   Biome biome() const;
   void set_biome(Biome biome);
-  Neighbours neighbours() const;
   int row() const { return _row; }
   int col() const { return _col; }
 
   // setters
-  void set_neighbours(Neighbours neighbours);
 
  protected:
   static void _bind_methods();
 
  private:
   Biome _biome;
-  Neighbours _neighbours;
 
   void handle_input_event(Camera3D* p_camera, const Ref<InputEvent>& p_event, const Vector3& p_event_position,
                           const Vector3& p_normal, int32_t p_shape_idx) override;

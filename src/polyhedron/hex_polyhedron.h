@@ -55,6 +55,8 @@ class PolygonWrapper : public Node3D {
     _mesh_instance_wrapper = memnew(PolyhedronTile(_tile_mesh, this));
   }
 
+  PolyhedronTile* tile() { return _mesh_instance_wrapper; }
+
  private:
   static int CNT;
   int _id;
