@@ -120,7 +120,7 @@ class RidgeHexGrid : public HexGrid, public RidgeBased {
   float _global_max_y = std::numeric_limits<float>::min();
 
   void assign_neighbours(const GroupOfRidgeMeshes& group);
-  void init_ridges(std::vector<RidgeGroup>& group, float ridge_offset);
+  void init_ridges(std::vector<RidgeGroup>& groups, float ridge_offset);
 
   virtual BiomeGroups collect_biome_groups(Biome b) = 0;
   virtual ClipOptions get_clip_options(int row, int col) const = 0;

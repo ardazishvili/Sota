@@ -39,7 +39,7 @@ class PolygonWrapper : public Node3D {
   explicit PolygonWrapper(std::unique_ptr<RegularPolygon> polygon) : _id(CNT++), _polygon(std::move(polygon)) {}
   ~PolygonWrapper() = default;
   PolygonWrapper(const PolygonWrapper& other) = delete;
-  PolygonWrapper(PolygonWrapper&& other) = default;
+  PolygonWrapper(PolygonWrapper&& other) = delete;
   PolygonWrapper& operator=(const PolygonWrapper& other) = delete;
   PolygonWrapper& operator=(PolygonWrapper&& other) = delete;
 

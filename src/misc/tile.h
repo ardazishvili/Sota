@@ -20,8 +20,8 @@ class Tile : public Node3D {
 
  public:
   Tile() = default;
-  Tile(const Tile& other) = default;
-  Tile(Tile&& other) = default;
+  Tile(const Tile& other) = delete;
+  Tile(Tile&& other) = delete;
   // copying operator= defined inside GDCLASS
   Tile& operator=(Tile&& other) = delete;
 
@@ -70,8 +70,8 @@ class OffsetTile : public Tile {
 
  public:
   OffsetTile() = default;
-  OffsetTile(const OffsetTile& other) = default;
-  OffsetTile(OffsetTile&& other) = default;
+  OffsetTile(const OffsetTile& other) = delete;
+  OffsetTile(OffsetTile&& other) = delete;
   // copying operator= defined inside GDCLASS
   OffsetTile& operator=(OffsetTile&& other) = delete;
 
@@ -104,8 +104,8 @@ class BiomeTile : public OffsetTile {
   GDCLASS(BiomeTile, OffsetTile)
  public:
   BiomeTile() = default;
-  BiomeTile(const BiomeTile& other) = default;
-  BiomeTile(BiomeTile&& other) = default;
+  BiomeTile(const BiomeTile& other) = delete;
+  BiomeTile(BiomeTile&& other) = delete;
   // copying operator= defined inside GDCLASS
   BiomeTile& operator=(BiomeTile&& other) = delete;
 

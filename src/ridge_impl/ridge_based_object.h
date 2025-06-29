@@ -58,6 +58,8 @@ class RidgeBased {
       default:
         printerr("Unknown biome in get_groups_by_biome");  // should be never reached
     }
+    printerr("Unknown biome in get_groups_by_biome");  // should be never reached
+    return _plain_groups;
   }
 
  protected:
