@@ -513,7 +513,6 @@ void RidgeHexGrid::assign_neighbours(const GroupOfRidgeMeshes& group) {
   for (auto& row : _tiles_layout) {
     for (auto& tile_ptr : row) {
       BiomeTile* tile = dynamic_cast<BiomeTile*>(tile_ptr);
-      RidgeMesh* ridge_hex_mesh = dynamic_cast<RidgeMesh*>(tile->mesh().ptr());
       if (!is_member_of_group(&group, tile->mesh().ptr())) {
         continue;
       }
@@ -523,8 +522,8 @@ void RidgeHexGrid::assign_neighbours(const GroupOfRidgeMeshes& group) {
   }
 }
 
-void RidgeHexGrid::init_ridges(std::vector<RidgeGroup>& group, float ridge_offset) {
-  for (RidgeGroup& group : group) {
+void RidgeHexGrid::init_ridges(std::vector<RidgeGroup>& groups, float ridge_offset) {
+  for (RidgeGroup& group : groups) {
     group.init_ridges(_distance_map, ridge_offset, _divisions);
   }
 }
@@ -536,8 +535,8 @@ void RidgeHexGrid::prepare_heights_calculation(RidgeGroup& group) {
     group.init_ridges(_distance_map, offset, _divisions);
   }
 
-  auto calculate_initial = [this](const GroupOfRidgeMeshes& group) {
-    for (auto* mesh : group) {
+  auto calculate_initial = [this](const GroupOfRidgeMeshes& g) {
+    for (auto* mesh : g) {
       mesh->calculate_initial_heights();
       auto [mesh_min_z, mesh_max_z] = mesh->get_min_max_height();
       _global_min_y = std::min(_global_min_y, mesh_min_z);
@@ -549,8 +548,8 @@ void RidgeHexGrid::prepare_heights_calculation(RidgeGroup& group) {
   float amplitude = _global_max_y - _global_min_y;
   float compression_factor = _biomes_plain_hill_gain / amplitude;
 
-  auto shift_compress = [this, compression_factor](const GroupOfRidgeMeshes& group) {
-    for (auto* mesh : group) {
+  auto shift_compress = [this, compression_factor](const GroupOfRidgeMeshes& g) {
+    for (auto* mesh : g) {
       mesh->set_shift_compress(-_global_min_y, compression_factor);
     }
   };

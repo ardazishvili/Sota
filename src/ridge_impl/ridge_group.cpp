@@ -8,6 +8,7 @@
 #include <numeric>
 #include <unordered_set>
 
+#include "godot_core.h"
 #include "misc/tile.h"
 #include "ridge_config.h"
 #include "ridge_impl/ridge_mesh.h"  // for RidgeMesh
@@ -89,7 +90,9 @@ void subtract(std::vector<RidgeGroup>& base, std::vector<RidgeGroup*> removed) {
     auto pred = [group_to_be_removed](const RidgeGroup& group) { return std::addressof(group) == group_to_be_removed; };
 
     size_t erased_num = std::erase_if(base, pred);
-    assert(erased_num == 1);
+    if (erased_num != 1) {
+      printerr("Can't found group to subtract");
+    }
   }
 }
 

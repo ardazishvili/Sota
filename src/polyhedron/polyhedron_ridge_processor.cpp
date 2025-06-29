@@ -95,7 +95,6 @@ void PolyhedronRidgeProcessor::set_neighbours() {
       continue;
     }
     PolygonWrapper* cur_wrapper = *cur_it;
-    RidgeMesh* ridge_mesh = dynamic_cast<RidgeMesh*>(cur_wrapper->mesh().ptr());
     Neighbours neighbours_meshes;
     for (auto n_id : neighbours_ids) {
       auto n_it = std::find_if(_meshes_wrapped.begin(), _meshes_wrapped.end(),

@@ -240,7 +240,6 @@ void HexMesh::calculate_tex_uv1() {
   tex_uv1_.clear();
 
   auto corner_points = _base_ngon->points();
-  auto normal = _base_ngon->normal();
 
   Vector3 c = (corner_points[0] + corner_points[3]) / 2;
   float diameter = (corner_points[3] - corner_points[0]).length();

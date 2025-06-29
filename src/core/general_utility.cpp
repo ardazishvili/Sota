@@ -89,7 +89,7 @@ void FlatMeshProcessor::calculate_initial_heights(Vector3Array& vertices, Ref<Fa
   }
 }
 void FlatMeshProcessor::calculate_hill_heights(Vector3Array& vertices, float r, float R, Vector3 center) {
-  auto t = [r, this](float dist_to_center_axis) -> float { return (r - std::min(r, dist_to_center_axis)) / r; };
+  auto t = [r](float dist_to_center_axis) -> float { return (r - std::min(r, dist_to_center_axis)) / r; };
   for (auto& v : vertices) {
     v.y *= std::lerp(1.0f, 3.0f, t(Vector2(0, 0).distance_to(Vector2(v.x, v.z))));
   }

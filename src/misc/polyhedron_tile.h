@@ -21,8 +21,8 @@ class PolyhedronTile : public Tile {
   GDCLASS(PolyhedronTile, Tile)
  public:
   PolyhedronTile() = default;
-  PolyhedronTile(const PolyhedronTile& other) = default;
-  PolyhedronTile(PolyhedronTile&& other) = default;
+  PolyhedronTile(const PolyhedronTile& other) = delete;
+  PolyhedronTile(PolyhedronTile&& other) = delete;
   // copying operator= defined inside GDCLASS
   PolyhedronTile& operator=(PolyhedronTile&& other) = delete;
 

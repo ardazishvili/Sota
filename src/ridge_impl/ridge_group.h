@@ -50,8 +50,8 @@ class RidgeGroup {
   friend std::vector<RidgeGroup> remove_mesh(RidgeGroup& ridge_group, RidgeMesh* mesh, RidgeConfig config);
 
   GroupOfRidgeMeshes _meshes;
-  Biome _biome;
   std::optional<std::unique_ptr<RidgeSet>> _ridge_set{};
+  Biome _biome;
 
   void assign_ridges();
   void calculate_corner_points_distances_to_border(DiscreteVertexToDistance& distance_map, int divisions);
