@@ -103,11 +103,11 @@ Array SotaMesh::_create_mesh_array() const {
 }
 #else
 void SotaMesh::_create_mesh_array(Array& res) const {
-  res[RS::ARRAY_VERTEX] = vertices_;
-  res[RS::ARRAY_NORMAL] = normals_to_godot_fmt();
-  res[RS::ARRAY_TANGENT] = tangents_;
-  res[RS::ARRAY_TEX_UV] = tex_uv1_;
-  res[RS::ARRAY_INDEX] = indices_;
+  res[ARRAY_VERTEX] = vertices_;
+  res[ARRAY_NORMAL] = normals_to_godot_fmt();
+  res[ARRAY_TANGENT] = tangents_;
+  res[ARRAY_TEX_UV] = tex_uv1_;
+  res[ARRAY_INDEX] = indices_;
 }
 #endif
 
