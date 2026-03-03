@@ -10,6 +10,7 @@
 #include "misc/types.h"            // for GroupedMeshVertices
 #include "tal/noise.h"             // for FastNoiseLite
 #include "tal/reference.h"         // for Ref
+#include "tal/vector3.h"
 
 namespace sota {
 class Hexagon;
@@ -45,6 +46,7 @@ class HoneycombHoney : public TileMesh {
   void fill();
   void clear();
   int get_level() const;
+  Vector3 get_offset() const;
 
   void calculate_initial_heights();
   void calculate_heights();

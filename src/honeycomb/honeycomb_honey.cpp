@@ -42,7 +42,10 @@ void HoneycombHoney::_bind_methods() {
   ClassDB::bind_method(D_METHOD("clear"), &HoneycombHoney::clear);
   ClassDB::bind_method(D_METHOD("is_full"), &HoneycombHoney::is_full);
   ClassDB::bind_method(D_METHOD("is_empty"), &HoneycombHoney::is_empty);
+  ClassDB::bind_method(D_METHOD("get_offset"), &HoneycombHoney::get_offset);
 }
+
+Vector3 HoneycombHoney::get_offset() const { return _hex_mesh->get_center(); }
 
 void HoneycombHoney::set_noise(Ref<FastNoiseLite> p_noise) {
   _noise = p_noise;
