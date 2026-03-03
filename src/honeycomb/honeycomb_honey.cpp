@@ -7,16 +7,17 @@
 #include "core/general_utility.h"  // for VolumeMeshProc...
 #include "core/hex_mesh.h"         // for HexMesh, HexMe...
 #include "core/mesh.h"             // for Orientation
-#include "misc/discretizer.h"      // for Dicretizer
-#include "misc/types.h"            // for GroupedMeshVer...
-#include "misc/utilities.h"        // for to_point_divis...
-#include "primitives/hexagon.h"    // for Hexagon, make_...
-#include "primitives/polygon.h"    // for RegularPolygon
-#include "tal/callable.h"          // for Callable
-#include "tal/godot_core.h"        // for D_METHOD, ClassDB
-#include "tal/noise.h"             // for FastNoiseLite
-#include "tal/reference.h"         // for Ref
-#include "tal/vector3.h"           // for Vector3
+#include "dlfcn.h"
+#include "misc/discretizer.h"    // for Dicretizer
+#include "misc/types.h"          // for GroupedMeshVer...
+#include "misc/utilities.h"      // for to_point_divis...
+#include "primitives/hexagon.h"  // for Hexagon, make_...
+#include "primitives/polygon.h"  // for RegularPolygon
+#include "tal/callable.h"        // for Callable
+#include "tal/godot_core.h"      // for D_METHOD, ClassDB
+#include "tal/noise.h"           // for FastNoiseLite
+#include "tal/reference.h"       // for Ref
+#include "tal/vector3.h"         // for Vector3
 
 namespace sota {
 
@@ -45,7 +46,21 @@ void HoneycombHoney::_bind_methods() {
   ClassDB::bind_method(D_METHOD("get_offset"), &HoneycombHoney::get_offset);
 }
 
-Vector3 HoneycombHoney::get_offset() const { return _hex_mesh->get_center(); }
+Vector3 HoneycombHoney::get_offset() const {
+  /* void* handle = dlopen("/home/roman/repos/Sota/sub.so", RTLD_NOW); */
+  /* if (!handle) { */
+  /*   godot::print_error("can't load sub.so"); */
+
+  /*   auto get_val = (bool (*)())dlsym(handle, "get_val"); */
+  /*   if (get_val()) { */
+  /*     godot::print_error("TRUE"); */
+  /*   } else { */
+  /*     godot::print_error("FALSE"); */
+  /*   } */
+  /*   dlclose(handle); */
+  /* } */
+  return _hex_mesh->get_center();
+}
 
 void HoneycombHoney::set_noise(Ref<FastNoiseLite> p_noise) {
   _noise = p_noise;
