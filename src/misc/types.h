@@ -6,6 +6,7 @@
 #include <map>
 #include <unordered_map>
 #include <vector>
+#include <string>
 
 #include "tal/vector3.h"
 #include "tal/vector3i.h"
