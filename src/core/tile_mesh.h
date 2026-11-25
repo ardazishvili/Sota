@@ -10,6 +10,12 @@ namespace sota {
 class SotaMesh;
 class Tile;
 
+/**
+ * @brief Reference-counted interface connecting a tile to its generated mesh.
+ *
+ * Implementations supply a tile ID and the underlying SotaMesh. The associated Tile pointer
+ * is non-owning.
+ */
 class TileMesh : public RefCounted {
   GDCLASS(TileMesh, RefCounted)
 
@@ -17,6 +23,7 @@ class TileMesh : public RefCounted {
   virtual int get_id() = 0;
   virtual SotaMesh* inner_mesh() const = 0;
 
+  /// Groups pointers to the mesh normals by quantized vertex position for smoothing.
   DiscreteVertexToNormals get_discrete_vertex_to_normals();
   Tile* tile() const { return _tile; }
   void set_tile(Tile* tile) { _tile = tile; }

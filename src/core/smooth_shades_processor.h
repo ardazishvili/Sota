@@ -9,6 +9,14 @@
 
 namespace sota {
 
+/**
+ * @brief Applies flat or smooth shading to a collection of tile meshes.
+ *
+ * Flat shading recalculates face normals for each mesh. Smooth shading combines normals
+ * at matching quantized positions across the supplied meshes, including tile boundaries,
+ * so the input vertices must share a coordinate space. The processor borrows the tile
+ * meshes and requests a refresh after updating their normals.
+ */
 class SmoothShadesProcessor {
  public:
   SmoothShadesProcessor(std::vector<TileMesh*> meshes) : _meshes(meshes) {}
