@@ -23,6 +23,11 @@ namespace sota {
 class RegularPolygon;
 class Ridge;
 
+/**
+ * @brief Interface for applying terrain heights to mesh vertices.
+ *
+ * Implementations handle elevation scaling and generate initial noise, hill, and ridge heights.
+ */
 class MeshProcessor {
  public:
   virtual ~MeshProcessor() = default;
@@ -39,6 +44,11 @@ class MeshProcessor {
  private:
 };
 
+/**
+ * @brief Applies terrain heights to planar meshes.
+ *
+ * Uses Y as elevation and samples base noise in the XZ plane.
+ */
 class FlatMeshProcessor : public MeshProcessor {
  public:
   Vector3Array shift_compress(Vector3Array vertices, float shift, float compress, float offset) override;
@@ -54,6 +64,12 @@ class FlatMeshProcessor : public MeshProcessor {
  private:
 };
 
+/**
+ * @brief Applies radial terrain heights to polyhedron meshes.
+ *
+ * Samples noise in 3D. Scaling uses the original vertices as a baseline, so each input
+ * vertex must correspond to the original vertex at the same index.
+ */
 class VolumeMeshProcessor : public MeshProcessor {
  public:
   VolumeMeshProcessor(Vector3Array initial_vertices) : MeshProcessor(), _initial_vertices(initial_vertices) {}
@@ -72,13 +88,22 @@ class VolumeMeshProcessor : public MeshProcessor {
   Vector3Array _initial_vertices;
 };
 
+/**
+ * @brief Shared operations on mesh geometry.
+ *
+ * Smooths normals by merging groups with matching quantized positions and assigning
+ * the normalized sum to each normal in a group.
+ */
 class GeneralUtility {
  public:
   static void make_smooth_normals(std::vector<DiscreteVertexToNormals>& normal_groups);
 };
 
 /**
- * @brief Parameters of line equations for Hexagon with center 0.0 and excircle radius = 1.0
+ * @brief Line coefficients for the six borders of an origin-centered hexagon.
+ *
+Each triplet holds A, B, and C for a line Ax + Bz + C = 0. The constructor takes the
+circumradius R and the inradius r.
  */
 struct HexBorderLineParams {
   HexBorderLineParams(float R, float r) {
@@ -93,10 +118,10 @@ struct HexBorderLineParams {
 };
 
 /**
- * @brief Calculate distances to borders of regular hexagon
+ * @brief Finds the distance from an XZ point to the nearest included hexagon border line.
  *
- * Calculation is based on line equations => radiuses of incircle(r) and excircle(R) are used
- * If particular line must be excluded from calculation, pass its number in `exclude_border_set`
+Precomputes line coefficients and normalization factors from the circumradius R and
+inradius r. Use `exclude_border_set` to skip specific zero-based border indices.
  */
 class PointToLineDistance_EquationBased {
  public:
@@ -127,10 +152,11 @@ class PointToLineDistance_EquationBased {
 };
 
 /**
- * @brief Calculate distances to lines via vector product
+ * @brief Finds the distance from a 3D point to the nearest included polygon border line.
  *
- * Lines presented as list of corner points p0, p1, ..., pN of polygon: there are N lines in total.
- * If particular line must be excluded from calculation, pass its number in `exclude_border_set`
+Uses cross products with the lines through consecutive corners, including the line
+from the last corner back to the first. Edge i starts at corner i. Use
+`exclude_border_set` to skip specific edges.
  */
 class PointToLineDistance_VectorMultBased {
  public:

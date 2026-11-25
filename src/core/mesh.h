@@ -19,9 +19,11 @@ enum class TesselationMode { Iterative = 0, Recursive };
 enum class Orientation { Plane = 0, Polyhedron };
 
 /**
- * @brief Base class for all meshes
+ * @brief Base Godot mesh resource for geometry generated from a regular polygon.
  *
- * Since PrimitiveMesh is used as super-class there are mandatory parts like vertices, normals, indices, etc.
+Owns the base polygon and supplies vertex attributes and indices to Godot. Subclasses
+generate the geometry and primary UVs. Orientation determines whether the base normal
+comes from the polygon plane or points radially from the origin.
  */
 class SotaMesh : public PrimitiveMesh {
   GDCLASS(SotaMesh, PrimitiveMesh)
@@ -38,7 +40,9 @@ class SotaMesh : public PrimitiveMesh {
   void set_id(int p_id) { _id = p_id; }
   int get_id() const { return _id; }
 
+  /// Generates geometry and requests a mesh refresh.
   void init();
+  /// Requests a refresh using the current mesh data.
   void update();
 
   const RegularPolygon& base() const { return *_base_ngon.get(); }

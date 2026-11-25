@@ -21,6 +21,12 @@ class TileMesh;
 
 using TilesLayout = std::vector<std::vector<Tile*>>;
 
+/**
+ * @brief Base node for grids of pointy-top hexagonal tiles on the XZ plane.
+ *
+ * Subclasses define the offset-coordinate layout and tile IDs. Changing a shared grid setting
+ * such as diameter, subdivision level, shader, or frame settings rebuilds the grid.
+ */
 class HexGrid : public Node3D {
   GDCLASS(HexGrid, Node3D)
 
@@ -46,6 +52,7 @@ class HexGrid : public Node3D {
 
   virtual void calculate_normals() {}
 
+  /// Returns the current tile meshes in layout traversal order.
   Array get_hex_meshes();
 
  protected:
@@ -68,6 +75,11 @@ class HexGrid : public Node3D {
  private:
 };
 
+/**
+ * @brief Hexagonal tiles arranged in a rectangular footprint.
+ *
+ * Height and width count rows and columns. Tile IDs are assigned in row-major order.
+ */
 class RectHexGrid : public HexGrid {
   GDCLASS(RectHexGrid, HexGrid)
  public:
@@ -86,6 +98,11 @@ class RectHexGrid : public HexGrid {
   static void _bind_methods();
 };
 
+/**
+ * @brief Hexagonal tiles arranged in a hexagonal footprint.
+ *
+ * Size counts the rings around the center tile. A grid of size n spans 2n + 1 rows.
+ */
 class HexagonalHexGrid : public HexGrid {
   GDCLASS(HexagonalHexGrid, HexGrid)
  public:

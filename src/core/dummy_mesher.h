@@ -5,7 +5,10 @@
 namespace sota {
 
 /**
- * @brief Class to provide dummy information for PrimitiveMesh
+ * @brief Creates placeholder arrays for Godot mesh attributes.
+ *
+Each function takes a vertex count and fills the corresponding attribute array with
+default values. Packed attributes can use multiple elements per vertex.
  */
 class DummyMesher {
  public:

@@ -19,6 +19,12 @@
 namespace sota {
 class Hexagon;
 
+/**
+ * @brief Construction settings for a HexMesh built from a supplied Hexagon.
+ *
+ * Controls the tile ID, diameter, material, subdivision level, orientation, and tessellation mode.
+ * The iterative path also uses the clipping and frame settings.
+ */
 struct HexMeshParams {
   int id{0};
   float diameter{1};
@@ -36,6 +42,13 @@ struct HexMeshParams {
   Orientation orientation{Orientation::Plane};
 };
 
+/**
+ * @brief Tessellated mesh generated from a hexagon.
+ *
+ * Supports iterative and recursive subdivision. The iterative path can clip the surface
+ * and add faces along the base edges when the frame is enabled. Changing the diameter
+ * rebuilds the mesh around its current center.
+ */
 class HexMesh : public SotaMesh {
   GDCLASS(HexMesh, SotaMesh)
 
@@ -54,6 +67,7 @@ class HexMesh : public SotaMesh {
 
   void set_clip_options(ClipOptions p_options) { _clip_options = p_options; }
 
+  /// Stores the supplied geometry and settings. Call init() to generate the mesh data.
   HexMesh(Hexagon hex, HexMeshParams params);
 
  protected:
@@ -81,6 +95,11 @@ class HexMesh : public SotaMesh {
   void z_clip(float boundary);
 };
 
+/**
+ * @brief TileMesh implementation used for plain hex-grid tiles.
+ *
+ * Holds a reference to an initialized HexMesh and uses that mesh as the source of the tile ID.
+ */
 class SimpleMesh : public TileMesh {
   GDCLASS(SimpleMesh, TileMesh)
  public:
