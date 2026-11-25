@@ -9,7 +9,11 @@ if COMMAND_LINE_TARGETS == ["test"]:
 # TODO: Do not copy environment after godot-cpp/test is updated <https://github.com/godotengine/godot-cpp/blob/master/test/SConstruct>.
 env = SConscript("godot-cpp/SConstruct")
 
-env.Append(CXXFLAGS=["-std=c++20", "-g"])
+if env.get("is_msvc", False):
+    env["CXXFLAGS"].remove("/std:c++17")
+    env.Append(CXXFLAGS=["/std:c++20"])
+else:
+    env.Append(CXXFLAGS=["-std=c++20", "-g"])
 env.Append(CPPDEFINES=["SOTA_GDEXTENSION"])
 
 # Add source files.
@@ -45,7 +49,7 @@ project_name = Path(extension_path).stem
 debug_or_release = "release" if env["target"] == "template_release" else "debug"
 
 if env["target"] == "editor":
-    env_sota.Append(CPPDEFINES=["SOTA_ENGINE"])
+    env.Append(CPPDEFINES=["SOTA_ENGINE"])
 
 if env["platform"] == "macos":
     library = env.SharedLibrary(
