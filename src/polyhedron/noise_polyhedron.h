@@ -2,6 +2,7 @@
 
 #include "polyhedron/polyhedron_noise_processor.h"
 #include "polyhedron/ridge_based_polyhedron.h"
+#include "tal/wrapped.h"  // for GDCLASS
 
 namespace sota {
 

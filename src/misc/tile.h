@@ -11,6 +11,7 @@
 #include "tal/mesh.h"
 #include "tal/node.h"
 #include "tal/reference.h"
+#include "tal/wrapped.h"  // for GDCLASS
 #include "tile_mesh.h"
 
 namespace sota {

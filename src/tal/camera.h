@@ -5,4 +5,5 @@
 
 using Camera3D = godot::Camera3D;
 #else
+#include "scene/3d/camera_3d.h"
 #endif

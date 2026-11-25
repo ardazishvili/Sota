@@ -8,6 +8,7 @@
 #include "primitives/polygon.h"
 #include "tal/material.h"   // for Material
 #include "tal/reference.h"  // for Ref
+#include "tal/wrapped.h"  // for GDCLASS
 
 namespace sota {
 class Pentagon;

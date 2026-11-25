@@ -9,6 +9,7 @@
 #include "tal/node.h"  // for Node3D
 #include "tal/reference.h"
 #include "tal/vector3.h"
+#include "tal/wrapped.h"  // for GDCLASS
 #include "types.h"
 
 namespace sota {

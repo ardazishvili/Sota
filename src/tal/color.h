@@ -5,4 +5,5 @@
 
 using Color = godot::Color;
 #else
+#include "core/math/color.h"
 #endif

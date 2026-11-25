@@ -12,6 +12,7 @@
 #include "tal/arrays.h"           // for Vector3Array
 #include "tal/mesh.h"             // for PrimitiveMesh
 #include "tal/vector3.h"          // for Vector3
+#include "tal/wrapped.h"  // for GDCLASS
 
 namespace sota {
 

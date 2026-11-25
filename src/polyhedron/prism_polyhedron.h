@@ -10,6 +10,7 @@
 #include "primitives/pentagon.h"         // for Pentagon
 #include "tal/material.h"                // for ShaderMaterial
 #include "tal/reference.h"               // for Ref
+#include "tal/wrapped.h"  // for GDCLASS
 
 namespace sota {
 

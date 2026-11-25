@@ -4,6 +4,7 @@
 #include "misc/discretizer.h"
 #include "misc/types.h"
 #include "tal/reference.h"
+#include "tal/wrapped.h"  // for GDCLASS
 
 namespace sota {
 
