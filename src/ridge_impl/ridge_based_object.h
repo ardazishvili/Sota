@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdint>
 #include <functional>
 #include <iterator>
 #include <vector>
@@ -16,16 +17,16 @@ class RidgeBased {
   void print_biomes() {
     print("\n");
     for (RidgeGroup& group : _mountain_groups) {
-      print("Mountain group of size ", (uint64_t)group.meshes().size());
+      print("Mountain group of size ", static_cast<std::uint64_t>(group.meshes().size()));
     }
     for (RidgeGroup& group : _water_groups) {
-      print("Water group of size ", (uint64_t)group.meshes().size());
+      print("Water group of size ", static_cast<std::uint64_t>(group.meshes().size()));
     }
     for (RidgeGroup& group : _hill_groups) {
-      print("Hill group of size ", (uint64_t)group.meshes().size());
+      print("Hill group of size ", static_cast<std::uint64_t>(group.meshes().size()));
     }
     for (RidgeGroup& group : _plain_groups) {
-      print("Plain group of size ", (uint64_t)group.meshes().size());
+      print("Plain group of size ", static_cast<std::uint64_t>(group.meshes().size()));
     }
   }
 
