@@ -18,6 +18,7 @@ using Variant = godot::Variant;
 using PropertyInfo = godot::PropertyInfo;
 using ModuleInitializationLevel = godot::ModuleInitializationLevel;
 using GDExtensionBinding = godot::GDExtensionBinding;
+constexpr godot::PropertyHint PROPERTY_HINT_ENUM = godot::PROPERTY_HINT_ENUM;
 constexpr godot::PropertyHint PROPERTY_HINT_RESOURCE_TYPE = godot::PropertyHint::PROPERTY_HINT_RESOURCE_TYPE;
 constexpr godot::ModuleInitializationLevel MODULE_INITIALIZATION_LEVEL_SCENE =
     godot::ModuleInitializationLevel::MODULE_INITIALIZATION_LEVEL_SCENE;

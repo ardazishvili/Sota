@@ -14,6 +14,17 @@ Ridge-based terrain
    - Shapes of mountain/water tiles
    - Shapes of hill/plain tiles
 
+## Terrain generation logging
+
+Set **Terrain Log Level** on a ridge terrain grid in the Godot Inspector.
+The setting applies to that grid when it next rebuilds.
+
+- **Off** (default) keeps terrain phase logging disabled.
+- **Phases** logs the start of each generation phase.
+- **Verbose** also logs phase durations in milliseconds and the tile and biome group counts.
+
+From GDScript, set `terrain_log_level` to `0`, `1`, or `2`.
+
 ## Neighbours, ridges and borders
 
 Each hexagon may have up to 6 neighbours. It doesn't matter for some types, e.g. "plain" and "hill", and does matter for other, i.e. "moutain" and "water". Ridges are calculated based on neighbours and their configuration

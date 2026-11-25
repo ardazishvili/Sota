@@ -2,6 +2,8 @@
 
 #include <algorithm>  // for find, max, min
 #include <cassert>
+#include <chrono>
+#include <cstdint>
 #include <functional>  // for reference_wrapper
 #include <iterator>
 #include <limits>  // for numeric_limits
@@ -42,6 +44,38 @@
 #include "tal/vector3i.h"    // for Vector3i
 
 namespace sota {
+namespace {
+
+enum TerrainLogLevel { LOG_OFF, LOG_PHASES, LOG_VERBOSE };
+
+class TerrainPhaseLogger {
+ public:
+  explicit TerrainPhaseLogger(int level) : level_(level) {}
+
+  template <typename Operation>
+  void run(const char* phase, Operation operation) const {
+    if (level_ == LOG_OFF) {
+      operation();
+      return;
+    }
+
+    print("[Sota terrain] Starting ", phase);
+    if (level_ == LOG_PHASES) {
+      operation();
+      return;
+    }
+
+    const auto start = std::chrono::steady_clock::now();
+    operation();
+    const std::chrono::duration<double, std::milli> elapsed = std::chrono::steady_clock::now() - start;
+    print("[Sota terrain] Finished ", phase, " in ", elapsed.count(), " ms");
+  }
+
+ private:
+  int level_;
+};
+
+}  // namespace
 
 RidgeHexGrid::RidgeHexGrid() {
   _texture[Biome::PLAIN] = Ref<Texture>();
@@ -50,35 +84,60 @@ RidgeHexGrid::RidgeHexGrid() {
   _texture[Biome::MOUNTAIN] = Ref<Texture>();
 }
 
+void RidgeHexGrid::set_terrain_log_level(int level) {
+  _terrain_log_level = std::clamp(level, int(LOG_OFF), int(LOG_VERBOSE));
+}
+
+int RidgeHexGrid::get_terrain_log_level() const {
+  return _terrain_log_level;
+}
+
 void RidgeHexGrid::init() {
-  init_col_row_layout();
+  const TerrainPhaseLogger log(_terrain_log_level);
+  log.run("grid layout", [this] { init_col_row_layout(); });
   if (_col_row_layout.empty()) {
     return;
   }
 
-  calculate_offsets();
-
-  make_tiles();
+  log.run("tile offsets", [this] { calculate_offsets(); });
+  log.run("tile creation", [this] { make_tiles(); });
 
   calculate_geometry();
 }
 
 void RidgeHexGrid::calculate_geometry() {
-  assign_cube_coordinates_map();
-  init_biomes();
+  const TerrainPhaseLogger log(_terrain_log_level);
+  log.run("tile coordinate mapping", [this] { assign_cube_coordinates_map(); });
+  log.run("biome grouping", [this] { init_biomes(); });
 
-  // print_biomes();
+  if (_terrain_log_level == LOG_VERBOSE) {
+    std::uint64_t tile_count = 0;
+    for (const auto& row : _tiles_layout) {
+      tile_count += row.size();
+    }
+    const auto group_count = _mountain_groups.size() + _water_groups.size() + _plain_groups.size() + _hill_groups.size();
+    print("[Sota terrain] Tiles: ", tile_count, ", biome groups: ", static_cast<std::uint64_t>(group_count));
+  }
 
-  for (RidgeGroup& group : all_groups()) {
-    prepare_heights_calculation(group);
-  }
-  for (RidgeGroup& group : all_groups()) {
-    calculate_final_heights(group);
-  }
-  calculate_normals();
+  log.run("height preparation", [this] {
+    for (RidgeGroup& group : all_groups()) {
+      prepare_heights_calculation(group);
+    }
+  });
+  log.run("final height calculation", [this] {
+    for (RidgeGroup& group : all_groups()) {
+      calculate_final_heights(group);
+    }
+  });
+  log.run("normal calculation", [this] { calculate_normals(); });
 }
 
 void RidgeHexGrid::_bind_methods() {
+  ClassDB::bind_method(D_METHOD("set_terrain_log_level", "level"), &RidgeHexGrid::set_terrain_log_level);
+  ClassDB::bind_method(D_METHOD("get_terrain_log_level"), &RidgeHexGrid::get_terrain_log_level);
+  ADD_PROPERTY(PropertyInfo(Variant::INT, "terrain_log_level", PROPERTY_HINT_ENUM, "Off,Phases,Verbose"),
+               "set_terrain_log_level", "get_terrain_log_level");
+
   ClassDB::bind_method(D_METHOD("set_terraformer", "p_terraformer"), &RidgeHexGrid::set_terraformer);
 
   ClassDB::bind_method(D_METHOD("get_smooth_normals"), &RidgeHexGrid::get_smooth_normals);

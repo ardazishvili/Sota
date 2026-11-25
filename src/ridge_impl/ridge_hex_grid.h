@@ -76,6 +76,9 @@ class RidgeHexGrid : public HexGrid, public RidgeBased {
   void set_biomes_plain_hill_gain(float p_biomes_plain_hill_gain);
   float get_biomes_plain_hill_gain() const;
 
+  void set_terrain_log_level(int level);
+  int get_terrain_log_level() const;
+
   void set_smooth_normals(bool p_smooth_normals);
   bool get_smooth_normals() const;
 
@@ -111,6 +114,7 @@ class RidgeHexGrid : public HexGrid, public RidgeBased {
   Ref<FastNoiseLite> _plain_noise;
   Ref<FastNoiseLite> _ridge_noise;
 
+  int _terrain_log_level{0};
   bool _smooth_normals{false};
   float _biomes_hill_level_ratio{0.7};
   float _biomes_plain_hill_gain{0.1f};
