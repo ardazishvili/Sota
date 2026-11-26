@@ -1,0 +1,22 @@
+name: PR checks
+
+on: pull_request
+
+permissions:
+  contents: read
+
+jobs:
+  standalone_unit_tests:
+    name: Standalone C++ smoke test
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: [self-hosted, linux, x64, sota-linux]
+    environment: sota-pr-checks
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Build and run the doctest test
+        run: |
+          g++ -std=c++20 tests/standalone/arithmetic_test.cpp -o "$RUNNER_TEMP/sota-arithmetic-test"
+          "$RUNNER_TEMP/sota-arithmetic-test"
