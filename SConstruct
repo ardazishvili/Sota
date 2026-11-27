@@ -2,6 +2,10 @@
 from glob import glob
 from pathlib import Path
 
+if COMMAND_LINE_TARGETS == ["test"]:
+    SConscript("tests/standalone/SConscript", variant_dir=".cache/standalone", duplicate=0)
+    Return()
+
 # TODO: Do not copy environment after godot-cpp/test is updated <https://github.com/godotengine/godot-cpp/blob/master/test/SConstruct>.
 env = SConscript("godot-cpp/SConstruct")
 

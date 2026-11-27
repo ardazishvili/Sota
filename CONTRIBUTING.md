@@ -7,6 +7,12 @@ To build Sota from sources either as GDExtension or module see [doc](docs/conten
 * Please use existing [Godot pull request workflow](https://docs.godotengine.org/en/stable/contributing/workflow/pr_workflow.html)
 * Check guidelines related to [Types Abstraction Layer](docs/content/arch/tal.md)
 
+## Standalone C++ unit tests
+
+Install SCons, a C++20 compiler, and the doctest headers (`doctest-dev` on
+Ubuntu). Run `scons test` from the repository root. The target builds and
+runs the tests in `tests/standalone` without building or launching Godot.
+
 ## Code style
 There are no well-defined rules yet, but please:
 1. Apply clang-format before making pull request. Configuration file is in root directory.

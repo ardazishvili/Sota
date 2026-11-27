@@ -1,0 +1,12 @@
+env = Environment()
+env.Append(CPPPATH=["#src"])
+env.Append(CXXFLAGS=["/std:c++20"] if env.get("MSVC_VERSION") else ["-std=c++20"])
+
+coordinates = env.Object("cube_coordinates", "#src/misc/cube_coordinates.cpp")
+binary = env.Program("unit-tests", source=[
+    "dsu_test.cpp",
+    "cube_coordinates_test.cpp",
+    coordinates,
+])
+test = env.Alias("test", binary, '"$SOURCE"')
+env.AlwaysBuild(test)

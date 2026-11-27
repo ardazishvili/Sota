@@ -16,7 +16,5 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Build and run the doctest test
-        run: |
-          g++ -std=c++20 tests/standalone/arithmetic_test.cpp -o "$RUNNER_TEMP/sota-arithmetic-test"
-          "$RUNNER_TEMP/sota-arithmetic-test"
+      - name: Build and run standalone unit tests
+        run: scons test
