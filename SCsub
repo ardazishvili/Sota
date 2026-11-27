@@ -33,6 +33,10 @@ env_sota.Append(CPPPATH=["src/honeycomb"])
 env_sota.Append(CPPPATH=["src/misc"])
 env_sota.Append(CPPPATH=["src/algo"])
 
+if env["tests"]:
+    # Godot compiles discovered module test headers in its own test target.
+    env.AppendUnique(CPPPATH=[Dir("src").abspath])
+
 sources = Glob("register_types.cpp")
 sources += Glob("src/*.cpp")
 sources += Glob("src/polyhedron/*.cpp")
