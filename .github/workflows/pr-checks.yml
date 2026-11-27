@@ -81,16 +81,43 @@ jobs:
       BUILD_SUITE: full
     steps: *build_steps
 
-  synthetic:
+  standalone_unit_tests:
     name: standalone unit tests
+    if: github.event.pull_request.head.repo.full_name == github.repository
     runs-on: [self-hosted, linux, x64, sota-linux]
     environment: sota-pr-checks
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
         with:
           persist-credentials: false
 
-      - name: Build and run the standalone C++ test
+      - name: Build and run standalone unit tests
+        run: scons test
+
+  godot_module_unit_tests:
+    name: godot-related unit tests
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: [self-hosted, linux, x64, sota-linux]
+    environment: sota-pr-checks
+    env:
+      GODOT_COMMIT: 4c311cbee68c0b66ff8ebb8b0defdd9979dd2a41
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Build the Linux editor and run Sota's Godot module tests
         run: |
-          g++ -std=c++20 tests/standalone/arithmetic_test.cpp -o "$RUNNER_TEMP/sota-arithmetic-test"
-          "$RUNNER_TEMP/sota-arithmetic-test"
+          godot_source="$HOME/repos/godot"
+          if [[ ! -f "$godot_source/SConstruct" ]]; then
+            echo "::error::Godot 4.4 source checkout is required at $godot_source"
+            exit 1
+          fi
+          if [[ "$(git -C "$godot_source" rev-parse HEAD)" != "$GODOT_COMMIT" ]]; then
+            echo "::error::$godot_source must be checked out at $GODOT_COMMIT"
+            exit 1
+          fi
+          cd "$godot_source"
+          scons platform=linuxbsd target=editor arch=x86_64 tests=yes \
+            custom_modules="$GITHUB_WORKSPACE" custom_modules_recursive=no -j2
+          ./bin/godot.linuxbsd.editor.x86_64 --headless --test --test-case='*[Sota]*'

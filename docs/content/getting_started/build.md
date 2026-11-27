@@ -77,16 +77,17 @@ returns a nonzero status if any build or runtime check fails.
 
 ### Pull request checks
 
-**smoke build test** and **standalone unit tests** are queued for every PR. The
-synthetic test is a standalone C++ doctest that checks `2 + 2 == 4` and
-depends only on the C++ toolchain and doctest. **full build test** is
-queued when a maintainer adds the `full-build` PR label and on updates
-while the label is present.
+**smoke build test** is queued for every PR. **full build test** is queued
+when a maintainer adds the `full-build` PR label and on updates while the
+label is present. For PRs from branches in this repository, **standalone
+unit tests** runs `scons test`, and **godot-related unit tests** runs the
+Linux Godot module suite using the pinned source checkout at
+`~/repos/godot`.
 
-All three jobs wait for approval from the required reviewer on the
+All jobs wait for approval from the required reviewer on the
 `sota-pr-checks` environment. Open the workflow run, select
 **Review deployments**, then approve `sota-pr-checks` to start the waiting
-jobs for that run. All three jobs use the self-hosted Linux x86_64 runner
+jobs for that run. All jobs use the self-hosted Linux x86_64 runner
 with the `sota-linux` label. Approved jobs queue while that runner is offline.
 
 Install the build dependencies on the runner before starting it. For
@@ -101,6 +102,17 @@ sudo apt install g++ python3 scons doctest-dev g++-mingw-w64-x86-64-posix \
 sudo update-alternatives --set x86_64-w64-mingw32-gcc /usr/bin/x86_64-w64-mingw32-gcc-posix
 sudo update-alternatives --set x86_64-w64-mingw32-g++ /usr/bin/x86_64-w64-mingw32-g++-posix
 ```
+
+On an existing Ubuntu runner, install `xvfb-run` with
+`sudo apt install xvfb xauth`. The `xvfb` package supplies the command,
+and `xauth` supplies X11 authentication. Use `command -v xvfb-run` to
+verify that the command is on the runner user's path.
+
+The workflow wraps each platform's test command in `xvfb-run -a`. This
+starts a temporary virtual X11 display so Wine can run the Windows Godot
+executables on a machine without a desktop session. Godot still runs with
+`--headless`. The Linux runtime checks and Android builds themselves
+require no X11 display.
 
 Install NDK `23.2.8568313` in the runner user's Android SDK. The workflow
 uses `ANDROID_HOME` or `ANDROID_SDK_ROOT` from the runner environment and
