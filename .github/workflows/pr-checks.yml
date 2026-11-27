@@ -21,16 +21,8 @@ jobs:
           submodules: true
           persist-credentials: false
 
-      - name: Locate the Android NDK
-        run: |
-          android_sdk="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-$HOME/Android/Sdk}}"
-          if [[ ! -x "$android_sdk/ndk/23.2.8568313/toolchains/llvm/prebuilt/linux-x86_64/bin/clang" ]]; then
-            echo "::error::Install Android NDK 23.2.8568313 in $android_sdk/ndk or set ANDROID_HOME for the runner."
-            exit 1
-          fi
-          echo "ANDROID_HOME=$android_sdk" >> "$GITHUB_ENV"
-
       - name: Prepare Godot 4.4
+        id: prepare_godot
         run: |
           godot_source="$RUNNER_TEMP/godot-source"
           git clone --depth 1 --branch 4.4-stable https://github.com/godotengine/godot.git "$godot_source"
@@ -55,22 +47,39 @@ jobs:
           unlink templates.tpz
           echo "GODOT_BINARIES=$godot_binaries" >> "$GITHUB_ENV"
 
-      - name: Build and test Sota
+      - name: Linux build and runtime test
+        working-directory: Sota
+        run: |
+          status=0
+          python3 scripts/test-builds.py --suite "$BUILD_SUITE" --platform linux -j2 || status=$?
+          # Reclaim space in the disposable CI checkouts before the next platform.
+          git -C "$GODOT_SOURCE" clean -ffdx
+          git -C godot-cpp clean -ffdx
+          exit "$status"
+
+      - name: Windows build and runtime test
+        if: ${{ !cancelled() && steps.prepare_godot.outcome == 'success' }}
         working-directory: Sota
         env:
           WINEDEBUG: '-all'
           WINEPREFIX: ${{ runner.temp }}/sota-wine
         run: |
           status=0
-          for platform in linux windows android; do
-            xvfb-run -a python3 scripts/test-builds.py --suite "$BUILD_SUITE" \
-              --platform "$platform" -j2 || status=1
-            # Each target has its own object files. Reclaim disk space between platforms
-            # in the disposable CI checkouts.
-            git -C "$GODOT_SOURCE" clean -ffdx
-            git -C godot-cpp clean -ffdx
-          done
+          xvfb-run -a python3 scripts/test-builds.py --suite "$BUILD_SUITE" --platform windows -j2 || status=$?
+          git -C "$GODOT_SOURCE" clean -ffdx
+          git -C godot-cpp clean -ffdx
           exit "$status"
+
+      - name: Android build
+        if: ${{ !cancelled() && steps.prepare_godot.outcome == 'success' }}
+        working-directory: Sota
+        run: |
+          export ANDROID_HOME="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-$HOME/Android/Sdk}}"
+          if [[ ! -x "$ANDROID_HOME/ndk/23.2.8568313/toolchains/llvm/prebuilt/linux-x86_64/bin/clang" ]]; then
+            echo "::error::Install Android NDK 23.2.8568313 in $ANDROID_HOME/ndk or set ANDROID_HOME for the runner."
+            exit 1
+          fi
+          python3 scripts/test-builds.py --suite "$BUILD_SUITE" --platform android -j2
 
   full:
     name: full build test

@@ -84,6 +84,11 @@ unit tests** runs `scons test`, and **godot-related unit tests** runs the
 Linux Godot module suite using the pinned source checkout at
 `~/repos/godot`.
 
+The smoke and full build checks show separate Linux, Windows, and
+Android steps. They run in order, with up to two parallel SCons jobs
+per build. After Godot setup succeeds, a failed platform step does
+not prevent the remaining platform steps from running.
+
 All jobs wait for approval from the required reviewer on the
 `sota-pr-checks` environment. Open the workflow run, select
 **Review deployments**, then approve `sota-pr-checks` to start the waiting
@@ -108,7 +113,7 @@ On an existing Ubuntu runner, install `xvfb-run` with
 and `xauth` supplies X11 authentication. Use `command -v xvfb-run` to
 verify that the command is on the runner user's path.
 
-The workflow wraps each platform's test command in `xvfb-run -a`. This
+The workflow wraps the Windows test command in `xvfb-run -a`. This
 starts a temporary virtual X11 display so Wine can run the Windows Godot
 executables on a machine without a desktop session. Godot still runs with
 `--headless`. The Linux runtime checks and Android builds themselves
