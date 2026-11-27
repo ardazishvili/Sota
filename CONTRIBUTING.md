@@ -13,6 +13,18 @@ Install SCons, a C++20 compiler, and the doctest headers (`doctest-dev` on
 Ubuntu). Run `scons test` from the repository root. The target builds and
 runs the tests in `tests/standalone` without building or launching Godot.
 
+## Godot module C++ unit tests
+
+Use a Godot 4.4 source checkout at commit
+`4c311cbee68c0b66ff8ebb8b0defdd9979dd2a41`. On Linux, run the following
+from the Godot checkout, adjusting the Sota path if needed:
+
+```bash
+scons platform=linuxbsd target=editor arch=x86_64 tests=yes \
+  custom_modules="$HOME/repos/Sota" custom_modules_recursive=no -j2
+./bin/godot.linuxbsd.editor.x86_64 --headless --test --test-case='*[Sota]*'
+```
+
 ## Code style
 There are no well-defined rules yet, but please:
 1. Apply clang-format before making pull request. Configuration file is in root directory.
