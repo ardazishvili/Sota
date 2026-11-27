@@ -2,6 +2,7 @@
 
 #include "polyhedron/ridge_based_polyhedron.h"
 #include "polyhedron_ridge_processor.h"
+#include "tal/wrapped.h"  // for GDCLASS
 
 namespace sota {
 

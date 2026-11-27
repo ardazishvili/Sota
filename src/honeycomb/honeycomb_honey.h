@@ -10,6 +10,7 @@
 #include "misc/types.h"            // for GroupedMeshVertices
 #include "tal/noise.h"             // for FastNoiseLite
 #include "tal/reference.h"         // for Ref
+#include "tal/wrapped.h"  // for GDCLASS
 
 namespace sota {
 class Hexagon;

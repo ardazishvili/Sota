@@ -15,15 +15,13 @@
 #include "ridge_impl/terraformer.h"
 #include "ridge_mesh.h"
 #include "tal/godot_core.h"
+#include "tal/godot_string.h"
 #include "tal/noise.h"      // for FastNoiseLite
 #include "tal/reference.h"  // for Ref
 #include "tal/texture.h"    // for Texture
 #include "tal/vector3.h"
 #include "tal/vector3i.h"
-
-#ifdef SOTA_GDEXTENSION
-using String = godot::String;  // TODO: see https://github.com/ardazishvili/Sota/issues/89
-#endif
+#include "tal/wrapped.h"  // for GDCLASS
 
 namespace sota {
 

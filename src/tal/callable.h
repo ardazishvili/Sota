@@ -5,4 +5,5 @@
 
 using Callable = godot::Callable;
 #else
+#include "core/variant/callable.h"
 #endif

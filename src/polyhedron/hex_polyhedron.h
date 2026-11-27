@@ -29,6 +29,7 @@
 #include "tal/texture.h"    // for Texture
 #include "tal/vector3.h"    // for Vector3
 #include "tal/vector3i.h"   // for Vector3i
+#include "tal/wrapped.h"  // for GDCLASS
 
 namespace sota {
 class Hexagon;

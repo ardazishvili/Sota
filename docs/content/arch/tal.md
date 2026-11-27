@@ -54,3 +54,37 @@ Same `register_types.h/cpp` files is also used by Godot's build system in case o
 
 1. All code must be tested both as GDExtension and module. Differences between godot-cpp classes and native classes are rare but exist.
 2. Sota classes must not have dependencies on native Godot classes as well on godot-cpp classes. If you need to use any headers, you are free to update existing TAL header with new lines (at least for 2 cases), or create new one.
+
+## Header contracts
+
+Include the TAL header that provides the symbol your file uses. Each header
+includes the declarations for its listed symbols in both build modes, with the
+editor and extension exceptions below. For example, a header that uses
+`GDCLASS` includes `tal/wrapped.h` directly, even if it also includes a Godot
+base class through another TAL header.
+
+| Header in `src/tal` | Provides |
+| --- | --- |
+| `arrays.h` | `Array`, `TypedArray<T>`, `Vector2Array`, `Vector3Array`, `TangentsArray`, `WeightsArray`, `ColorsArray`, `ByteArray`, `IntArray` |
+| `callable.h` | `Callable` |
+| `camera.h` | `Camera3D` |
+| `color.h` | `Color` |
+| `engine.h` | `Engine`. Also provides `EditorInterface` for GDExtension and native editor builds. |
+| `event.h` | `Input`, `InputEvent`, `InputEventMouse`, and the left-button and left/right button-mask constants |
+| `godot_core.h` | `ClassDB`, `D_METHOD`, `GDREGISTER_CLASS`, `GDREGISTER_ABSTRACT_CLASS`, `Variant`, `PropertyInfo`, `PROPERTY_HINT_RESOURCE_TYPE`, `memnew`, module initialization levels, `print`, and `printerr`. Also provides the GDExtension entry-point declarations in extension builds. |
+| `godot_string.h` | `String` |
+| `material.h` | `Material`, `ShaderMaterial` |
+| `mesh.h` | `PrimitiveMesh`, `MeshInstance3D`, `StaticBody3D`, `CollisionShape3D`, `SphereShape3D` |
+| `node.h` | `Node`, `Node3D` |
+| `noise.h` | `FastNoiseLite` |
+| `object.h` | `Object` |
+| `reference.h` | `Ref<T>`, `RefCounted` |
+| `shader.h` | `Shader` |
+| `texture.h` | `Texture` |
+| `tmath.h` | `Math` |
+| `vector2.h`, `vector2i.h`, `vector3.h`, `vector3i.h` | `Vector2`, `Vector2i`, `Vector3`, `Vector3i`, respectively |
+| `wrapped.h` | `GDCLASS` |
+
+When adding a TAL export, include the header that defines it in each build
+branch and update the table. Treat other declarations brought in by those
+headers as transitive dependencies.

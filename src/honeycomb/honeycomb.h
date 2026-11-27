@@ -10,6 +10,7 @@
 #include "tal/shader.h"     // for Shader
 #include "tal/texture.h"    // for Texture
 #include "tal/vector3.h"    // for Vector3
+#include "tal/wrapped.h"  // for GDCLASS
 
 namespace sota {
 class HoneycombHoney;

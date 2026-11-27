@@ -6,6 +6,7 @@
 #include "primitives/hexagon.h"     // for Hexagon
 #include "primitives/pentagon.h"    // for Pentagon
 #include "ridge_impl/ridge_mesh.h"  // for RidgeMesh, RidgeHexMeshParams
+#include "tal/wrapped.h"  // for GDCLASS
 
 namespace sota {
 
