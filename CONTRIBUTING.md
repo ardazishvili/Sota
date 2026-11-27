@@ -15,15 +15,21 @@ runs the tests in `tests/standalone` without building or launching Godot.
 
 ## Godot module C++ unit tests
 
-Use a Godot 4.4 source checkout at commit
-`4c311cbee68c0b66ff8ebb8b0defdd9979dd2a41`. On Linux, run the following
-from the Godot checkout, adjusting the Sota path if needed:
+Use the Godot 4.4 source checkout at `~/repos/godot` for both local and
+self-hosted PR testing. The checkout must be at commit
+`4c311cbee68c0b66ff8ebb8b0defdd9979dd2a41`. On Linux, adjust the Sota
+module path in the command if your Sota checkout is elsewhere.
 
 ```bash
+cd ~/repos/godot
 scons platform=linuxbsd target=editor arch=x86_64 tests=yes \
   custom_modules="$HOME/repos/Sota" custom_modules_recursive=no -j2
 ./bin/godot.linuxbsd.editor.x86_64 --headless --test --test-case='*[Sota]*'
 ```
+
+The **godot-related unit tests** PR check runs after approval on the
+self-hosted Linux runner labeled `sota-linux`. In CI, `~` is the runner
+service user's home directory.
 
 ## Code style
 There are no well-defined rules yet, but please:
