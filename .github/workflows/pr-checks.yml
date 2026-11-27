@@ -10,7 +10,7 @@ permissions:
 jobs:
   smoke:
     name: smoke build test
-    runs-on: ubuntu-24.04
+    runs-on: [self-hosted, linux, x64, sota-linux]
     environment: sota-pr-checks
     env:
       BUILD_SUITE: smoke
@@ -21,17 +21,14 @@ jobs:
           submodules: true
           persist-credentials: false
 
-      - name: Install build and runtime dependencies
+      - name: Locate the Android NDK
         run: |
-          sudo apt-get update
-          sudo apt-get install -y scons g++-mingw-w64-x86-64-posix \
-            libasound2-dev libdbus-1-dev libdecor-0-dev libfontconfig1-dev libgl1-mesa-dev \
-            libpulse-dev libudev-dev libwayland-dev libx11-dev libxcursor-dev libxi-dev \
-            libxinerama-dev libxkbcommon-dev libxrandr-dev libvulkan-dev \
-            wine wine64 xvfb xauth
-          sudo update-alternatives --set x86_64-w64-mingw32-gcc /usr/bin/x86_64-w64-mingw32-gcc-posix
-          sudo update-alternatives --set x86_64-w64-mingw32-g++ /usr/bin/x86_64-w64-mingw32-g++-posix
-          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" 'ndk;23.2.8568313'
+          android_sdk="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-$HOME/Android/Sdk}}"
+          if [[ ! -x "$android_sdk/ndk/23.2.8568313/toolchains/llvm/prebuilt/linux-x86_64/bin/clang" ]]; then
+            echo "::error::Install Android NDK 23.2.8568313 in $android_sdk/ndk or set ANDROID_HOME for the runner."
+            exit 1
+          fi
+          echo "ANDROID_HOME=$android_sdk" >> "$GITHUB_ENV"
 
       - name: Prepare Godot 4.4
         run: |
@@ -78,7 +75,7 @@ jobs:
   full:
     name: full build test
     if: contains(github.event.pull_request.labels.*.name, 'full-build')
-    runs-on: ubuntu-24.04
+    runs-on: [self-hosted, linux, x64, sota-linux]
     environment: sota-pr-checks
     env:
       BUILD_SUITE: full
@@ -86,17 +83,12 @@ jobs:
 
   synthetic:
     name: standalone unit tests
-    runs-on: ubuntu-24.04
+    runs-on: [self-hosted, linux, x64, sota-linux]
     environment: sota-pr-checks
     steps:
       - uses: actions/checkout@v6
         with:
           persist-credentials: false
-
-      - name: Install doctest
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y doctest-dev
 
       - name: Build and run the standalone C++ test
         run: |

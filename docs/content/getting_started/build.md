@@ -86,8 +86,25 @@ while the label is present.
 All three jobs wait for approval from the required reviewer on the
 `sota-pr-checks` environment. Open the workflow run, select
 **Review deployments**, then approve `sota-pr-checks` to start the waiting
-jobs for that run. The jobs use GitHub-hosted Linux runners, with Wine
-for the Windows runtime checks.
+jobs for that run. All three jobs use the self-hosted Linux x86_64 runner
+with the `sota-linux` label. Approved jobs queue while that runner is offline.
+
+Install the build dependencies on the runner before starting it. For
+example, on Ubuntu:
+
+```bash
+sudo apt install g++ python3 scons doctest-dev g++-mingw-w64-x86-64-posix \
+  libasound2-dev libdbus-1-dev libdecor-0-dev libfontconfig1-dev libgl1-mesa-dev \
+  libpulse-dev libudev-dev libx11-dev libwayland-dev libxcursor-dev libxi-dev \
+  libxinerama-dev libxkbcommon-dev libxrandr-dev libvulkan-dev \
+  wine wine64 xvfb xauth curl git unzip
+sudo update-alternatives --set x86_64-w64-mingw32-gcc /usr/bin/x86_64-w64-mingw32-gcc-posix
+sudo update-alternatives --set x86_64-w64-mingw32-g++ /usr/bin/x86_64-w64-mingw32-g++-posix
+```
+
+Install NDK `23.2.8568313` in the runner user's Android SDK. The workflow
+uses `ANDROID_HOME` or `ANDROID_SDK_ROOT` from the runner environment and
+defaults to `~/Android/Sdk`.
 
 In the target branch's GitHub ruleset or branch protection, require
 **smoke build test** from GitHub Actions and leave **full build test**
