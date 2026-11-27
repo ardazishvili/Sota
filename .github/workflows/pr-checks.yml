@@ -1,13 +1,97 @@
 name: PR checks
 
-on: pull_request
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled, unlabeled]
 
 permissions:
   contents: read
 
 jobs:
+  smoke:
+    name: smoke build test
+    runs-on: [self-hosted, linux, x64, sota-linux]
+    environment: sota-pr-checks
+    env:
+      BUILD_SUITE: smoke
+    steps: &build_steps
+      - uses: actions/checkout@v6
+        with:
+          path: Sota
+          submodules: true
+          persist-credentials: false
+
+      - name: Prepare Godot 4.4
+        id: prepare_godot
+        run: |
+          godot_source="$RUNNER_TEMP/godot-source"
+          git clone --depth 1 --branch 4.4-stable https://github.com/godotengine/godot.git "$godot_source"
+          echo "GODOT_SOURCE=$godot_source" >> "$GITHUB_ENV"
+
+          godot_binaries="$RUNNER_TEMP/godot-binaries"
+          mkdir -p "$godot_binaries"
+          cd "$godot_binaries"
+          release=https://github.com/godotengine/godot-builds/releases/download/4.4-stable
+          curl -fsSL --retry 3 "$release/Godot_v4.4-stable_export_templates.tpz" -o templates.tpz
+          templates=(templates/linux_debug.x86_64 'templates/windows_debug_x86_64*.exe')
+          if [[ "$BUILD_SUITE" == full ]]; then
+            templates+=(templates/linux_release.x86_64 'templates/windows_release_x86_64*.exe')
+            for editor in Godot_v4.4-stable_linux.x86_64.zip Godot_v4.4-stable_win64.exe.zip; do
+              curl -fsSL --retry 3 "$release/$editor" -o "$editor"
+              unzip -qj "$editor"
+            done
+            chmod +x Godot_v4.4-stable_linux.x86_64
+          fi
+          unzip -qj templates.tpz "${templates[@]}"
+          chmod +x linux_*.x86_64
+          unlink templates.tpz
+          echo "GODOT_BINARIES=$godot_binaries" >> "$GITHUB_ENV"
+
+      - name: Linux build and runtime test
+        working-directory: Sota
+        run: |
+          status=0
+          python3 scripts/test-builds.py --suite "$BUILD_SUITE" --platform linux -j2 || status=$?
+          # Reclaim space in the disposable CI checkouts before the next platform.
+          git -C "$GODOT_SOURCE" clean -ffdx
+          git -C godot-cpp clean -ffdx
+          exit "$status"
+
+      - name: Windows build and runtime test
+        if: ${{ !cancelled() && steps.prepare_godot.outcome == 'success' }}
+        working-directory: Sota
+        env:
+          WINEDEBUG: '-all'
+          WINEPREFIX: ${{ runner.temp }}/sota-wine
+        run: |
+          status=0
+          xvfb-run -a python3 scripts/test-builds.py --suite "$BUILD_SUITE" --platform windows -j2 || status=$?
+          git -C "$GODOT_SOURCE" clean -ffdx
+          git -C godot-cpp clean -ffdx
+          exit "$status"
+
+      - name: Android build
+        if: ${{ !cancelled() && steps.prepare_godot.outcome == 'success' }}
+        working-directory: Sota
+        run: |
+          export ANDROID_HOME="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-$HOME/Android/Sdk}}"
+          if [[ ! -x "$ANDROID_HOME/ndk/23.2.8568313/toolchains/llvm/prebuilt/linux-x86_64/bin/clang" ]]; then
+            echo "::error::Install Android NDK 23.2.8568313 in $ANDROID_HOME/ndk or set ANDROID_HOME for the runner."
+            exit 1
+          fi
+          python3 scripts/test-builds.py --suite "$BUILD_SUITE" --platform android -j2
+
+  full:
+    name: full build test
+    if: contains(github.event.pull_request.labels.*.name, 'full-build')
+    runs-on: [self-hosted, linux, x64, sota-linux]
+    environment: sota-pr-checks
+    env:
+      BUILD_SUITE: full
+    steps: *build_steps
+
   standalone_unit_tests:
-    name: Standalone C++ smoke test
+    name: standalone unit tests
     if: github.event.pull_request.head.repo.full_name == github.repository
     runs-on: [self-hosted, linux, x64, sota-linux]
     environment: sota-pr-checks
