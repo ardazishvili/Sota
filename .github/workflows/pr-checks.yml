@@ -64,7 +64,7 @@ jobs:
           status=0
           for platform in linux windows android; do
             xvfb-run -a python3 scripts/test-builds.py --suite "$BUILD_SUITE" \
-              --platform "$platform" -j "$(nproc)" || status=1
+              --platform "$platform" -j2 || status=1
             # Each target has its own object files. Reclaim disk space between platforms
             # in the disposable CI checkouts.
             git -C "$GODOT_SOURCE" clean -ffdx
