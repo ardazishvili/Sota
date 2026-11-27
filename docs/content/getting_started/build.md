@@ -77,15 +77,21 @@ returns a nonzero status if any build or runtime check fails.
 
 ### Pull request checks
 
-**Smoke build check** runs on every PR and includes the standalone C++ smoke
-test. **Full build check** runs when a maintainer adds the `full-build` PR
-label and reruns on updates while the label is present. Both jobs run on a
-GitHub-hosted Linux runner and run the Windows executables under Wine.
+**smoke build test** and **standalone unit tests** are queued for every PR. The
+synthetic test is a standalone C++ doctest that checks `2 + 2 == 4` and
+depends only on the C++ toolchain and doctest. **full build test** is
+queued when a maintainer adds the `full-build` PR label and on updates
+while the label is present.
+
+All three jobs wait for approval from the required reviewer on the
+`sota-pr-checks` environment. Open the workflow run, select
+**Review deployments**, then approve `sota-pr-checks` to start the waiting
+jobs for that run. The jobs use GitHub-hosted Linux runners, with Wine
+for the Windows runtime checks.
 
 In the target branch's GitHub ruleset or branch protection, require
-**Smoke build check** from GitHub Actions. Leave **Full build check** optional
-and remove the previous **Standalone C++ smoke test** requirement if it was
-configured. [GitHub branch protection](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches)
+**smoke build test** from GitHub Actions and leave **full build test**
+optional. [GitHub branch protection](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches)
 
 ## System variables and dependencies
 
