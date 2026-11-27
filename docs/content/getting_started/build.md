@@ -25,68 +25,67 @@ The module configurations have separate outputs.
 
 ## Test the module and GDExtension builds
 
-Install Python 3.9 or newer, SCons 4 or newer, and a C++20 toolchain for each target. Initialize the
-pinned bindings from the Sota checkout with `git submodule update --init`.
-For module builds, also obtain a Godot **source** checkout and keep the Sota
-checkout directory named `Sota`, as required by its registration functions.
-Godot `4.4-stable` matches the pinned `godot-cpp` API and the demo project's
-Godot feature version.
-Pass the source checkout for the version you want to test with
-`--godot-source` or the `GODOT_SOURCE` environment variable.
+The full suite selects six configurations per platform, combining both modes
+with all three SCons targets. The smoke suite selects `extension/template_debug`
+and `module/editor` on each platform.
 
-```bash
-python3 scripts/test-builds.py --dry-run
-python3 scripts/test-builds.py --godot-source ~/repos/godot --platform linux --arch x86_64 -j4
-python3 scripts/test-builds.py --godot-source ~/repos/godot --platform windows -j4
-python3 scripts/test-builds.py --mode extension --platform android --arch arm64 --target template_release
-```
+| Platform | Architecture | Smoke | Full | Validation |
+| --- | --- | --- | --- | --- |
+| Linux | x86_64 | 2 | 6 | Build and run headless |
+| Windows | x86_64 | 2 | 6 | Build and run headless |
+| Android | arm64 | 2 | 6 | Build native shared libraries |
+| **Total** | | **6** | **18** | |
 
-With no filters the script selects both build forms for every platform in the
-add-on manifest. It compiles debug and release templates, plus editor builds
-on desktop targets and for the Android ARM64 module. It continues after failures and exits nonzero if any
-selected build fails. Use `--platform`, `--arch`, `--mode`, and `--target`
-to run the appropriate portion on each build host. A macOS GDExtension uses
-`--arch universal`. The macOS module builds separately for Intel and Apple silicon.
+Each desktop case opens a temporary Godot project and instantiates Sota's
+`RectHexGrid` through `ClassDB`. The extension cases use the matching stock
+Godot editor or export template and load the library produced by that case.
+The module cases use the custom Godot binary produced by that case. Android
+uses the NDK to compile the native libraries and requires no emulator or device.
 
-| Target | Toolchain |
+Install Python 3.9 or newer, SCons 4 or newer, and the toolchains listed below.
+Initialize the pinned bindings with `git submodule update --init`. Module cases
+require a Godot source checkout and the Sota checkout directory must be named
+`Sota` for Godot's module registration. Godot `4.4-stable` matches the pinned
+bindings and the demo project.
+
+Pass the Godot source directory with `--godot-source` or `GODOT_SOURCE`. For
+desktop extension tests, pass `--godot-binaries` or `GODOT_BINARIES` with the
+directory containing your extracted Godot 4.4 desktop binaries. Put the
+platform's editor and the contents of the export archive's `templates/`
+directory alongside each other and keep their original filenames. For smoke
+tests, only the desktop debug export templates are needed. On Linux, make
+the Linux editor and templates executable. [Godot 4.4 downloads](https://github.com/godotengine/godot-builds/releases/tag/4.4-stable)
+
+| Platform | Toolchain |
 | --- | --- |
-| Linux x86_64, arm64, rv64 | GCC or Clang for the target architecture. Run the Linux cases on matching Linux hosts or in matching Linux guests. For module builds, install the [Godot Linux build dependencies](https://docs.godotengine.org/en/4.4/contributing/development/compiling/compiling_for_linuxbsd.html). |
-| Windows x86_64 | MinGW-w64 with POSIX threads when cross-compiling from Linux, or Visual Studio with Desktop development with C++ on Windows. See [Godot's Windows build guide](https://docs.godotengine.org/en/4.4/contributing/development/compiling/compiling_for_windows.html). |
-| Android x86_64, arm64 | Set `ANDROID_HOME` to the Android SDK path and install NDK r23c (`23.2.8568313`) for the pinned bindings and Godot 4.4. See [Godot's Android build guide](https://docs.godotengine.org/en/4.4/contributing/development/compiling/compiling_for_android.html) for SDK and JDK setup. [Download NDK r23c for Linux x86_64](https://dl.google.com/android/repository/android-ndk-r23c-linux.zip). |
-| macOS | Run on a Mac with Xcode or the Xcode Command Line Tools for the compiler and SDK. For module builds, also set up MoltenVK. See [Godot's macOS build guide](https://docs.godotengine.org/en/4.4/contributing/development/compiling/compiling_for_macos.html). |
-
-On Debian or Ubuntu, the following packages provide SCons and the Windows x86_64
-cross-compiler.
+| Linux | GCC or Clang with C++20 support and the [Godot Linux build dependencies](https://docs.godotengine.org/en/4.4/contributing/development/compiling/compiling_for_linuxbsd.html). |
+| Windows | For Linux cross-builds, use the MinGW-w64 POSIX toolchain and run the headless checks under Wine, for example with `xvfb-run -a`. On Windows, use Visual Studio with Desktop development with C++. [Godot Windows build guide](https://docs.godotengine.org/en/4.4/contributing/development/compiling/compiling_for_windows.html) |
+| Android | Set `ANDROID_HOME` to the SDK directory and install NDK r23c with `sdkmanager 'ndk;23.2.8568313'`. [Godot Android build guide](https://docs.godotengine.org/en/4.4/contributing/development/compiling/compiling_for_android.html) |
 
 ```bash
-sudo apt install python3 scons g++-mingw-w64-x86-64-posix
+python3 scripts/test-builds.py --suite smoke --dry-run
+python3 scripts/test-builds.py --suite full --dry-run
+python3 scripts/test-builds.py --suite smoke --godot-source ~/repos/godot --godot-binaries ~/godot-4.4 -j4
+python3 scripts/test-builds.py --platform linux --godot-source ~/repos/godot --godot-binaries ~/godot-4.4 -j4
+python3 scripts/test-builds.py --platform android --mode extension --target template_release
 ```
 
-### Android ARM64 builds on Linux
+The script defaults to the full suite. Use `--platform`, `--arch`, `--mode`,
+and `--target` to narrow the selection, or `--build-only` to skip desktop
+execution locally. The script continues through the selected cases and
+returns a nonzero status if any build or runtime check fails.
 
-Set `ANDROID_HOME` to your SDK directory. The example below assumes the NDK
-ZIP from the table is in `~/Downloads` and the SDK is in `~/Android/Sdk`.
-If `ndk/23.2.8568313` already exists in your SDK, skip the extraction steps.
+### Pull request checks
 
-```bash
-export ANDROID_HOME="$HOME/Android/Sdk"
-mkdir -p "$ANDROID_HOME/ndk"
-unzip "$HOME/Downloads/android-ndk-r23c-linux.zip" -d "$ANDROID_HOME/ndk"
-mv "$ANDROID_HOME/ndk/android-ndk-r23c" "$ANDROID_HOME/ndk/23.2.8568313"
-```
+**Smoke build check** runs on every PR and includes the standalone C++ smoke
+test. **Full build check** runs when a maintainer adds the `full-build` PR
+label and reruns on updates while the label is present. Both jobs run on a
+GitHub-hosted Linux runner and run the Windows executables under Wine.
 
-Run both native build checks from the Sota checkout in the same terminal so
-they inherit `ANDROID_HOME`. Adjust `--godot-source` to match your Godot checkout.
-
-```bash
-cd "$HOME/repos/Sota"
-
-python3 scripts/test-builds.py --platform android --arch arm64 \
-  --mode extension --target template_debug -j4
-
-python3 scripts/test-builds.py --platform android --arch arm64 \
-  --mode module --target editor --godot-source "$HOME/repos/godot" -j4
-```
+In the target branch's GitHub ruleset or branch protection, require
+**Smoke build check** from GitHub Actions. Leave **Full build check** optional
+and remove the previous **Standalone C++ smoke test** requirement if it was
+configured. [GitHub branch protection](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches)
 
 ## System variables and dependencies
 
